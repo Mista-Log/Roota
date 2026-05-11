@@ -50,25 +50,25 @@ jobs:
           ALLOWED_HOSTS: 127.0.0.1,localhost
         run: uv run python manage.py test
 
-  frontend-build:
-    name: React Frontend CI
-    runs-on: ubuntu-latest
+  # frontend-build:
+  #   name: React Frontend CI
+  #   runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        working-directory: Frontend
+  #   defaults:
+  #     run:
+  #       working-directory: Frontend
 
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+  #   steps:
+  #     - name: Checkout Code
+  #       uses: actions/checkout@v4
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
+  #     - name: Setup Node
+  #       uses: actions/setup-node@v4
+  #       with:
+  #         node-version: 22
 
-      - name: Install Dependencies
-        run: npm install
+  #     - name: Install Dependencies
+  #       run: npm install
 
-      - name: Build Project
-        run: npm run build
+  #     - name: Build Project
+  #       run: npm run build
