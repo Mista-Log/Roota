@@ -1,0 +1,67 @@
+name: Full Stack CI/CD
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - "Backend/**"
+      - "Frontend/**"
+
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "Backend/**"
+      - "Frontend/**"
+
+jobs:
+  backend-test:
+    name: Django Backend CI
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: Backend
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install UV
+        uses: astral-sh/setup-uv@v3
+
+      - name: Setup Python
+        run: uv python install 3.12
+
+      - name: Install Dependencies
+        run: uv sync
+
+      - name: Run Migrations
+        run: uv run python manage.py migrate
+
+      - name: Run Tests
+        run: uv run python manage.py test
+
+  frontend-build:
+    name: React Frontend CI
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: Frontend
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build Project
+        run: npm run build
