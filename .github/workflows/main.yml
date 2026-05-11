@@ -17,12 +17,14 @@ on:
 
 jobs:
   backend-test:
-    name: Django Backend CI
     runs-on: ubuntu-latest
 
     defaults:
       run:
         working-directory: Backend
+
+    env:
+      ALLOWED_HOSTS: 127.0.0.1,localhost
 
     steps:
       - name: Checkout Code
@@ -41,6 +43,11 @@ jobs:
         run: uv run python manage.py migrate
 
       - name: Run Tests
+        env:
+          DJANGO_SETTINGS_MODULE: config.settings
+          SECRET_KEY: test-key
+          DEBUG: True
+          ALLOWED_HOSTS: 127.0.0.1,localhost
         run: uv run python manage.py test
 
   frontend-build:
