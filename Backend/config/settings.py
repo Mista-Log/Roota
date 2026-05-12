@@ -43,8 +43,14 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
 
-    "corsheaders",
     "accounts",
+
+    "corsheaders",
+    "rest_framework",
+    "rest_framework_simplejwt",
+    "cloudinary",
+    "cloudinary_storage",
+    "drf_spectacular",
 ]
 
 MIDDLEWARE = [
@@ -110,6 +116,26 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ),
+
+    "DEFAULT_PERMISSION_CLASSES": (
+        "rest_framework.permissions.IsAuthenticated",
+    ),
+
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Roota API",
+    "DESCRIPTION": "Roota Backend API Documentation",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+}
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
@@ -127,3 +153,15 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+
+
+AUTH_USER_MODEL = "accounts.User"
+
+
+CLOUDINARY_STORAGE = {
+    "CLOUD_NAME": "your_cloud_name",
+    "API_KEY": "your_api_key",
+    "API_SECRET": "your_api_secret",
+}
+
+DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
