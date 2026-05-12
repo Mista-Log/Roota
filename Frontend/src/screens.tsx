@@ -1,9 +1,59 @@
 import type { ReactNode } from 'react';
+import { createContext, useContext, useState, ReactNode as RN } from 'react';
 import { Link, NavLink, Navigate, Route, Routes } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import './roota.css';
 
 type ActiveTab = 'dashboard' | 'jobs' | 'finances' | 'insights';
 type WorkspaceMode = 'worker' | 'employer' | 'finance' | 'insights';
+
+type AuthContextType = {
+  isAuthenticated: boolean;
+  userRole: 'worker' | 'employer' | null;
+  login: (role: 'worker' | 'employer') => void;
+  logout: () => void;
+};
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+function AuthProvider({ children }: { children: RN }) {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userRole, setUserRole] = useState<'worker' | 'employer' | null>(null);
+
+  const login = (role: 'worker' | 'employer') => {
+    setIsAuthenticated(true);
+    setUserRole(role);
+    localStorage.setItem('auth', JSON.stringify({ isAuthenticated: true, userRole: role }));
+  };
+
+  const logout = () => {
+    setIsAuthenticated(false);
+    setUserRole(null);
+    localStorage.removeItem('auth');
+  };
+
+  return <AuthContext.Provider value={{ isAuthenticated, userRole, login, logout }}>{children}</AuthContext.Provider>;
+}
+
+function useAuth() {
+  const context = useContext(AuthContext);
+  if (!context) throw new Error('useAuth must be used within AuthProvider');
+  return context;
+}
+
+function ProtectedRoute({ children, allowedRoles }: { children: RN; allowedRoles?: Array<'worker' | 'employer'> }) {
+  const { isAuthenticated, userRole } = useAuth();
+
+  if (!isAuthenticated) {
+    return <Navigate to="/auth" replace />;
+  }
+
+  if (allowedRoles && userRole && !allowedRoles.includes(userRole)) {
+    return <Navigate to="/role" replace />;
+  }
+
+  return <>{children}</>;
+}
 
 const tabs: Array<{ to: string; label: string; tab: ActiveTab }> = [
   { to: '/worker', label: 'Dashboard', tab: 'dashboard' },
@@ -121,102 +171,173 @@ const transactions = [
 
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<LandingPage />} />
-      <Route path="/role" element={<RoleSelectionPage />} />
-      <Route path="/auth" element={<AuthPage />} />
-      <Route path="/marketplace" element={<MarketplacePage />} />
-      <Route path="/worker" element={<WorkerDashboardPage />} />
-      <Route path="/dashboard" element={<WorkerDashboardPage />} />
-      <Route path="/employer" element={<EmployerDashboardPage />} />
-      <Route path="/finances" element={<FinancesPage />} />
-      <Route path="/insights" element={<InsightsPage />} />
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+    <AuthProvider>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/role" element={<RoleSelectionPage />} />
+        <Route path="/auth" element={<AuthPage />} />
+        <Route path="/marketplace" element={<ProtectedRoute><MarketplacePage /></ProtectedRoute>} />
+        <Route path="/worker" element={<ProtectedRoute allowedRoles={['worker']}><WorkerDashboardPage /></ProtectedRoute>} />
+        <Route path="/dashboard" element={<ProtectedRoute><WorkerDashboardPage /></ProtectedRoute>} />
+        <Route path="/employer" element={<ProtectedRoute allowedRoles={['employer']}><EmployerDashboardPage /></ProtectedRoute>} />
+        <Route path="/finances" element={<ProtectedRoute><FinancesPage /></ProtectedRoute>} />
+        <Route path="/insights" element={<ProtectedRoute><InsightsPage /></ProtectedRoute>} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </AuthProvider>
   );
 }
 
 function LandingPage() {
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.2,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.6, ease: 'easeOut' },
+    },
+  };
+
+  const slideInVariants = {
+    hidden: { opacity: 0, x: -40 },
+    visible: {
+      opacity: 1,
+      x: 0,
+      transition: { duration: 0.7, ease: 'easeOut' },
+    },
+  };
+
+  const scaleInVariants = {
+    hidden: { opacity: 0, scale: 0.9 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      transition: { duration: 0.6, ease: 'easeOut' },
+    },
+  };
+
+  const floatVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: [0, -10, 0],
+      transition: { duration: 3, repeat: Infinity, ease: 'easeInOut' },
+    },
+  };
+
   return (
-    <div className="page marketing-page">
+    <motion.div className="page marketing-page" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
       <header className="marketing-header">
-        <Link to="/" className="brand-wordmark">
-          Roota
-        </Link>
+        <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6 }}>
+          <Link to="/" className="brand-wordmark">
+            Roota
+          </Link>
+        </motion.div>
         <nav className="marketing-nav">
-          {tabs.map((tab) => (
-            <Link key={tab.tab} to={tab.to} className={tab.tab === 'dashboard' ? 'active' : ''}>
-              {tab.label}
-            </Link>
+          {tabs.map((tab, idx) => (
+            <motion.div key={tab.tab} initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.05, duration: 0.5 }}>
+              <Link to={tab.to} className={tab.tab === 'dashboard' ? 'active' : ''}>
+                {tab.label}
+              </Link>
+            </motion.div>
           ))}
         </nav>
-        <div className="header-actions">
+        <motion.div className="header-actions" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6 }}>
           <Link to="/role" className="plain-link">
             Switch Role
           </Link>
           <Link to="/marketplace" className="pill-button pill-button--solid">
             Hire Talent
           </Link>
-        </div>
+        </motion.div>
       </header>
 
       <main className="landing-stack">
         <section className="hero-section hero-section--dark">
-          <div className="hero-copy">
-            <span className="eyebrow eyebrow--hero">Rooted in Trust</span>
-            <h1>
+          <motion.div className="hero-copy" variants={containerVariants} initial="hidden" animate="visible">
+            <motion.span className="eyebrow eyebrow--hero" variants={itemVariants}>
+              Rooted in Trust
+            </motion.span>
+            <motion.h1 variants={itemVariants}>
               Powering Africa&apos;s <span>Economic Roots.</span>
-            </h1>
-            <p>
-              Building the world&apos;s most trusted AI-driven workforce ecosystem. We empower African talent with verified
-              financial identities and global employment opportunities.
-            </p>
-            <div className="hero-actions">
+            </motion.h1>
+            <motion.p variants={itemVariants}>
+              Building the world&apos;s most trusted AI-driven workforce ecosystem. We empower African talent with verified financial
+              identities and global employment opportunities.
+            </motion.p>
+            <motion.div className="hero-actions" variants={itemVariants}>
               <Link to="/role" className="pill-button pill-button--solid">
                 Join as Worker
               </Link>
               <Link to="/marketplace" className="pill-button pill-button--ghost">
                 Hire Talent
               </Link>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
 
-          <div className="hero-orbit-card">
-            <div className="hero-orbit-card__primary">
+          <motion.div className="hero-orbit-card" variants={scaleInVariants} initial="hidden" animate="visible">
+            <motion.div className="hero-orbit-card__primary" animate={{ y: [0, -8, 0] }} transition={{ duration: 3, repeat: Infinity }}>
               <div>
                 <span>Active Talent Pool</span>
                 <strong>124,500+</strong>
               </div>
               <span className="mini-circle">↗</span>
-            </div>
-            <div className="hero-orbit-card__secondary">
+            </motion.div>
+            <motion.div className="hero-orbit-card__secondary" animate={{ y: [0, 8, 0] }} transition={{ duration: 3, repeat: Infinity, delay: 0.5 }}>
               <div>
                 <span>Verified Identities</span>
                 <strong>98.4</strong>
               </div>
               <span className="trust-badge">AI Trust Score</span>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         </section>
 
-        <section className="section-block section-block--light">
-          <div className="section-intro">
+        <motion.section
+          className="section-block section-block--light"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+        >
+          <motion.div className="section-intro" variants={slideInVariants} initial="hidden" whileInView="visible" viewport={{ once: true }}>
             <h2>The New Standard of Trust</h2>
             <p>
-              We leverage proprietary AI to analyze work history, technical proficiency, and reliability to create a portable
-              financial identity for every worker.
+              We leverage proprietary AI to analyze work history, technical proficiency, and reliability to create a portable financial
+              identity for every worker.
             </p>
-          </div>
-          <div className="feature-grid">
+          </motion.div>
+          <motion.div className="feature-grid" variants={containerVariants} initial="hidden" whileInView="visible" viewport={{ once: true }}>
             {landingFeatures.map((feature) => (
-              <FeatureTile key={feature.title} {...feature} />
+              <motion.div key={feature.title} variants={itemVariants}>
+                <FeatureTile {...feature} />
+              </motion.div>
             ))}
-          </div>
-        </section>
+          </motion.div>
+        </motion.section>
 
-        <section className="identity-section">
-          <TrustRing value="845" label="Identity Verified" corner="Top 1%" />
-          <div className="identity-copy">
+        <motion.section
+          className="identity-section"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+        >
+          <motion.div variants={scaleInVariants} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+            <TrustRing value="845" label="Identity Verified" corner="Top 1%" />
+          </motion.div>
+          <motion.div className="identity-copy" variants={slideInVariants} initial="hidden" whileInView="visible" viewport={{ once: true }}>
             <h2>Your Professional Identity, Quantified.</h2>
             <p>
               Forget traditional resumes. Roota&apos;s AI Trust Score aggregates your delivery speed, skill proficiency, and client
@@ -230,49 +351,67 @@ function LandingPage() {
             <Link to="/auth" className="pill-button pill-button--solid pill-button--small dark-shadow">
               Get Your Score Free
             </Link>
-          </div>
-        </section>
+          </motion.div>
+        </motion.section>
 
-        <section className="section-block section-block--dark">
-          <div className="section-intro section-intro--light">
+        <motion.section
+          className="section-block section-block--dark"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+        >
+          <motion.div className="section-intro section-intro--light" variants={slideInVariants} initial="hidden" whileInView="visible" viewport={{ once: true }}>
             <h2>Payroll for Everyone, Everywhere.</h2>
             <p>
-              From individual freelancers to large-scale enterprises, we handle the complexities of global finance so you can
-              focus on work.
+              From individual freelancers to large-scale enterprises, we handle the complexities of global finance so you can focus on
+              work.
             </p>
-          </div>
-          <div className="payroll-grid">
+          </motion.div>
+          <motion.div className="payroll-grid" variants={containerVariants} initial="hidden" whileInView="visible" viewport={{ once: true }}>
             {payrollTiles.map((tile) => (
-              <article key={tile.title} className={`payroll-tile payroll-tile--${tile.kind}`}>
+              <motion.article key={tile.title} variants={itemVariants} className={`payroll-tile payroll-tile--${tile.kind}`}>
                 <div className="payroll-tile__visual" />
                 <div>
                   <h3>{tile.title}</h3>
                   {tile.body ? <p>{tile.body}</p> : null}
                 </div>
-              </article>
+              </motion.article>
             ))}
-          </div>
-        </section>
+          </motion.div>
+        </motion.section>
 
-        <section className="cta-banner">
-          <h2>Ready to plant your roots?</h2>
-          <p>
-            Whether you&apos;re looking for the best talent in Africa or aiming to build your professional reputation, Roota is
-            your engine for growth.
-          </p>
-          <div className="hero-actions hero-actions--centered">
-            <Link to="/role" className="pill-button pill-button--light">
-              Join as Worker
-            </Link>
-            <Link to="/marketplace" className="pill-button pill-button--ghost-light">
-              Hire Talent
-            </Link>
-          </div>
-        </section>
+        <motion.section
+          className="cta-banner"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+        >
+          <motion.h2 variants={slideInVariants} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+            Ready to plant your roots?
+          </motion.h2>
+          <motion.p variants={slideInVariants} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+            Whether you&apos;re looking for the best talent in Africa or aiming to build your professional reputation, Roota is your
+            engine for growth.
+          </motion.p>
+          <motion.div className="hero-actions hero-actions--centered" variants={containerVariants} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+            <motion.div variants={itemVariants}>
+              <Link to="/role" className="pill-button pill-button--light">
+                Join as Worker
+              </Link>
+            </motion.div>
+            <motion.div variants={itemVariants}>
+              <Link to="/marketplace" className="pill-button pill-button--ghost-light">
+                Hire Talent
+              </Link>
+            </motion.div>
+          </motion.div>
+        </motion.section>
       </main>
 
       <MarketingFooter />
-    </div>
+    </motion.div>
   );
 }
 
