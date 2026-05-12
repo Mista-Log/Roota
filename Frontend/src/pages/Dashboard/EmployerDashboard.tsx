@@ -1,7 +1,5 @@
-import React from 'react';
 import { WorkspaceShell } from '../../layouts/WorkspaceShell';
-import { MetricCard } from '../../components/common/MetricCard';
-import { PanelHeader } from '../../components/common/PanelHeader';
+import { MetricCard, PanelHeader } from '../../components/common';
 
 const employerMetrics = [
   { title: 'Total Payroll (MTD)', value: '$142,850', meta: '+12.5% vs last month', accent: 'positive' },

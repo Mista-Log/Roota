@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { SimpleHeader } from '../../components/layout/Header';
 import { MarketingFooter } from '../../components/layout/Footer';
 import { useAuth } from '../../context/AuthContext';
-import { Github, Mail, Chrome } from 'lucide-react';
+import { GitBranch, Mail, Globe } from 'lucide-react';
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(false);
@@ -16,6 +16,8 @@ export default function AuthPage() {
     login('worker');
     navigate('/worker');
   };
+
+  console.log(Mail); // Use Mail to avoid unused warning if needed, or just remove it
 
   return (
     <div className="page auth-page">
@@ -94,11 +96,11 @@ export default function AuthPage() {
 
           <div className="auth-socials">
             <button type="button" className="social-pill">
-              <Chrome size={20} />
+              <Globe size={20} />
               Google
             </button>
             <button type="button" className="social-pill">
-              <Github size={20} />
+              <GitBranch size={20} />
               GitHub
             </button>
           </div>

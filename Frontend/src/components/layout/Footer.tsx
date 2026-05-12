@@ -1,5 +1,3 @@
-import React from 'react';
-
 interface MarketingFooterProps {
   minimal?: boolean;
   auth?: boolean;

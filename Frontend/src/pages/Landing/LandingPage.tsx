@@ -1,17 +1,9 @@
-import React from 'react';
-import { motion, Variants } from 'framer-motion';
+import { motion, type Variants } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { FeatureTile } from '../../components/landing/FeatureTile';
 import { TrustRing } from '../../components/common/TrustRing';
 import { MarketingFooter } from '../../components/layout/Footer';
 import { MarketingHeader } from '../../components/layout/Header';
-
-const tabs = [
-  { to: '/worker', label: 'Dashboard', tab: 'dashboard' },
-  { to: '/marketplace', label: 'Jobs', tab: 'jobs' },
-  { to: '/finances', label: 'Finances', tab: 'finances' },
-  { to: '/insights', label: 'Insights', tab: 'insights' },
-] as const;
 
 const landingFeatures = [
   {
