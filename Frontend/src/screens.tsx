@@ -1031,7 +1031,7 @@ function MarketingFooter({ minimal = false, auth = false }: { minimal?: boolean;
       <div>
         <div className="brand-name">Roota</div>
         <p>
-          {auth ? '© 2024 Roota. Built for the African Future.' : 'Building Africa&apos;s professional future with AI-driven trust.'}
+          {auth ? '© 2026 Roota. Built for the African Future.' : 'Building Africa&apos;s professional future with AI-driven trust.'}
         </p>
       </div>
       <nav>

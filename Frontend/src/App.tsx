@@ -356,7 +356,7 @@ function AuthPage() {
       <footer className="auth-footer">
         <div>
           <div className="brand-title">Roota</div>
-          <p>© 2024 Roota. Built for the African Future.</p>
+          <p>© 2026 Roota. Built for the African Future.</p>
         </div>
         <nav>
           <a href="#terms">Terms of Service</a>
