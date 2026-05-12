@@ -155,8 +155,14 @@ export default function LandingPage() {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <motion.div variants={scaleInVariants} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-            <TrustRing value="845" label="Identity Verified" corner="Top 1%" />
+          <motion.div
+            className="trust-ring-wrapper"
+            variants={scaleInVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+          >
+            <TrustRing value="845" label="Trust Score" corner="Top 1%" pill="Verified Identity" />
           </motion.div>
           <motion.div className="identity-copy" variants={slideInVariants} initial="hidden" whileInView="visible" viewport={{ once: true }}>
             <h2>Your Professional Identity, Quantified.</h2>
@@ -189,16 +195,53 @@ export default function LandingPage() {
               work.
             </p>
           </motion.div>
-          <motion.div className="payroll-grid" variants={containerVariants} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-            {payrollTiles.map((tile) => (
-              <motion.article key={tile.title} variants={itemVariants} className={`payroll-tile payroll-tile--${tile.kind}`}>
-                <div className="payroll-tile__visual" />
+          <motion.div
+            className="payroll-grid payroll-grid--masonry"
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+          >
+            {/* LARGE CARD */}
+            <motion.article
+              variants={itemVariants}
+              className="payroll-tile payroll-tile--large"
+            >
+              <div className="payroll-tile__visual" />
+              <div className="payroll-tile__content">
+                <h3>Global Wallets</h3>
+                <p>Receive payments in USD, EUR, or Local Currency instantly.</p>
+              </div>
+            </motion.article>
+
+            {/* WIDE CARD */}
+            <motion.article
+              variants={itemVariants}
+              className="payroll-tile payroll-tile--wide"
+            >
+              <div className="payroll-tile__content-row">
                 <div>
-                  <h3>{tile.title}</h3>
-                  {tile.body ? <p>{tile.body}</p> : null}
+                  <h3>Automated Tax</h3>
+                  <p>Smart compliance tracking for 50+ countries.</p>
                 </div>
-              </motion.article>
-            ))}
+              </div>
+            </motion.article>
+
+            {/* SMALL CARD */}
+            <motion.article
+              variants={itemVariants}
+              className="payroll-tile payroll-tile--compact payroll-tile--grey"
+            >
+              <h3>Instant Payouts</h3>
+            </motion.article>
+
+            {/* SMALL CARD (CTA STYLE) */}
+            <motion.article
+              variants={itemVariants}
+              className="payroll-tile payroll-tile--cta"
+            >
+              <h3>Employer Portal</h3>
+            </motion.article>
           </motion.div>
         </motion.section>
 

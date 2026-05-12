@@ -25,6 +25,7 @@ export function FeatureTile({ title, body, icon, tone }: FeatureTileProps) {
   };
 
   return (
+    
     <article className={`feature-tile feature-tile--${tone}`}>
       <div className="feature-tile__icon">
         {getIcon(icon)}
