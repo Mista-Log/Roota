@@ -4,6 +4,7 @@ import { SimpleHeader } from '../../components/layout/Header';
 import { MarketingFooter } from '../../components/layout/Footer';
 import { useAuth } from '../../context/AuthContext';
 import { GitBranch, Mail, Globe } from 'lucide-react';
+import { GoogleLogin } from "@react-oauth/google";
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(false);
@@ -74,6 +75,55 @@ export default function AuthPage() {
         err.response?.data?.detail ||
         "Login failed"
       );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleSuccess = async (credentialResponse: any) => {
+    try {
+      setLoading(true);
+
+      const response = await fetch(
+        "http://localhost:8000/api/auth/google/",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type": "application/json",
+          },
+
+          body: JSON.stringify({
+            token: credentialResponse.credential,
+            role,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.detail);
+      }
+
+      // save tokens
+      localStorage.setItem("access", data.access);
+
+      localStorage.setItem("refresh", data.refresh);
+
+      localStorage.removeItem("selectedRole");
+
+      // redirect
+      if (data.user.role === "WORKER") {
+        navigate("/worker");
+      } else {
+        navigate("/employer");
+      }
+
+    } catch (error: any) {
+      console.error(error);
+
+      alert(error.message);
     } finally {
       setLoading(false);
     }
@@ -179,14 +229,12 @@ export default function AuthPage() {
           </div>
 
           <div className="auth-socials">
-            <button type="button" className="social-pill">
-              <img
-                src="https://www.svgrepo.com/show/475656/google-color.svg"
-                alt="Google"
-                className="social-pill__icon"
-              />
-              Continue with Google
-            </button>
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={() => {
+                alert("Google Login Failed");
+              }}
+            />
           </div>
         </section>
       </main>
