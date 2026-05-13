@@ -1,4 +1,5 @@
 import React from 'react';
+import { CountUpValue } from './CountUpValue';
 
 interface MetricCardProps {
   title: string;
@@ -12,7 +13,9 @@ export function MetricCard({ title, value, meta, tone = 'default', accent = 'neu
   return (
     <div className={`metric-card metric-card--${tone} metric-card--${accent}`}>
       <span className="metric-card__title">{title}</span>
-      <strong className="metric-card__value">{value}</strong>
+      <strong className="metric-card__value">
+        <CountUpValue value={value} />
+      </strong>
       {meta ? <span className="metric-card__meta">{meta}</span> : null}
     </div>
   );
