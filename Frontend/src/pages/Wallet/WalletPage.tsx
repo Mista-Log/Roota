@@ -30,16 +30,27 @@ const earningsData = [
 ];
 
 export default function WalletPage() {
-  const [transactions] = useState<Transaction[]>(mockTransactions);
+  const [transactions, setTransactions] = useState<Transaction[]>(mockTransactions);
   const [animatedScore, setAnimatedScore] = useState(0);
   const [rewardClaimed, setRewardClaimed] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
       try {
-        console.log('Wallet page loaded');
+        const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+        
+        // Fetch wallet transactions
+        const response = await fetch(`${apiUrl}/api/wallet/transactions/`);
+        if (response.ok) {
+          const data = await response.json();
+          setTransactions(Array.isArray(data.results) ? data.results : data);
+        }
       } catch (error) {
-        console.log('Using mock data');
+        console.error('Error fetching wallet data:', error);
+      } finally {
+        setLoading(false);
       }
     };
 

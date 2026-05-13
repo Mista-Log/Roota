@@ -48,18 +48,39 @@ const mockRecentHires: RecentHire[] = [
 ];
 
 export default function EmployerDashboard() {
-  const [workers] = useState<Worker[]>(mockWorkers);
-  const [talent] = useState<Talent[]>(mockTalent);
-  const [recentHires] = useState<RecentHire[]>(mockRecentHires);
+  const [workers, setWorkers] = useState<Worker[]>(mockWorkers);
+  const [talent, setTalent] = useState<Talent[]>(mockTalent);
+  const [recentHires, setRecentHires] = useState<RecentHire[]>(mockRecentHires);
 
   // Fetch employer data from backend
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Backend integration would go here
-        console.log('Employer dashboard loaded');
+        const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+        
+        // Fetch payroll workers
+        const workersRes = await fetch(`${apiUrl}/api/employer/payroll/`);
+        if (workersRes.ok) {
+          const workersData = await workersRes.json();
+          setWorkers(Array.isArray(workersData.results) ? workersData.results : workersData);
+        }
+
+        // Fetch top talent
+        const talentRes = await fetch(`${apiUrl}/api/employer/talent/`);
+        if (talentRes.ok) {
+          const talentData = await talentRes.json();
+          setTalent(Array.isArray(talentData.results) ? talentData.results : talentData);
+        }
+
+        // Fetch recent hires
+        const hiresRes = await fetch(`${apiUrl}/api/employer/recent-hires/`);
+        if (hiresRes.ok) {
+          const hiresData = await hiresRes.json();
+          setRecentHires(Array.isArray(hiresData.results) ? hiresData.results : hiresData);
+        }
       } catch (error) {
-        console.log('Using mock data');
+        console.error('Error fetching employer data:', error);
+        // Use mock data as fallback
       }
     };
 

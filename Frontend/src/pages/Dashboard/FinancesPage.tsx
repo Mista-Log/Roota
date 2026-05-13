@@ -1,13 +1,14 @@
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Banknote, CreditCard, ReceiptText, ShieldCheck } from 'lucide-react';
 
-const financialSummary = [
+const mockFinancialSummary = [
   { label: 'Wallet Balance', value: '$8,420.50', meta: 'Available for withdrawal', icon: Banknote },
   { label: 'Pending Payouts', value: '$3,200.00', meta: 'Processing: 2', icon: ReceiptText },
   { label: 'Total Tax Paid', value: '$1,120.00', meta: 'YTD compliance active', icon: ShieldCheck },
 ];
 
-const recentTransactions = [
+const mockRecentTransactions = [
   { description: 'Payroll - Project X', amount: '+$4,200.00', status: 'SUCCESS', date: 'Oct 24, 2023' },
   { description: 'Bank Withdrawal', amount: '-$1,500.00', status: 'PENDING', date: 'Oct 22, 2023' },
   { description: 'Bonus Reward', amount: '+$550.00', status: 'SUCCESS', date: 'Oct 20, 2023' },
@@ -15,6 +16,38 @@ const recentTransactions = [
 ];
 
 export default function FinancesPage() {
+  const [financialSummary, setFinancialSummary] = useState(mockFinancialSummary);
+  const [recentTransactions, setRecentTransactions] = useState(mockRecentTransactions);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+        
+        // Fetch financial metrics
+        const metricsRes = await fetch(`${apiUrl}/api/finances/metrics/`);
+        if (metricsRes.ok) {
+          const metricsData = await metricsRes.json();
+          setFinancialSummary(Array.isArray(metricsData.results) ? metricsData.results : metricsData);
+        }
+
+        // Fetch transactions
+        const transRes = await fetch(`${apiUrl}/api/finances/transactions/`);
+        if (transRes.ok) {
+          const transData = await transRes.json();
+          setRecentTransactions(Array.isArray(transData.results) ? transData.results : transData);
+        }
+      } catch (error) {
+        console.error('Error fetching finances data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
   const cardVariants = {
     hidden: { opacity: 0, y: 18 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.45, ease: 'easeOut' } },

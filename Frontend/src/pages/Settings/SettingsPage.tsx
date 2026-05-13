@@ -1,19 +1,60 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { ChevronRight, Save } from 'lucide-react';
+import { ChevronRight, Save, Loader2 } from 'lucide-react';
 import Section from '../../components/layout/Section';
 
-export default function SettingsPage() {
-  const [formData, setFormData] = useState({
-    fullName: 'Alexander Roota',
-    email: 'alexander@roota.ai',
-    phone: '+234 (0) 8123456789',
-    location: 'Lagos, Nigeria',
-    bio: 'AI Specialist | Freelancer',
-  });
+const mockFormData = {
+  fullName: 'Alexander Roota',
+  email: 'alexander@roota.ai',
+  phone: '+234 (0) 8123456789',
+  location: 'Lagos, Nigeria',
+  bio: 'AI Specialist | Freelancer',
+};
 
-  const handleSave = () => {
-    console.log('Settings saved:', formData);
+export default function SettingsPage() {
+  const [formData, setFormData] = useState(mockFormData);
+  const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [savedMessage, setSavedMessage] = useState(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+        const response = await fetch(`${apiUrl}/api/settings/profile/`);
+        if (response.ok) {
+          const data = await response.json();
+          setFormData(data);
+        }
+      } catch (error) {
+        console.error('Error fetching settings:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+      const response = await fetch(`${apiUrl}/api/settings/profile/update/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+      if (response.ok) {
+        setSavedMessage(true);
+        setTimeout(() => setSavedMessage(false), 2000);
+      }
+    } catch (error) {
+      console.error('Error saving settings:', error);
+    } finally {
+      setSaving(false);
+    }
   };
 
   const settingsGroups = [
@@ -124,10 +165,11 @@ export default function SettingsPage() {
           <motion.button
             whileHover={{ y: -2 }}
             onClick={handleSave}
-            className="flex items-center gap-2 w-full py-3 bg-primary-dark text-white rounded-lg font-semibold transition-all duration-200 hover:bg-primary-dark/90 justify-center"
+            disabled={saving}
+            className="flex items-center gap-2 w-full py-3 bg-primary-dark text-white rounded-lg font-semibold transition-all duration-200 hover:bg-primary-dark/90 justify-center disabled:opacity-50"
           >
-            <Save size={18} />
-            Save Changes
+            {saving ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
+            {saving ? 'Saving...' : savedMessage ? 'Saved!' : 'Save Changes'}
           </motion.button>
         </motion.div>
       </Section>
