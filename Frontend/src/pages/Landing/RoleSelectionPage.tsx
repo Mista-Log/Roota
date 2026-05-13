@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { SimpleHeader } from '../../components/layout/Header';
 import { MarketingFooter } from '../../components/layout/Footer';
+import { useNavigate } from "react-router-dom";
 
 interface ChoiceCardProps {
   title: string;
@@ -15,11 +16,11 @@ function ChoiceCard({
   title,
   body,
   action,
-  to,
   variant,
-}: ChoiceCardProps) {
+  onClick,
+}: ChoiceCardProps & { onClick: () => void }) {
   return (
-    <Link to={to} className="choice-card">
+    <div className="choice-card" onClick={onClick}>
       <div className={`choice-card__media choice-card__media--${variant}`} />
       <div className="choice-card__content">
         <h3>{title}</h3>
@@ -29,11 +30,18 @@ function ChoiceCard({
           <span className="choice-arrow">›</span>
         </div>
       </div>
-    </Link>
+    </div>
   );
 }
 
 export default function RoleSelectionPage() {
+  const navigate = useNavigate();
+
+  const selectRole = (role: "worker" | "employer", path: string) => {
+    localStorage.setItem("selectedRole", role.toUpperCase());
+    navigate(path);
+  };
+
   return (
     <div className="page role-page">
       <SimpleHeader left="Roota" right={<Link to="/auth">Back to home</Link>} />
@@ -52,17 +60,18 @@ export default function RoleSelectionPage() {
         <section className="role-cards">
           <ChoiceCard
             title="Join as a Worker"
-            body="Find high-value projects, build your trust score, and secure your financial growth."
+            body="Find high-value projects..."
             action="Start Earning"
-            to="/auth"
             variant="worker"
+            onClick={() => selectRole("worker", "/auth")}
           />
+
           <ChoiceCard
             title="Hire as an Employer"
-            body="Access top-tier verified talent across the continent and scale your vision with speed."
+            body="Access top-tier talent..."
             action="Find Talent"
-            to="/marketplace"
             variant="employer"
+            onClick={() => selectRole("employer", "/marketplace")}
           />
         </section>
       </main>
