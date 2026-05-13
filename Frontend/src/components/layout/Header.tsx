@@ -11,53 +11,57 @@ const tabs = [
 
 export function MarketingHeader() {
   return (
-    <header className="marketing-header">
-      <motion.div
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.6 }}
-      >
-        <Link to="/" className="brand-wordmark">
-          Roota
-        </Link>
-      </motion.div>
+    <header className="sticky top-0 z-50 bg-white border-b border-slate-200">
+      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <Link to="/" className="text-2xl font-bold text-slate-900 hover:opacity-80 transition-opacity">
+            Roota
+          </Link>
+        </motion.div>
 
-      <nav className="marketing-nav">
-        {tabs.map((tab, idx) => (
-          <motion.div
-            key={tab.tab}
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: idx * 0.05, duration: 0.5 }}
-          >
-            <NavLink
-              to={tab.to}
-              className={({ isActive }) =>
-                isActive
-                  ? 'marketing-nav__link marketing-nav__link--active'
-                  : 'marketing-nav__link'
-              }
+        <nav className="hidden lg:flex items-center gap-8">
+          {tabs.map((tab, idx) => (
+            <motion.div
+              key={tab.tab}
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: idx * 0.05, duration: 0.5 }}
             >
-              {tab.label}
-            </NavLink>
-          </motion.div>
-        ))}
-      </nav>
+              <NavLink
+                to={tab.to}
+                className={({ isActive }) =>
+                  `text-sm font-medium transition-colors ${
+                    isActive
+                      ? 'text-primary-dark border-b-2 border-primary-dark pb-1'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`
+                }
+              >
+                {tab.label}
+              </NavLink>
+            </motion.div>
+          ))}
+        </nav>
 
-      <motion.div
-        className="header-actions"
-        initial={{ opacity: 0, x: 20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.6 }}
-      >
-        <Link to="/role" className="header-switch-role">
-          Switch Role
-        </Link>
+        <motion.div
+          className="flex items-center gap-3"
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <Link to="/role" className="px-4 py-2 text-sm font-medium text-slate-700 hover:text-slate-900 transition-colors">
+            Login
+          </Link>
 
-        <Link to="/marketplace" className="header-cta">
-          Hire Talent
-        </Link>
-      </motion.div>
+          <Link to="/marketplace" className="px-5 py-2.5 bg-primary-dark text-white text-sm font-semibold rounded-full hover:opacity-90 transition-opacity">
+            Get Started
+          </Link>
+        </motion.div>
+      </div>
     </header>
   );
 }
@@ -69,12 +73,14 @@ interface SimpleHeaderProps {
 
 export function SimpleHeader({ left, right }: SimpleHeaderProps) {
   return (
-    <header className="simple-header">
-      <Link to="/" className="brand-wordmark">
-        {left}
-      </Link>
+    <header className="bg-white border-b border-slate-200 py-4 px-6 sticky top-0 z-40">
+      <div className="max-w-7xl mx-auto flex items-center justify-between">
+        <Link to="/" className="text-xl font-bold text-slate-900 hover:opacity-80 transition-opacity">
+          {left}
+        </Link>
 
-      <div className="simple-header__right">{right}</div>
+        <div className="flex items-center gap-4">{right}</div>
+      </div>
     </header>
   );
 }

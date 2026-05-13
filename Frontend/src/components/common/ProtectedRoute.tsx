@@ -8,19 +8,19 @@ interface ProtectedRouteProps {
 }
 
 export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) {
-  const { isAuthenticated, userRole, loading } = useAuth();
+  // const { isAuthenticated, userRole, loading } = useAuth();
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  // if (loading) {
+  //   return <div>Loading...</div>;
+  // }
 
-  if (!isAuthenticated) {
-    return <Navigate to="/auth" replace />;
-  }
+  // if (!isAuthenticated) {
+  //   return <Navigate to="/auth" replace />;
+  // }
 
-  if (allowedRoles && userRole && !allowedRoles.includes(userRole)) {
-    return <Navigate to="/role" replace />;
-  }
+  // if (allowedRoles && userRole && !allowedRoles.includes(userRole)) {
+  //   return <Navigate to="/role" replace />;
+  // }
 
   return <>{children}</>;
 }
