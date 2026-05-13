@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowUpRight, CheckCircle, Circle, Home, Send, Sparkles, Wallet } from 'lucide-react';
+import { ArrowUpRight, AlertCircle, CheckCircle, Circle, Home, Send, Sparkles, Wallet } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 interface Transaction {

@@ -28,17 +28,17 @@ export default function Sidebar() {
       transition={{ duration: 0.24 }}
       role="navigation"
       aria-label="Main navigation"
-      className="fixed z-50 flex h-screen w-72 flex-col overflow-y-auto border-r border-border bg-[#f6f8f5] text-slate-900"
+      className="fixed z-50 flex h-screen w-72 flex-col overflow-y-auto border-r border-[#d6e4dc] bg-[#edf6f1] text-slate-900"
     >
       {/* Logo section */}
-      <div className="border-b border-border px-6 py-5">
+      <div className="border-b border-[#d6e4dc] bg-[#0b5d4b] px-6 py-5 text-white">
         <Link to={homePath} className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent font-bold text-primary-dark">
             Ⓡ
           </div>
           <div>
-            <div className="text-sm font-bold text-slate-900">Roota AI</div>
-            <div className="text-xs text-muted">Premium Workforce</div>
+            <div className="text-sm font-bold text-white">Roota AI</div>
+            <div className="text-xs text-white/75">Premium Workforce</div>
           </div>
         </Link>
       </div>
@@ -56,14 +56,14 @@ export default function Sidebar() {
                 aria-current={isActive ? 'page' : undefined}
                 className={`relative flex items-center gap-3 rounded-xl px-4 py-3 font-medium transition-colors duration-200 ${
                   isActive
-                    ? 'bg-primary-dark text-white shadow-sm'
-                    : 'text-slate-600 hover:bg-white hover:text-slate-900'
+                    ? 'bg-[#0b5d4b] text-white shadow-sm'
+                    : 'text-slate-700 hover:bg-[#dcebe4] hover:text-slate-900'
                 }`}
               >
                 <Icon size={18} />
                 <span className="text-sm">{item.label}</span>
                 {isActive && (
-                  <span className="absolute left-0 -ml-4 h-full w-1 rounded-r-md bg-primary-dark" aria-hidden />
+                  <span className="absolute left-0 -ml-4 h-full w-1 rounded-r-md bg-[#0b5d4b]" aria-hidden />
                 )}
               </Link>
             </motion.div>
@@ -73,7 +73,7 @@ export default function Sidebar() {
 
       {/* Upgrade card */}
       <motion.div whileHover={{ y: -2 }} transition={{ duration: 0.2 }} className="mx-4 mb-6">
-        <div className="cursor-pointer rounded-2xl border border-[#315d4e] bg-[#1b5a47] p-4 text-white shadow-sm">
+        <div className="cursor-pointer rounded-2xl border border-[#2f6b59] bg-[#134b3d] p-4 text-white shadow-sm">
           <div className="flex items-start gap-3">
             <Zap size={18} className="mt-0.5 flex-shrink-0 text-accent" />
             <div>
@@ -88,12 +88,12 @@ export default function Sidebar() {
       </motion.div>
 
       {/* Bottom section */}
-      <div className="mt-auto space-y-2 border-t border-border px-4 py-6">
-        <button className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-slate-600 transition-colors duration-200 hover:bg-white hover:text-slate-900">
+      <div className="mt-auto space-y-2 border-t border-[#d6e4dc] px-4 py-6">
+        <button className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-slate-700 transition-colors duration-200 hover:bg-[#dcebe4] hover:text-slate-900">
           <LifeBuoy size={18} />
           Support
         </button>
-        <button className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-slate-600 transition-colors duration-200 hover:bg-white hover:text-slate-900">
+        <button className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-slate-700 transition-colors duration-200 hover:bg-[#dcebe4] hover:text-slate-900">
           <LogOut size={18} />
           Logout
         </button>
