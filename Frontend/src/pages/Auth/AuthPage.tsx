@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { SimpleHeader } from '../../components/layout/Header';
 import { MarketingFooter } from '../../components/layout/Footer';
 import { useAuth } from '../../context/AuthContext';
@@ -24,8 +25,6 @@ export default function AuthPage() {
     try {
       setLoading(true);
 
-      console.log("error")
-
       const user = await signup({
         full_name: fullName,
         email,
@@ -36,9 +35,9 @@ export default function AuthPage() {
       localStorage.removeItem("selectedRole");
 
       if (user.role === "WORKER") {
-        navigate("/worker");
+        navigate("/worker/dashboard");
       } else {
-        navigate("/employer");
+        navigate("/employer/dashboard");
       }
 
     } catch (err: any) {
@@ -62,9 +61,9 @@ export default function AuthPage() {
       const user = await login(email, password);
 
       if (user.role === "WORKER") {
-        navigate("/worker");
+        navigate("/worker/dashboard");
       } else {
-        navigate("/employer");
+        navigate("/employer/dashboard");
       }
 
     } catch (err: any) {
@@ -114,9 +113,9 @@ export default function AuthPage() {
 
       // redirect
       if (data.user.role === "WORKER") {
-        navigate("/worker");
+        navigate("/worker/dashboard");
       } else {
-        navigate("/employer");
+        navigate("/employer/dashboard");
       }
 
     } catch (error: any) {

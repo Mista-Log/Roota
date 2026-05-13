@@ -26,6 +26,7 @@ type AuthContextType = {
   user: User | null;
   isAuthenticated: boolean;
   loading: boolean;
+  userRole: 'worker' | 'employer' | 'admin' | null;
 
   login: (email: string, password: string) => Promise<User>;
 
@@ -44,6 +45,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   const isAuthenticated = !!user;
+  const userRole = user ? (user.role.toLowerCase() as 'worker' | 'employer' | 'admin') : null;
 
   // ==========================================
   // FETCH AUTHENTICATED USER
@@ -176,6 +178,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         user,
         isAuthenticated,
         loading,
+        userRole,
         login,
         signup,
         logout,
