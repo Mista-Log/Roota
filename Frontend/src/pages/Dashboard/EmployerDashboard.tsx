@@ -197,42 +197,49 @@ export default function EmployerDashboard() {
           initial="hidden"
           animate="visible"
           transition={{ delay: 0.4 }}
-          className="col-span-1 space-y-4"
+          className="col-span-1 rounded-2xl border border-border bg-card px-6 py-6 shadow-sm"
         >
-          <div className="rounded-2xl border border-border bg-card px-6 py-6 shadow-sm">
-            <div className="mb-6 flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-slate-900">Top Talent</h3>
-              <span className="rounded-full bg-[#DDF6E9] px-3 py-1 text-xs font-semibold text-primary">AI Matched</span>
-            </div>
+          <div className="mb-6 flex items-center justify-between">
+            <h3 className="text-lg font-semibold text-slate-900">Top Talent</h3>
+            <span className="rounded-full bg-[#FFF1D9] px-3 py-1 text-xs font-semibold text-[#B7791F]">AI Matched</span>
+          </div>
 
-            <div className="space-y-4">
-              {talent.map((person) => (
-                <div key={person.id} className="rounded-xl border border-border/50 p-4 hover:border-primary/30 transition-colors">
-                  <div className="mb-3 flex items-start justify-between">
+          <div className="space-y-4">
+            {talent.map((person, index) => (
+              <div key={person.id} className="rounded-2xl border border-border/60 bg-white p-4 shadow-sm transition-colors hover:border-primary/30">
+                <div className="mb-4 flex items-start justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <div className={`flex h-12 w-12 items-center justify-center rounded-full ${index === 0 ? 'bg-[#E7F2FE]' : 'bg-[#F0ECE7]'} text-sm font-bold text-slate-900`}>
+                      {person.name
+                        .split(' ')
+                        .map((part) => part[0])
+                        .slice(0, 2)
+                        .join('')}
+                    </div>
                     <div>
                       <p className="font-semibold text-slate-900">{person.name}</p>
                       <p className="text-xs text-muted">{person.title}</p>
                     </div>
-                    <div className="text-right">
-                      <p className="text-2xl font-bold text-primary-dark">{person.score}</p>
-                      <p className="text-[10px] uppercase tracking-wider text-muted">Score</p>
-                    </div>
                   </div>
-
-                  <div className="mb-4 flex flex-wrap gap-2">
-                    {person.skills.map((skill) => (
-                      <span key={skill} className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-700">
-                        {skill}
-                      </span>
-                    ))}
+                  <div className="text-right">
+                    <p className="text-2xl font-bold text-[#F5A623]">{person.score}</p>
+                    <p className="text-[10px] uppercase tracking-wider text-muted">Trust Score</p>
                   </div>
-
-                  <button className="w-full rounded-lg border border-primary-dark bg-white px-3 py-2 text-sm font-semibold text-primary-dark transition-all hover:bg-primary-dark hover:text-white">
-                    Quick Hire
-                  </button>
                 </div>
-              ))}
-            </div>
+
+                <div className="mb-4 flex flex-wrap gap-2">
+                  {person.skills.map((skill) => (
+                    <span key={skill} className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-700">
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+
+                <button className="w-full rounded-xl border border-primary-dark bg-white px-3 py-2.5 text-sm font-semibold text-primary-dark transition-all hover:bg-primary-dark hover:text-white">
+                  Quick Hire
+                </button>
+              </div>
+            ))}
           </div>
         </motion.section>
       </div>
@@ -249,10 +256,12 @@ export default function EmployerDashboard() {
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
           {recentHires.map((hire) => (
-            <div key={hire.id} className="rounded-xl border border-border/50 p-4 text-center hover:border-primary/30 transition-colors">
-              <p className="text-3xl mb-2">{hire.icon}</p>
-              <p className="font-semibold text-slate-900">{hire.name}</p>
-              <p className="text-xs text-muted mt-1">{hire.action}</p>
+            <div key={hire.id} className="flex items-center gap-3 rounded-xl border border-border/50 p-4 transition-colors hover:border-primary/30">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-lg">{hire.icon}</div>
+              <div>
+                <p className="font-semibold text-slate-900">{hire.name}</p>
+                <p className="mt-1 text-xs text-muted">{hire.action}</p>
+              </div>
             </div>
           ))}
         </div>

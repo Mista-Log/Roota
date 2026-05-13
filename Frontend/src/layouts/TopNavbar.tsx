@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { User } from 'lucide-react';
+import { Search, User } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
-const topNavItems = [
-  { path: '/dashboard', label: 'Dashboard' },
+const sharedNavItems = [
   { path: '/jobs', label: 'Jobs' },
   { path: '/finances', label: 'Finances' },
   { path: '/insights', label: 'Insights' },
@@ -13,27 +13,17 @@ const topNavItems = [
 export default function TopNavbar() {
   const location = useLocation();
   const navigate = useNavigate();
-  const [showRoleMenu, setShowRoleMenu] = useState(false);
+  const { userRole } = useAuth();
 
-  const isNavItemActive = (path: string) => {
-    return location.pathname.startsWith(path);
-  };
+  const currentRole = userRole === 'employer' ? 'employer' : 'worker';
+  const dashboardPath = currentRole === 'employer' ? '/employer' : '/dashboard';
 
-  const getCurrentRole = () => {
-    if (location.pathname.includes('/dashboard') || location.pathname.includes('/jobs')) {
-      return 'Worker';
-    }
-    return 'Employer';
-  };
+  const topNavItems = [{ path: dashboardPath, label: 'Dashboard' }, ...sharedNavItems];
+
+  const isNavItemActive = (path: string) => location.pathname.startsWith(path);
 
   const switchRole = () => {
-    const currentRole = getCurrentRole();
-    if (currentRole === 'Worker') {
-      navigate('/employer');
-    } else {
-      navigate('/dashboard');
-    }
-    setShowRoleMenu(false);
+    navigate(currentRole === 'worker' ? '/employer' : '/dashboard');
   };
 
   return (
@@ -44,9 +34,22 @@ export default function TopNavbar() {
       role="banner"
       className="sticky top-0 z-40 bg-card border-b border-border shadow-sm"
     >
-      <div className="px-8 py-4 flex items-center justify-between max-w-full">
+      <div className="flex max-w-full items-center justify-between px-8 py-4">
         {/* Left navigation tabs */}
-        <nav aria-label="Top Navigation" className="flex items-center gap-8">
+        <div className="flex items-center gap-6">
+          {location.pathname.startsWith('/employer') && (
+            <div className="hidden xl:flex items-center gap-3 rounded-full border border-border bg-[#f7f8f6] px-4 py-2.5">
+              <Search size={16} className="text-muted" />
+              <input
+                type="text"
+                aria-label="Search talent"
+                placeholder="Search talent..."
+                className="w-56 bg-transparent text-sm text-slate-900 outline-none placeholder:text-muted"
+              />
+            </div>
+          )}
+
+          <nav aria-label="Top Navigation" className="flex items-center gap-8">
           {topNavItems.map((item) => {
             const isActive = isNavItemActive(item.path);
             return (
@@ -72,33 +75,17 @@ export default function TopNavbar() {
               </button>
             );
           })}
-        </nav>
+          </nav>
+        </div>
 
         {/* Right section with buttons and profile */}
         <div className="flex items-center gap-4">
-          {/* Switch Role button */}
-          <div className="relative">
-            <button
-              onClick={() => setShowRoleMenu(!showRoleMenu)}
-              className="px-4 py-2 text-sm font-medium text-muted border border-border rounded-lg transition-all duration-200 hover:border-primary-dark hover:text-primary-dark"
-            >
-              Switch Role
-            </button>
-            {showRoleMenu && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="absolute right-0 mt-2 w-48 bg-card border border-border rounded-lg shadow-lg z-50"
-              >
-                <button
-                  onClick={switchRole}
-                  className="w-full text-left px-4 py-3 text-sm hover:bg-slate-50 transition-colors duration-200 first:rounded-t-lg last:rounded-b-lg"
-                >
-                  Switch to {getCurrentRole() === 'Worker' ? 'Employer' : 'Worker'}
-                </button>
-              </motion.div>
-            )}
-          </div>
+          <button
+            onClick={switchRole}
+            className="rounded-lg border border-border px-4 py-2 text-sm font-medium text-muted transition-all duration-200 hover:border-primary-dark hover:text-primary-dark"
+          >
+            Switch Role
+          </button>
 
           {/* Hire Talent CTA */}
           <button className="px-4 py-2 text-sm font-semibold bg-primary-dark text-white rounded-lg transition-all duration-200 hover:bg-primary-dark/90 active:scale-95 shadow-sm">

@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Send, Home, TrendingUp, CheckCircle, AlertCircle, Circle } from 'lucide-react';
+import { ArrowUpRight, CheckCircle, Circle, Home, Send, Sparkles, Wallet } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 interface Transaction {
@@ -31,6 +31,8 @@ const earningsData = [
 
 export default function WalletPage() {
   const [transactions] = useState<Transaction[]>(mockTransactions);
+  const [animatedScore, setAnimatedScore] = useState(0);
+  const [rewardClaimed, setRewardClaimed] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -43,6 +45,30 @@ export default function WalletPage() {
 
     fetchData();
   }, []);
+
+  useEffect(() => {
+    const targetScore = 850;
+    const duration = 1200;
+    const start = performance.now();
+
+    const tick = (now: number) => {
+      const progress = Math.min((now - start) / duration, 1);
+      const nextScore = Math.round(targetScore * progress);
+      setAnimatedScore(nextScore);
+
+      if (progress < 1) {
+        requestAnimationFrame(tick);
+      }
+    };
+
+    requestAnimationFrame(tick);
+  }, []);
+
+  const handleClaimReward = () => {
+    setRewardClaimed(true);
+  };
+
+  const trustProgress = useMemo(() => animatedScore / 10, [animatedScore]);
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -59,73 +85,80 @@ export default function WalletPage() {
 
   return (
     <div className="space-y-6">
-      {/* Balance Card */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="rounded-2xl bg-gradient-to-br from-[#F5A623] to-[#E8941E] px-8 py-8 text-white shadow-lg"
-      >
-        <div className="flex items-start justify-between mb-12">
-          <div>
-            <p className="text-sm font-medium opacity-90">Available Balance</p>
-            <h1 className="text-5xl font-bold mt-2">$24,580.45</h1>
-          </div>
-          <div className="h-12 w-12 rounded-lg bg-white/20 flex items-center justify-center">
-            <Home size={24} className="opacity-80" />
-          </div>
-        </div>
-
-        <div className="mb-8 flex gap-12">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-wider opacity-75">Monthly Yield</p>
-            <p className="mt-2 text-2xl font-bold">+4.2%</p>
-          </div>
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-wider opacity-75">Account Balance</p>
-            <p className="mt-2 text-2xl font-bold">$1,200.00</p>
-          </div>
-        </div>
-
-        <div className="text-sm font-semibold">Account Holder: ALEXANDER ROOTA!</div>
-      </motion.div>
-
-      {/* Action Buttons */}
-      <div className="grid grid-cols-2 gap-4">
-        <motion.button
-          whileHover={{ y: -2 }}
-          className="rounded-2xl border border-border bg-card px-6 py-5 shadow-sm transition-all duration-200 hover:shadow-md"
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1.45fr_0.9fr]">
+        {/* Balance Card */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="rounded-[28px] bg-gradient-to-br from-[#F5A623] to-[#E89617] px-8 py-8 text-white shadow-lg"
         >
-          <div className="flex flex-col items-center justify-center text-center">
-            <div className="h-12 w-12 rounded-full bg-primary-dark/10 flex items-center justify-center mb-3">
-              <Send size={20} className="text-primary-dark" />
-            </div>
-            <p className="text-sm font-semibold text-slate-900">Send Money</p>
-            <p className="text-xs text-muted mt-1">Instant transfers to any global account</p>
-          </div>
-        </motion.button>
+          <div className="flex items-start justify-between gap-6">
+            <div className="max-w-md">
+              <p className="text-sm font-medium text-white/90">Available Balance</p>
+              <h1 className="mt-2 text-[3.65rem] font-bold leading-none tracking-tight">$24,580.45</h1>
 
-        <motion.button
-          whileHover={{ y: -2 }}
-          className="rounded-2xl border border-border bg-primary-dark px-6 py-5 shadow-sm transition-all duration-200 hover:shadow-md"
-        >
-          <div className="flex flex-col items-center justify-center text-center">
-            <div className="h-12 w-12 rounded-full bg-white/20 flex items-center justify-center mb-3">
-              <Home size={20} className="text-white" />
+              <div className="mt-8 grid max-w-[370px] grid-cols-2 gap-3">
+                <div className="rounded-2xl bg-white/16 px-4 py-3 backdrop-blur-[1px]">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-white/75">Monthly Yield</p>
+                  <p className="mt-1 text-xl font-bold">+4.2%</p>
+                </div>
+                <div className="rounded-2xl bg-white/16 px-4 py-3 backdrop-blur-[1px]">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-white/75">Locked Rewards</p>
+                  <p className="mt-1 text-xl font-bold">$1,200.00</p>
+                </div>
+              </div>
+
+              <div className="mt-10 text-sm font-semibold tracking-wide text-white/90">Account Holder: ALEXANDER ROOTA!</div>
             </div>
-            <p className="text-sm font-semibold text-white">Withdraw</p>
-            <p className="text-xs text-white/80 mt-1">Transfer funds to your local bank</p>
+
+            <div className="rounded-xl bg-white/16 p-3 text-white/90">
+              <Wallet size={22} />
+            </div>
           </div>
-        </motion.button>
+        </motion.div>
+
+        {/* Action Buttons */}
+        <div className="grid grid-rows-2 gap-4">
+          <motion.button
+            whileHover={{ y: -2 }}
+            className="rounded-[22px] border border-border bg-primary-dark px-6 py-5 text-left shadow-sm transition-all duration-200 hover:shadow-md"
+          >
+            <div className="flex h-full flex-col justify-center gap-3 text-center text-white">
+              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-white/12">
+                <Send size={20} className="text-white" />
+              </div>
+              <div>
+                <p className="text-lg font-semibold">Send Money</p>
+                <p className="mt-1 text-xs text-white/75">Instant transfers to any global account</p>
+              </div>
+            </div>
+          </motion.button>
+
+          <motion.button
+            whileHover={{ y: -2 }}
+            className="rounded-[22px] border border-border bg-white px-6 py-5 text-left shadow-sm transition-all duration-200 hover:shadow-md"
+          >
+            <div className="flex h-full flex-col justify-center gap-3 text-center text-slate-900">
+              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-primary-dark">
+                <ArrowUpRight size={20} />
+              </div>
+              <div>
+                <p className="text-lg font-semibold">Withdraw</p>
+                <p className="mt-1 text-xs text-muted">Transfer funds to your local bank</p>
+              </div>
+            </div>
+          </motion.button>
+        </div>
       </div>
 
       {/* Main Content Grid */}
-      <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-[1.35fr_0.9fr]">
         {/* Monthly Earnings Chart */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="col-span-1 xl:col-span-2 rounded-2xl border border-border bg-card px-6 py-6 shadow-sm"
+          className="rounded-2xl border border-border bg-card px-6 py-6 shadow-sm"
         >
           <div className="mb-6">
             <h3 className="text-lg font-semibold text-slate-900">Monthly Earnings</h3>
@@ -153,7 +186,7 @@ export default function WalletPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="col-span-1 rounded-2xl border border-border bg-card px-6 py-6 shadow-sm"
+          className="rounded-2xl border border-border bg-card px-6 py-6 shadow-sm"
         >
           <div className="mb-6 flex items-center justify-between">
             <div>
@@ -188,23 +221,35 @@ export default function WalletPage() {
         transition={{ delay: 0.3 }}
         className="rounded-2xl border border-border bg-gradient-to-br from-slate-50 to-slate-100 px-8 py-8 shadow-sm"
       >
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-          <div className="flex flex-col items-center justify-center">
-            <div className="relative h-32 w-32 rounded-full bg-gradient-to-br from-[#F5A623] to-[#E8941E] flex items-center justify-center">
-              <div className="text-center">
-                <p className="text-4xl font-bold text-white">850</p>
-                <p className="text-xs font-semibold text-white/80 mt-1 uppercase">Trust Score</p>
-              </div>
+        <div className="flex flex-col gap-8 xl:flex-row xl:items-center">
+          <div className="relative h-40 w-40 flex-shrink-0">
+            <svg className="h-40 w-40 -rotate-90" viewBox="0 0 120 120" aria-hidden>
+              <circle cx="60" cy="60" r="48" fill="none" stroke="#E5E7EB" strokeWidth="8" />
+              <circle
+                cx="60"
+                cy="60"
+                r="48"
+                fill="none"
+                stroke="#F5A623"
+                strokeWidth="8"
+                strokeLinecap="round"
+                strokeDasharray={Math.PI * 2 * 48}
+                strokeDashoffset={Math.PI * 2 * 48 * (1 - trustProgress / 100)}
+              />
+            </svg>
+            <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+              <p className="text-4xl font-bold text-slate-900">{animatedScore}</p>
+              <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-muted">Trust Score</p>
             </div>
           </div>
 
-          <div>
-            <h3 className="text-xl font-bold text-slate-900 mb-3">AI Wealth Optimizer</h3>
-            <p className="text-sm text-muted mb-4">
+          <div className="max-w-2xl">
+            <h3 className="mb-3 text-xl font-bold text-slate-900">AI Wealth Optimizer</h3>
+            <p className="text-sm leading-6 text-muted">
               Based on your consistent payroll history and low failure rate, your trust score has increased. You are now eligible for +0.5% lower transaction fees** and early payout features.
             </p>
 
-            <div className="flex flex-wrap gap-3 mb-6">
+            <div className="mt-5 flex flex-wrap gap-3">
               <span className="rounded-full bg-white px-4 py-2 text-xs font-semibold text-slate-900 shadow-sm">
                 ✓ Verified Earner
               </span>
@@ -212,9 +257,16 @@ export default function WalletPage() {
                 ⚡ High Stability
               </span>
             </div>
+          </div>
 
-            <button className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary-dark px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-primary hover:-translate-y-0.5">
-              Claim Reward
+          <div className="xl:ml-auto xl:self-center">
+            <button
+              type="button"
+              onClick={handleClaimReward}
+              className={`inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold text-white transition-all hover:-translate-y-0.5 ${rewardClaimed ? 'bg-[#3f6d5d]' : 'bg-primary-dark hover:bg-primary'}`}
+            >
+              <Sparkles size={16} />
+              {rewardClaimed ? 'Reward Claimed' : 'Claim Reward'}
             </button>
           </div>
         </div>
