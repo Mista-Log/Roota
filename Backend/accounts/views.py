@@ -3,6 +3,17 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 
+from google.oauth2 import id_token
+from google.auth.transport import requests
+
+from rest_framework_simplejwt.tokens import RefreshToken
+from .models import User, WorkerProfile, EmployerProfile
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
+
+
 from drf_spectacular.utils import (
     extend_schema,
     OpenApiResponse,
@@ -161,3 +172,84 @@ class AdminDashboardView(APIView):
         return Response({
             "message": "Welcome Admin"
         })
+
+
+class GoogleLoginAPIView(APIView):
+
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+
+        token = request.data.get("token")
+        role = request.data.get("role", "WORKER")
+
+        if not token:
+            return Response(
+                {"detail": "Token missing"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            # Verify Google token
+            idinfo = id_token.verify_oauth2_token(
+                token,
+                requests.Request(),
+            )
+
+            email = idinfo["email"]
+            full_name = idinfo.get("name", "")
+
+            # =========================
+            # CREATE OR GET USER
+            # =========================
+            user, created = User.objects.get_or_create(
+                email=email,
+                defaults={
+                    "full_name": full_name,
+                    "role": role,
+                }
+            )
+
+            # If user already exists, DON'T overwrite role blindly
+            if created:
+                user.role = role
+                user.full_name = full_name
+                user.save()
+
+            # =========================
+            # CREATE PROFILE HERE (IMPORTANT)
+            # =========================
+            if user.role == User.Role.WORKER:
+                WorkerProfile.objects.get_or_create(user=user)
+
+            elif user.role == User.Role.EMPLOYER:
+                EmployerProfile.objects.get_or_create(
+                    user=user,
+                    defaults={"company_name": ""}
+                )
+
+            # =========================
+            # AUTHENTICATE USER
+            # =========================
+            refresh = RefreshToken.for_user(user)
+
+            return Response({
+                "access": str(refresh.access_token),
+                "refresh": str(refresh),
+
+                "user": {
+                    "id": user.id,
+                    "email": user.email,
+                    "full_name": user.full_name,
+                    "role": user.role,
+                },
+
+                # 🔥 IMPORTANT FOR FRONTEND FLOW
+                "redirect": "/confirm" if created else "/dashboard"
+            })
+
+        except ValueError:
+            return Response(
+                {"detail": "Invalid Google token"},
+                status=status.HTTP_400_BAD_REQUEST
+            )

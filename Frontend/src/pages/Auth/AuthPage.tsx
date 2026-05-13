@@ -4,29 +4,150 @@ import { SimpleHeader } from '../../components/layout/Header';
 import { MarketingFooter } from '../../components/layout/Footer';
 import { useAuth } from '../../context/AuthContext';
 import { GitBranch, Mail, Globe } from 'lucide-react';
+import { GoogleLogin } from "@react-oauth/google";
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(false);
-  const { login } = useAuth();
+  const { login, signup } = useAuth();
   const navigate = useNavigate();
 
-  const handleAuth = (e: React.FormEvent) => {
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [role] = useState<"WORKER" | "EMPLOYER">(
+    (localStorage.getItem("selectedRole") as any) || "WORKER"
+  );
+  const [loading, setLoading] = useState(false);
+
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Default to worker for demo purposes
-    login('worker');
-    navigate('/worker');
+
+    try {
+      setLoading(true);
+
+      console.log("error")
+
+      const user = await signup({
+        full_name: fullName,
+        email,
+        password,
+        role,
+      });
+
+      localStorage.removeItem("selectedRole");
+
+      if (user.role === "WORKER") {
+        navigate("/worker");
+      } else {
+        navigate("/employer");
+      }
+
+    } catch (err: any) {
+      console.error(err);
+
+      alert(
+        err.response?.data?.detail ||
+        "Signup failed"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      setLoading(true);
+
+      const user = await login(email, password);
+
+      if (user.role === "WORKER") {
+        navigate("/worker");
+      } else {
+        navigate("/employer");
+      }
+
+    } catch (err: any) {
+      console.error(err);
+
+      alert(
+        err.response?.data?.detail ||
+        "Login failed"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleSuccess = async (credentialResponse: any) => {
+    try {
+      setLoading(true);
+
+      const response = await fetch(
+        "http://localhost:8000/api/auth/google/",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type": "application/json",
+          },
+
+          body: JSON.stringify({
+            token: credentialResponse.credential,
+            role,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.detail);
+      }
+
+      // save tokens
+      localStorage.setItem("access", data.access);
+
+      localStorage.setItem("refresh", data.refresh);
+
+      localStorage.removeItem("selectedRole");
+
+      // redirect
+      if (data.user.role === "WORKER") {
+        navigate("/worker");
+      } else {
+        navigate("/employer");
+      }
+
+    } catch (error: any) {
+      console.error(error);
+
+      alert(error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   console.log(Mail); // Use Mail to avoid unused warning if needed, or just remove it
 
   return (
     <div className="page auth-page">
-      <SimpleHeader left="Roota" right={<Link to="/">Back to home</Link>} />
-
+      <SimpleHeader
+        left="Roota"
+        right={
+          <Link to="/" className="floating-home-button">
+            Back to home
+          </Link>
+        }
+      />
       <main className="auth-layout">
         <section className="auth-visual">
           <div className="auth-visual__panel">
-            <span className="eyebrow eyebrow--gold">Global Standard</span>
+            <span className="eyebrow eyebrow--gold">
+              <span className="eyebrow__icon">🛡</span>
+              Global Standard
+            </span>
             <h2>Secure Your Wealth Frontier</h2>
             <p>
               Roota leverages advanced AI to provide an immutable Trust Score, bridging African talent with global high-value
@@ -69,20 +190,33 @@ export default function AuthPage() {
             <p>{isLogin ? 'Log in to your professional workspace.' : 'Join the network of futuristic professionals today.'}</p>
           </div>
 
-          <form className="auth-form" onSubmit={handleAuth}>
+          <form className="auth-form" onSubmit={isLogin ? handleLogin : handleSignup}>
             {!isLogin && (
-              <div className="form-group">
-                <label htmlFor="name">Full Name</label>
-                <input type="text" id="name" placeholder="John Doe" required />
-              </div>
+              <input
+                type="text"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                placeholder="Full Name"
+                required
+              />
             )}
             <div className="form-group">
               <label htmlFor="email">Email Address</label>
-              <input type="email" id="email" placeholder="john@example.com" required />
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
             </div>
             <div className="form-group">
               <label htmlFor="password">Password</label>
-              <input type="password" id="password" placeholder="••••••••" required />
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
             </div>
             
             <button type="submit" className="pill-button pill-button--solid pill-button--block">
@@ -95,14 +229,12 @@ export default function AuthPage() {
           </div>
 
           <div className="auth-socials">
-            <button type="button" className="social-pill">
-              <Globe size={20} />
-              Google
-            </button>
-            <button type="button" className="social-pill">
-              <GitBranch size={20} />
-              GitHub
-            </button>
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={() => {
+                alert("Google Login Failed");
+              }}
+            />
           </div>
         </section>
       </main>

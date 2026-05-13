@@ -1,28 +1,26 @@
 import React from 'react';
+import { Navigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
-  allowedRoles?: Array<'worker' | 'employer'>;
+  allowedRoles?: Array<'worker' | 'employer' | 'admin'>;
 }
 
-export function ProtectedRoute({ children, allowedRoles: _allowedRoles }: ProtectedRouteProps) {
-  const { isAuthenticated, userRole } = useAuth();
+export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) {
+  const { isAuthenticated, userRole, loading } = useAuth();
 
-  // TEMPORARILY DISABLED - Remove protection to work on pages while backend dev finishes auth endpoint
-  // Keep references to variables to avoid "declared but never read" diagnostics while protection is disabled.
-  void isAuthenticated;
-  void userRole;
-  void _allowedRoles;
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
-  // Uncomment the original logic when backend auth is ready
-  // if (!isAuthenticated) {
-  //   return <Navigate to="/auth" replace />;
-  // }
+  if (!isAuthenticated) {
+    return <Navigate to="/auth" replace />;
+  }
 
-  // if (allowedRoles && userRole && !allowedRoles.includes(userRole)) {
-  //   return <Navigate to="/role" replace />;
-  // }
+  if (allowedRoles && userRole && !allowedRoles.includes(userRole)) {
+    return <Navigate to="/role" replace />;
+  }
 
   return <>{children}</>;
 }
