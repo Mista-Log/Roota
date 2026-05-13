@@ -28,22 +28,22 @@ export default function SkillProgressCard({
     <motion.div
       initial={{ opacity: 0, x: -8 }}
       whileInView={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.3 }}
-      className="bg-card rounded-lg border border-border p-4 shadow-sm"
+      transition={{ duration: 0.24 }}
+      className="rounded-[14px] border border-border bg-card px-4 py-3.5 shadow-sm"
     >
-      <div className="flex items-start justify-between mb-3">
-        <div>
-          <h4 className="font-semibold text-slate-900">{skill}</h4>
-          <p className="text-sm text-muted mt-0.5">{level}</p>
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0 flex-1">
+          <h4 className="text-[15px] font-semibold leading-6 tracking-[-0.02em] text-slate-900">{skill}</h4>
+          <p className="mt-0.5 text-[13px] text-muted">{level}</p>
         </div>
-        <span className={`${colors.bg} ${colors.text} text-xs font-semibold px-2.5 py-1 rounded-full capitalize`}>
+        <span className={`${colors.bg} ${colors.text} rounded-full px-2.5 py-1 text-[11px] font-semibold capitalize`}>
           {status === 'in-progress' ? 'In Progress' : status}
         </span>
       </div>
 
       {/* Progress bar */}
-      <div className="mb-3">
-        <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+      <div className="mt-3">
+        <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100">
           <motion.div
             initial={{ width: 0 }}
             whileInView={{ width: `${progress}%` }}
@@ -51,14 +51,14 @@ export default function SkillProgressCard({
             className={`${colors.progress} h-full rounded-full`}
           />
         </div>
-        <p className="text-xs text-muted mt-2">{progress}% Complete</p>
+        <p className="mt-2 text-[12px] text-muted">{progress}% Complete</p>
       </div>
 
       {/* Action button */}
       {onVerify && (
         <button
           onClick={onVerify}
-          className="w-full mt-3 py-2 px-3 border border-border rounded-lg text-sm font-medium transition-all duration-200 hover:bg-slate-50"
+          className="mt-3 w-full rounded-[10px] border border-border px-3 py-2 text-[13px] font-medium transition-colors duration-200 hover:bg-slate-50"
         >
           Verify Skill
         </button>

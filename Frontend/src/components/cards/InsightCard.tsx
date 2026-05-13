@@ -49,11 +49,11 @@ export default function InsightCard({
       initial={{ opacity: 0, y: 8 }}
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className={`${config.bg} rounded-lg border ${config.border} p-5 shadow-sm`}
+      className={`rounded-[14px] border ${config.border} ${config.bg} px-4 py-4 shadow-sm`}
     >
       <div className="flex gap-4">
         <motion.div
-          className={`${config.icon} flex-shrink-0 mt-0.5`}
+          className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-[10px] bg-white/75 ${config.icon}`}
           initial={{ rotate: -10 }}
           whileInView={{ rotate: 0 }}
           transition={{ duration: 0.3 }}
@@ -62,14 +62,14 @@ export default function InsightCard({
         </motion.div>
 
         <div className="flex-1">
-          <h4 className="font-semibold text-slate-900 mb-1">{title}</h4>
-          <p className="text-sm text-slate-700 leading-relaxed mb-3">{description}</p>
+          <h4 className="mb-1 text-[15px] font-semibold tracking-[-0.02em] text-slate-900">{title}</h4>
+          <p className="mb-3 text-[13px] leading-6 text-slate-700">{description}</p>
 
           {action && (
             <motion.button
               whileHover={{ x: 2 }}
               onClick={action.onClick}
-              className={`${config.badge} text-xs font-semibold px-3 py-1.5 rounded transition-all duration-200 hover:shadow-md`}
+              className={`${config.badge} rounded-full px-3 py-1.5 text-[12px] font-semibold transition-shadow duration-200 hover:shadow-md`}
             >
               {action.label}
             </motion.button>

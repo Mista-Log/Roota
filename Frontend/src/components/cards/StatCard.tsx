@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { useRef } from 'react';
 
 interface StatCardProps {
   label: string;
@@ -56,16 +55,16 @@ export default function StatCard({
     animate();
   }, [isInView, value]);
 
-  const bgColor = {
-    default: 'bg-card',
-    gold: 'bg-yellow-50',
-    success: 'bg-green-50',
+  const toneStyles = {
+    default: 'bg-card border-border',
+    gold: 'bg-[#FFF8DF] border-[#F2DCA6]',
+    success: 'bg-[#F2FBF8] border-[#D9EEE6]',
   }[tone];
 
-  const textColor = {
+  const valueColor = {
     default: 'text-slate-900',
-    gold: 'text-yellow-900',
-    success: 'text-green-900',
+    gold: 'text-[#A86A00]',
+    success: 'text-[#0B5D4B]',
   }[tone];
 
   const changeColor = {
@@ -80,20 +79,23 @@ export default function StatCard({
       initial={{ opacity: 0, y: 8 }}
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className={`${bgColor} rounded-lg border border-border p-6 shadow-sm`}
+      className={`${toneStyles} rounded-[14px] border px-6 py-5 shadow-sm`}
     >
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex-1">
-          <p className="metric-label mb-2">{label}</p>
-          <p className={`metric-value ${textColor}`}>{displayValue}</p>
-          {change && (
-            <p className={`metric-meta mt-1 ${changeColor}`}>{change}</p>
-          )}
-        </div>
-        {icon && (
-          <div className="flex-shrink-0 text-muted">
-            {icon}
+      <div className="flex min-h-[114px] flex-col justify-between gap-3">
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex-1">
+            <p className="text-[12px] font-medium uppercase tracking-[0.08em] text-muted">{label}</p>
+            <p className={`mt-2 text-[34px] font-semibold leading-none tracking-[-0.05em] ${valueColor}`}>
+              {displayValue}
+            </p>
           </div>
+          {icon && <div className="flex-shrink-0 text-slate-500">{icon}</div>}
+        </div>
+
+        {change && (
+          <p className={`text-[15px] font-medium ${changeColor}`}>
+            {change}
+          </p>
         )}
       </div>
     </motion.div>

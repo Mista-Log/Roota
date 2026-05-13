@@ -49,29 +49,21 @@ export default function TrustScoreCard({
       initial={{ opacity: 0, scale: 0.95 }}
       whileInView={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.4 }}
-      className="bg-card rounded-lg border border-border p-8 shadow-sm"
+      className="rounded-2xl border border-border bg-card px-6 py-6 shadow-sm"
     >
-      <div className="flex flex-col items-center">
-        {/* Circle progress */}
-        <div className="relative w-32 h-32 mb-6">
-          <svg className="absolute inset-0 transform -rotate-90" viewBox="0 0 100 100">
-            {/* Background circle */}
-            <circle
-              cx="50"
-              cy="50"
-              r="45"
-              fill="none"
-              stroke="#E5E7EB"
-              strokeWidth="4"
-            />
-            {/* Progress circle */}
+      <div className="flex h-full flex-col items-center justify-center text-center">
+        <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-slate-700">AI Trust Score</p>
+
+        <div className="relative mt-5 grid h-[136px] w-[136px] place-items-center">
+          <svg className="absolute inset-0 -rotate-90" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="45" fill="none" stroke="#E9EDF0" strokeWidth="6" />
             <motion.circle
               cx="50"
               cy="50"
               r="45"
               fill="none"
               stroke="#F5A623"
-              strokeWidth="4"
+              strokeWidth="6"
               strokeDasharray={circumference}
               strokeDashoffset={circumference}
               animate={{ strokeDashoffset }}
@@ -79,33 +71,26 @@ export default function TrustScoreCard({
               strokeLinecap="round"
             />
           </svg>
-          {/* Score text */}
-          <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <motion.div
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              transition={{ delay: 0.2 }}
-              className="text-center"
-            >
-              <div className="text-3xl font-bold text-primary-dark">{displayScore}</div>
-              <div className="text-xs text-muted mt-0.5">/ {maxScore}</div>
-            </motion.div>
+
+          <div className="relative z-10 flex flex-col items-center justify-center">
+            <div className="text-[34px] font-semibold leading-none tracking-[-0.05em] text-slate-900">
+              {displayScore}
+            </div>
+            <div className="mt-1 text-[13px] text-muted">/ {maxScore}</div>
           </div>
         </div>
 
-        {/* Tier badge */}
         <motion.div
           initial={{ opacity: 0, y: 4 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="flex items-center gap-1 mb-3 px-3 py-1 bg-yellow-100 rounded-full"
+          transition={{ delay: 0.24 }}
+          className="mt-5 inline-flex items-center gap-2 rounded-full bg-[#E8F6EF] px-4 py-2 text-[13px] font-medium text-[#0B5D4B]"
         >
-          <TrendingUp size={14} className="text-yellow-600" />
-          <span className="text-xs font-semibold text-yellow-700">{tier}</span>
+          <TrendingUp size={14} />
+          <span>{tier}</span>
         </motion.div>
 
-        {/* Subtitle */}
-        <p className="text-sm text-muted text-center">{subtitle}</p>
+        <p className="mt-3 text-[14px] text-muted">{subtitle}</p>
       </div>
     </motion.div>
   );
