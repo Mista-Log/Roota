@@ -21,12 +21,21 @@ export default function AuthPage() {
 
   return (
     <div className="page auth-page">
-      <SimpleHeader left="Roota" right={<Link to="/">Back to home</Link>} />
-
+      <SimpleHeader
+        left="Roota"
+        right={
+          <Link to="/" className="floating-home-button">
+            Back to home
+          </Link>
+        }
+      />
       <main className="auth-layout">
         <section className="auth-visual">
           <div className="auth-visual__panel">
-            <span className="eyebrow eyebrow--gold">Global Standard</span>
+            <span className="eyebrow eyebrow--gold">
+              <span className="eyebrow__icon">🛡</span>
+              Global Standard
+            </span>
             <h2>Secure Your Wealth Frontier</h2>
             <p>
               Roota leverages advanced AI to provide an immutable Trust Score, bridging African talent with global high-value
@@ -96,12 +105,12 @@ export default function AuthPage() {
 
           <div className="auth-socials">
             <button type="button" className="social-pill">
-              <Globe size={20} />
-              Google
-            </button>
-            <button type="button" className="social-pill">
-              <GitBranch size={20} />
-              GitHub
+              <img
+                src="https://www.svgrepo.com/show/475656/google-color.svg"
+                alt="Google"
+                className="social-pill__icon"
+              />
+              Continue with Google
             </button>
           </div>
         </section>
