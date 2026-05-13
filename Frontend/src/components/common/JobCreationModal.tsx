@@ -110,7 +110,7 @@ export default function JobCreationModal({ isOpen, onClose, onSubmit }: JobCreat
                 onChange={handleChange}
                 placeholder="Describe the role, responsibilities, and ideal candidate..."
                 rows={5}
-                className="input w-full resize-none"
+                className="w-full resize-none rounded-xl border border-border bg-white px-4 py-3 text-sm outline-none transition-colors focus:border-primary-dark"
               />
             </div>
 

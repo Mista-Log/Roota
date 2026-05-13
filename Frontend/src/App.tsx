@@ -15,6 +15,7 @@ import InsightsPage from './pages/Dashboard/InsightsPage';
 import JobsPage from './pages/Jobs/JobsPage';
 import JobDetailsPage from './pages/Jobs/JobDetailsPage';
 import WalletPage from './pages/Wallet/WalletPage';
+import TransactionsPage from './pages/Wallet/TransactionsPage';
 import TrustScorePage from './pages/TrustScore/TrustScorePage';
 import SettingsPage from './pages/Settings/SettingsPage';
 import SupportPage from './pages/Support/SupportPage';
@@ -94,6 +95,16 @@ function App() {
           <ProtectedRoute>
             <AppShell>
               <WalletPage />
+            </AppShell>
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/transactions" 
+        element={
+          <ProtectedRoute>
+            <AppShell>
+              <TransactionsPage />
             </AppShell>
           </ProtectedRoute>
         } 

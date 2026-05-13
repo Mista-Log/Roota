@@ -89,6 +89,7 @@ export default function JobDetailsPage() {
     portfolio: '',
     coverLetter: '',
   });
+  const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
@@ -134,7 +135,7 @@ export default function JobDetailsPage() {
       const response = await fetch(`${apiUrl}/api/jobs/${jobId}/apply/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(applicationData),
+        body: JSON.stringify({ ...applicationData, resumeFileName: resumeFile?.name ?? null }),
       });
 
       if (response.ok) {
@@ -143,6 +144,7 @@ export default function JobDetailsPage() {
           setShowApplicationForm(false);
           setSubmitted(false);
           setApplicationData({ fullName: '', email: '', phone: '', portfolio: '', coverLetter: '' });
+          setResumeFile(null);
         }, 2000);
       }
     } catch (error) {
@@ -386,8 +388,20 @@ export default function JobDetailsPage() {
                     onChange={handleApplicationChange}
                     placeholder="Tell us why you're interested in this role..."
                     rows={6}
-                    className="input w-full resize-none"
+                    className="w-full resize-none rounded-xl border border-border bg-white px-4 py-3 text-sm outline-none transition-colors focus:border-primary-dark"
                   />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-slate-900 mb-2">Upload CV / Resume</label>
+                  <input
+                    type="file"
+                    accept=".pdf,.doc,.docx"
+                    onChange={(e) => setResumeFile(e.target.files?.[0] ?? null)}
+                    className="w-full rounded-xl border border-border bg-white px-3 py-2.5 text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-slate-100 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-slate-700 hover:file:bg-slate-200"
+                  />
+                  <p className="mt-1 text-xs text-muted">Accepted formats: PDF, DOC, DOCX</p>
+                  {resumeFile && <p className="mt-1 text-xs font-medium text-primary-dark">Selected: {resumeFile.name}</p>}
                 </div>
 
                 <div className="flex gap-3 pt-4">

@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import Section from '../../components/layout/Section';
 import StatCard from '../../components/cards/StatCard';
 import TrustScoreCard from '../../components/cards/TrustScoreCard';
@@ -11,6 +12,8 @@ import EarningsChart from '../../components/charts/EarningsChart';
 import { Briefcase, TrendingUp } from 'lucide-react';
 
 export default function WorkerDashboardPage() {
+  const navigate = useNavigate();
+
   const chartData = [
     { month: 'Mon', amount: 2400 },
     { month: 'Tue', amount: 1398 },
@@ -22,6 +25,7 @@ export default function WorkerDashboardPage() {
 
   const recommendedJobs = [
     {
+      id: '1',
       title: 'Senior RLHF Fine-Tuning Specialist',
       company: 'Anthropic',
       location: 'Via Roota Direct',
@@ -30,6 +34,7 @@ export default function WorkerDashboardPage() {
       salary: '$5,500 - $7,500',
     },
     {
+      id: '2',
       title: 'Dataset Optimization Lead',
       company: 'Scale AI',
       location: 'Remote',
@@ -38,6 +43,7 @@ export default function WorkerDashboardPage() {
       salary: '$4,500 - $6,500',
     },
     {
+      id: '3',
       title: 'AI Ethics Auditor - African Dialects',
       company: 'Meta Platforms',
       location: 'Hybrid',
@@ -101,12 +107,19 @@ export default function WorkerDashboardPage() {
         <Section
           title="Recommended Jobs"
           description="See All"
-          action={<button className="text-sm font-medium text-accent transition-colors hover:text-accent/90">See All →</button>}
+          action={
+            <button
+              onClick={() => navigate('/jobs')}
+              className="text-sm font-medium text-accent transition-colors hover:text-accent/90"
+            >
+              See All →
+            </button>
+          }
           className="h-full"
         >
           <div className="space-y-4">
-            {recommendedJobs.map((job, idx) => (
-              <JobCard key={idx} {...job} onApply={() => console.log('Applied')} />
+            {recommendedJobs.map((job) => (
+              <JobCard key={job.id} {...job} />
             ))}
           </div>
         </Section>
@@ -117,6 +130,7 @@ export default function WorkerDashboardPage() {
             title="Recent Earnings"
             subtitle="Payroll history for the last 6 months"
             activeMonth="Thu"
+            onViewAll={() => navigate('/wallet')}
           />
         </Section>
       </div>
