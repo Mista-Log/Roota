@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import { WorkspaceShell } from '../../layouts/WorkspaceShell';
 import { MetricCard } from '../../components/common/MetricCard';
 
@@ -10,16 +11,21 @@ const transactions = [
 ] as const;
 
 export default function FinancesPage() {
+  const panelVariants = {
+    hidden: { opacity: 0, y: 18 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.45, ease: 'easeOut' } },
+  };
+
   return (
-    <WorkspaceShell activeTab="finances" mode="finance" title="Financial Hub" subtitle="Manage your global earnings and payouts.">
+    <WorkspaceShell activeTab="finances" mode="finance" title="" subtitle="">
       <div className="finances-grid">
-        <section className="metric-strip">
+        <motion.section className="metric-strip" variants={panelVariants} initial="hidden" animate="visible">
           <MetricCard title="Wallet Balance" value="$8,420.50" meta="Available for withdrawal" accent="positive" />
           <MetricCard title="Pending Payouts" value="$3,200.00" meta="Processing: 2" accent="neutral" />
           <MetricCard title="Total Tax Paid" value="$1,120.00" meta="YTD compliance active" accent="neutral" />
-        </section>
+        </motion.section>
 
-        <section className="panel wallet-panel">
+        <motion.section className="panel wallet-panel" variants={panelVariants} initial="hidden" animate="visible">
           <div className="panel-header">
             <h3>Global Wallet</h3>
             <button type="button" className="pill-button pill-button--solid pill-button--small">Withdraw</button>
@@ -43,9 +49,9 @@ export default function FinancesPage() {
               </div>
             </div>
           </div>
-        </section>
+        </motion.section>
 
-        <section className="panel transaction-panel panel--wide">
+        <motion.section className="panel transaction-panel panel--wide" variants={panelVariants} initial="hidden" animate="visible">
           <div className="panel-header">
             <h3>Recent Transactions</h3>
             <button type="button" className="text-button">Export CSV</button>
@@ -72,7 +78,7 @@ export default function FinancesPage() {
               ))}
             </tbody>
           </table>
-        </section>
+        </motion.section>
       </div>
     </WorkspaceShell>
   );

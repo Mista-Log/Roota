@@ -10,13 +10,16 @@ interface ProtectedRouteProps {
 export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) {
   const { isAuthenticated, userRole } = useAuth();
 
-  if (!isAuthenticated) {
-    return <Navigate to="/auth" replace />;
-  }
+  // TEMPORARILY DISABLED - Remove protection to work on pages while backend dev finishes auth endpoint
+  // Uncomment the code below when backend auth is ready
+  
+  // if (!isAuthenticated) {
+  //   return <Navigate to="/auth" replace />;
+  // }
 
-  if (allowedRoles && userRole && !allowedRoles.includes(userRole)) {
-    return <Navigate to="/role" replace />;
-  }
+  // if (allowedRoles && userRole && !allowedRoles.includes(userRole)) {
+  //   return <Navigate to="/role" replace />;
+  // }
 
   return <>{children}</>;
 }

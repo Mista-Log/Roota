@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import { WorkspaceShell } from '../../layouts/WorkspaceShell';
 import { MetricCard, PanelHeader } from '../../components/common';
 
@@ -19,16 +20,21 @@ const talentCards = [
 ] as const;
 
 export default function EmployerDashboardPage() {
+  const panelVariants = {
+    hidden: { opacity: 0, y: 18 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.45, ease: 'easeOut' } },
+  };
+
   return (
-    <WorkspaceShell activeTab="dashboard" mode="employer" title="Employer Console" subtitle="Manage your global team and payroll.">
+    <WorkspaceShell activeTab="dashboard" mode="employer" title="" subtitle="">
       <div className="employer-grid">
-        <section className="metric-strip">
+        <motion.section className="metric-strip" variants={panelVariants} initial="hidden" animate="visible">
           {employerMetrics.map((m) => (
             <MetricCard key={m.title} {...m} />
           ))}
-        </section>
+        </motion.section>
 
-        <section className="panel payroll-panel panel--wide">
+        <motion.section className="panel payroll-panel panel--wide" variants={panelVariants} initial="hidden" animate="visible">
           <PanelHeader title="Active Payroll" actionButton="Run Payroll" sparkle />
           <table className="payroll-table">
             <thead>
@@ -55,9 +61,9 @@ export default function EmployerDashboardPage() {
               ))}
             </tbody>
           </table>
-        </section>
+        </motion.section>
 
-        <section className="panel talent-panel">
+        <motion.section className="panel talent-panel" variants={panelVariants} initial="hidden" animate="visible">
           <PanelHeader title="Recommended Talent" action="Browse Marketplace" />
           <div className="talent-stack">
             {talentCards.map(([name, role, score, skills], idx) => (
@@ -76,7 +82,7 @@ export default function EmployerDashboardPage() {
               </div>
             ))}
           </div>
-        </section>
+        </motion.section>
       </div>
     </WorkspaceShell>
   );

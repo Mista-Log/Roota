@@ -1240,6 +1240,10 @@ input {
   letter-spacing: -0.05em;
 }
 
+.trust-ring__value {
+  display: block;
+}
+
 .trust-ring__circle span {
   font-size: 0.8rem;
   color: var(--muted);
@@ -1684,18 +1688,27 @@ input {
 }
 
 .workspace-page {
-  grid-template-columns: 18rem 1fr;
+  display: block;
   min-height: 100vh;
-  background: #f7f9f8;
+  background: #f4f6f4;
+  width: 100%;
+  overflow-x: hidden;
+  position: relative;
 }
 
 .workspace-sidebar {
-  padding: 1.2rem;
+  position: fixed;
+  inset: 0 auto 0 0;
+  width: 18rem;
+  padding: 1.35rem 1.1rem;
   border-right: 1px solid #e2e8e4;
   background: #f2f5f4;
   display: flex;
   flex-direction: column;
   gap: 1.2rem;
+  overflow-y: auto;
+  z-index: 30;
+  box-shadow: 8px 0 24px rgba(13, 32, 27, 0.04);
 }
 
 .brand-block {
@@ -1877,16 +1890,18 @@ input {
 }
 
 .workspace-main {
-  padding: 0 1.25rem 2rem;
+  margin-left: 18rem;
+  min-height: 100vh;
+  padding: 0 1.45rem 2rem;
 }
 
 .workspace-topbar {
-  min-height: 90px;
+  min-height: 84px;
   gap: 1rem;
   border-bottom: 1px solid #e2e8e4;
   background: rgba(255, 255, 255, 0.64);
   backdrop-filter: blur(12px);
-  padding: 0 0.3rem 0 0;
+  padding: 0 0.2rem 0 0;
   position: sticky;
   top: 0;
   z-index: 20;
@@ -1947,11 +1962,11 @@ input {
 }
 
 .workspace-content {
-  padding: 1.7rem 0 0;
+  padding: 1.35rem 0 0;
 }
 
 .page-heading {
-  margin-bottom: 1.35rem;
+  margin-bottom: 1.05rem;
 }
 
 .page-heading h1 {
@@ -2221,7 +2236,7 @@ input {
 .finance-grid,
 .insights-grid {
   display: grid;
-  gap: 1rem;
+  gap: 1.15rem;
 }
 
 .worker-grid {
@@ -2229,7 +2244,7 @@ input {
 }
 
 .panel {
-  padding: 1rem;
+  padding: 1.08rem;
 }
 
 .panel--wide {
@@ -2413,6 +2428,7 @@ input {
   flex: 1;
   background: #dfe4e2;
   border-radius: 0.45rem 0.45rem 0 0;
+  will-change: height;
 }
 
 .mini-chart__bars span.active {
@@ -2536,6 +2552,12 @@ input {
 .metric-card strong {
   font-size: 2.8rem;
   letter-spacing: -0.06em;
+}
+
+.metric-card__value,
+.trust-ring__value {
+  display: inline-block;
+  font-variant-numeric: tabular-nums;
 }
 
 .metric-card__meta--positive {
@@ -2975,7 +2997,7 @@ input {
   grid-column: 1 / -1;
   display: grid;
   grid-template-columns: 0.72fr 1.2fr 0.65fr;
-  gap: 1rem;
+  gap: 1.15rem;
 }
 
 .growth-card {
@@ -3072,7 +3094,7 @@ input {
 .workspace-content--dashboard .page-heading,
 .workspace-content--finances .page-heading,
 .workspace-content--insights .page-heading {
-  margin-bottom: 1rem;
+  margin-bottom: 0.9rem;
 }
 
 @media (max-width: 900px) {
@@ -3138,6 +3160,11 @@ input {
 
   .workspace-page {
     grid-template-columns: 1fr;
+  }
+
+  .workspace-main {
+    margin-left: 0;
+    padding: 0 1rem 2rem;
   }
 
   .workspace-sidebar {

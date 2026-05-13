@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import { WorkspaceShell } from '../../layouts/WorkspaceShell';
 import { MetricCard } from '../../components/common/MetricCard';
 import { MiniBarChart } from '../../components/common/MiniBarChart';
@@ -20,32 +21,37 @@ const workerSkills = [
 ] as const;
 
 export default function WorkerDashboardPage() {
+  const panelVariants = {
+    hidden: { opacity: 0, y: 18 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.45, ease: 'easeOut' } },
+  };
+
   return (
     <WorkspaceShell activeTab="dashboard" mode="worker" title="Welcome back, James" subtitle="You have 3 new high-value matches today.">
       <div className="worker-grid">
-        <section className="metric-strip">
+        <motion.section className="metric-strip" variants={panelVariants} initial="hidden" animate="visible">
           <MetricCard title="Total Earnings" value="$12,450.00" meta="+$1,200 this month" accent="positive" />
           <MetricCard title="Active Projects" value="04" meta="2 due this week" accent="neutral" />
           <MetricCard title="Avg. Hourly" value="$85.00" meta="Top 5% in region" accent="neutral" />
-        </section>
+        </motion.section>
 
-        <section className="panel activity-panel">
+        <motion.section className="panel activity-panel" variants={panelVariants} initial="hidden" animate="visible">
           <div className="panel-header">
             <h3>Earnings Velocity</h3>
             <span className="menu-dot">⋮</span>
           </div>
           <MiniBarChart activeIndex={3} />
-        </section>
+        </motion.section>
 
-        <section className="panel trust-panel">
+        <motion.section className="panel trust-panel" variants={panelVariants} initial="hidden" animate="visible">
           <TrustRing value="845" label="TRUST SCORE" pill="Top 1%" />
           <div className="trust-meta">
             <p>Your score increased by <strong>+12pts</strong> this week.</p>
             <button type="button" className="text-button">View Breakdown</button>
           </div>
-        </section>
+        </motion.section>
 
-        <section className="panel recommendations-panel">
+        <motion.section className="panel recommendations-panel" variants={panelVariants} initial="hidden" animate="visible">
           <div className="panel-header">
             <h3>Top Recommendations</h3>
             <button type="button" className="text-button">View All</button>
@@ -55,9 +61,9 @@ export default function WorkerDashboardPage() {
               <RecommendationRow key={title} title={title} company={company} score={score} active={idx === 0} />
             ))}
           </div>
-        </section>
+        </motion.section>
 
-        <section className="panel skills-panel">
+        <motion.section className="panel skills-panel" variants={panelVariants} initial="hidden" animate="visible">
           <div className="panel-header">
             <h3>Skill Proficiency</h3>
             <button type="button" className="text-button">Add Skill</button>
@@ -67,9 +73,9 @@ export default function WorkerDashboardPage() {
               <SkillRow key={name} name={name} level={level} value={value} />
             ))}
           </div>
-        </section>
+        </motion.section>
 
-        <section className="panel optimizer-panel panel--wide">
+        <motion.section className="panel optimizer-panel panel--wide" variants={panelVariants} initial="hidden" animate="visible">
           <div className="optimizer-ring-wrap">
             <TrustRing value="850" label="TRUST SCORE" compact />
           </div>
@@ -87,7 +93,7 @@ export default function WorkerDashboardPage() {
           <button type="button" className="pill-button pill-button--solid pill-button--compact">
             Claim Reward
           </button>
-        </section>
+        </motion.section>
       </div>
     </WorkspaceShell>
   );
