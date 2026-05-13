@@ -9,6 +9,7 @@ interface EarningsChartProps {
   title?: string;
   subtitle?: string;
   activeMonth?: string;
+  onViewAll?: () => void;
 }
 
 export default function EarningsChart({
@@ -16,6 +17,7 @@ export default function EarningsChart({
   title = 'Monthly Earnings',
   subtitle = 'Payroll history for the last 6 months',
   activeMonth,
+  onViewAll,
 }: EarningsChartProps) {
   const activeIndex = activeMonth
     ? data.findIndex((d) => d.month === activeMonth)
@@ -35,9 +37,12 @@ export default function EarningsChart({
           <h3 className="text-[18px] font-semibold tracking-[-0.02em] text-slate-900">{title}</h3>
           <p className="mt-1 text-[14px] text-muted">{subtitle}</p>
         </div>
-        <div className="rounded-full border border-border px-3 py-1.5 text-[12px] text-slate-700">
+        <button
+          onClick={onViewAll}
+          className="rounded-full border border-border px-3 py-1.5 text-[12px] text-slate-700 transition-colors hover:bg-slate-50"
+        >
           View all
-        </div>
+        </button>
       </div>
 
       <div className="mt-5">

@@ -1,9 +1,12 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowUpRight, AlertCircle, CheckCircle, Circle, Home, Send, Sparkles, Wallet } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import AnimatedNumber from '../../components/common/AnimatedNumber';
+import FundsActionModal from '../../components/common/FundsActionModal';
 
 interface Transaction {
   id: string;
@@ -30,10 +33,12 @@ const earningsData = [
 ];
 
 export default function WalletPage() {
+  const navigate = useNavigate();
   const [transactions, setTransactions] = useState<Transaction[]>(mockTransactions);
   const [animatedScore, setAnimatedScore] = useState(0);
   const [rewardClaimed, setRewardClaimed] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [activeFundsModal, setActiveFundsModal] = useState<'send' | 'withdraw' | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -79,6 +84,27 @@ export default function WalletPage() {
     setRewardClaimed(true);
   };
 
+  const handleFundsSubmit = async (payload: {
+    amount: string;
+    recipientName: string;
+    accountNumber: string;
+    bankName: string;
+    note: string;
+  }) => {
+    const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+    const endpoint = activeFundsModal === 'send' ? '/api/wallet/send/' : '/api/wallet/withdraw/';
+
+    try {
+      await fetch(`${apiUrl}${endpoint}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+    } catch (error) {
+      console.error('Funds action failed:', error);
+    }
+  };
+
   const trustProgress = useMemo(() => animatedScore / 10, [animatedScore]);
 
   const getStatusIcon = (status: string) => {
@@ -106,7 +132,9 @@ export default function WalletPage() {
           <div className="flex items-start justify-between gap-6">
             <div className="max-w-md">
               <p className="text-sm font-medium text-white/90">Available Balance</p>
-              <h1 className="mt-2 text-[3.65rem] font-bold leading-none tracking-tight">$24,580.45</h1>
+              <h1 className="mt-2 text-[3.65rem] font-bold leading-none tracking-tight">
+                <AnimatedNumber value={24580.45} duration={1500} currency="USD" />
+              </h1>
 
               <div className="mt-8 grid max-w-[370px] grid-cols-2 gap-3">
                 <div className="rounded-2xl bg-white/16 px-4 py-3 backdrop-blur-[1px]">
@@ -132,6 +160,7 @@ export default function WalletPage() {
         <div className="grid grid-rows-2 gap-4">
           <motion.button
             whileHover={{ y: -2 }}
+            onClick={() => setActiveFundsModal('send')}
             className="rounded-[22px] border border-border bg-primary-dark px-6 py-5 text-left shadow-sm transition-all duration-200 hover:shadow-md"
           >
             <div className="flex h-full flex-col justify-center gap-3 text-center text-white">
@@ -147,6 +176,7 @@ export default function WalletPage() {
 
           <motion.button
             whileHover={{ y: -2 }}
+            onClick={() => setActiveFundsModal('withdraw')}
             className="rounded-[22px] border border-border bg-white px-6 py-5 text-left shadow-sm transition-all duration-200 hover:shadow-md"
           >
             <div className="flex h-full flex-col justify-center gap-3 text-center text-slate-900">
@@ -203,7 +233,12 @@ export default function WalletPage() {
             <div>
               <h3 className="text-lg font-semibold text-slate-900">Recent Transactions</h3>
             </div>
-            <a href="#" className="text-xs font-semibold text-primary-dark hover:text-primary">View All</a>
+            <button
+              onClick={() => navigate('/transactions')}
+              className="text-xs font-semibold text-primary-dark hover:text-primary"
+            >
+              View All
+            </button>
           </div>
 
           <div className="space-y-3">
@@ -249,7 +284,9 @@ export default function WalletPage() {
               />
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-              <p className="text-4xl font-bold text-slate-900">{animatedScore}</p>
+              <p className="text-4xl font-bold text-slate-900">
+                <AnimatedNumber value={850} duration={1500} />
+              </p>
               <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-muted">Trust Score</p>
             </div>
           </div>
@@ -282,6 +319,13 @@ export default function WalletPage() {
           </div>
         </div>
       </motion.div>
+
+      <FundsActionModal
+        isOpen={activeFundsModal !== null}
+        mode={activeFundsModal ?? 'send'}
+        onClose={() => setActiveFundsModal(null)}
+        onSubmit={handleFundsSubmit}
+      />
     </div>
   );
 }

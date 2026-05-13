@@ -1,8 +1,10 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowRight, Building2 } from 'lucide-react';
 
 interface JobCardProps {
+  id?: string;
   title: string;
   company: string;
   location?: string;
@@ -13,6 +15,7 @@ interface JobCardProps {
 }
 
 export default function JobCard({
+  id,
   title,
   company,
   location,
@@ -21,6 +24,13 @@ export default function JobCard({
   salary,
   onApply,
 }: JobCardProps) {
+  const navigate = useNavigate();
+
+  const handleViewDetails = () => {
+    if (id) {
+      navigate(`/jobs/${id}`);
+    }
+  };
   return (
     <motion.div
       initial={{ opacity: 0, y: 8 }}
@@ -63,7 +73,7 @@ export default function JobCard({
           <div className="text-[12px] leading-none text-muted">Match Score</div>
           <motion.button
             whileHover={{ x: 3 }}
-            onClick={onApply}
+            onClick={handleViewDetails}
             className="grid h-8 w-8 place-items-center rounded-[10px] border border-border text-slate-700 transition-colors duration-200 hover:border-primary-dark hover:text-primary-dark"
           >
             <ArrowRight size={16} />

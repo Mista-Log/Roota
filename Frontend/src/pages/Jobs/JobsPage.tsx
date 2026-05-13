@@ -2,8 +2,19 @@ import { useState, useEffect } from 'react';
 import Section from '../../components/layout/Section';
 import JobCard from '../../components/cards/JobCard';
 
-const mockJobs = [
+interface Job {
+  id: string;
+  title: string;
+  company: string;
+  location: string;
+  matchScore: number;
+  skills: string[];
+  salary: string;
+}
+
+const mockJobs: Job[] = [
   {
+    id: '1',
     title: 'Senior FinTech Lead',
     company: 'Acme Corp',
     location: 'San Francisco, CA',
@@ -12,6 +23,7 @@ const mockJobs = [
     salary: '$12,500 - $18,000',
   },
   {
+    id: '2',
     title: 'Product Strategist',
     company: 'Tech Startup',
     location: 'Remote',
@@ -22,7 +34,7 @@ const mockJobs = [
 ];
 
 export default function JobsPage() {
-  const [jobs, setJobs] = useState(mockJobs);
+  const [jobs, setJobs] = useState<Job[]>(mockJobs);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -52,11 +64,16 @@ export default function JobsPage() {
         description="AI-suggested roles based on your profile"
       >
         <div className="space-y-4">
-          {jobs.map((job, idx) => (
+          {jobs.map((job) => (
             <JobCard
-              key={idx}
-              {...job}
-              onApply={() => console.log('Apply for', job.title)}
+              key={job.id}
+              id={job.id}
+              title={job.title}
+              company={job.company}
+              location={job.location}
+              matchScore={job.matchScore}
+              skills={job.skills}
+              salary={job.salary}
             />
           ))}
         </div>
