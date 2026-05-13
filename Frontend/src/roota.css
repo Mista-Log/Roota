@@ -1,47 +1,12 @@
 /* @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap'); */
 
-@import url('https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap');
+/* Legacy `roota.css` archived. Full original preserved at
+   `src/styles/legacy/roota.css`.
 
-:root {
-  --primary: #0f5f46;
-  --primary-light: #95d3ba;
-  --primary-dark: #003527;
+   Placeholder to avoid accidental legacy imports while we migrate to Tailwind.
+*/
 
-  --surface: #f7f9fb;
-  --surface-dark: #071411;
-  --surface-card: rgba(255,255,255,0.08);
-
-  --text-primary: #0d1c17;
-  --text-secondary: #5f6d68;
-
-  --white: #ffffff;
-
-  --border-light: rgba(255,255,255,0.08);
-
-  --shadow-lg: 0 25px 50px rgba(0,0,0,0.12);
-  --shadow-md: 0 10px 30px rgba(0,0,0,0.08);
-
-  --radius-xl: 24px;
-  --radius-lg: 18px;
-
-  --transition: all 0.3s ease;
-}
-
-* {
-  box-sizing: border-box;
-}
-
-html,
-body,
-#root {
-  min-height: 100%;
-}
-
-body {
-  font-family: 'Inter', sans-serif;
-  background: var(--surface);
-  color: var(--text-primary);
-}
+:root {}
 
 h1,
 h2,
