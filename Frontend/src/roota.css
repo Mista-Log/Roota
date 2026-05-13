@@ -107,16 +107,30 @@ input {
   width: 100%;
 }
 
-.pill-button--solid {
-  background: var(--dark);
-  color: #fff;
-  box-shadow: 0 10px 22px rgba(12, 62, 50, 0.16);
+.hero-actions {
+  display: flex;
+  gap: 0.85rem;
+  align-items: stretch;
+}
+
+.hero-actions .pill-button {
+  flex: 1;
+  justify-content: center;
+  height: 58px;
 }
 
 .pill-button--ghost {
+  height: 58px;
+  border-radius: 12px; /* same as solid button */
   background: transparent;
-  border-color: rgba(255, 255, 255, 0.15);
-  color: #fff;
+  color: var(--primary);
+  border: 1px solid rgba(149, 211, 186, 0.35);
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: all 0.2s ease;
 }
 
 .pill-button--ghost-light {
@@ -374,6 +388,330 @@ input {
   gap: 1rem;
 }
 
+
+.floating-home-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0.8rem 1.2rem;
+
+  background: var(--primary);
+  color: #fff;
+
+  border-radius: 12px;
+
+  font-weight: 600;
+  font-size: 0.95rem;
+
+  box-shadow: 0 10px 25px rgba(6, 78, 59, 0.22);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+/* =========================
+   AUTH CARD
+========================= */
+
+.auth-card {
+  width: 100%;
+  max-width: 520px;
+
+  margin: auto;
+
+  padding: 42px;
+
+  background: #ffffff;
+
+  border-radius: 28px;
+
+  border: 1px solid rgba(15, 95, 70, 0.08);
+
+  box-shadow:
+    0 20px 60px rgba(15, 95, 70, 0.08);
+
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* =========================
+   TABS
+========================= */
+
+.auth-tabs {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+
+  background: #f4f7f5;
+
+  padding: 6px;
+
+  border-radius: 14px;
+}
+
+.auth-tabs__button {
+  border: none;
+
+  background: transparent;
+
+  padding: 14px 18px;
+
+  border-radius: 10px;
+
+  font-weight: 600;
+
+  color: #5f6d68;
+
+  transition: all 0.25s ease;
+
+  cursor: pointer;
+}
+
+.auth-tabs__button--active {
+  background: white;
+
+  color: var(--primary);
+
+  box-shadow: 0 6px 18px rgba(15, 95, 70, 0.08);
+}
+
+/* =========================
+   COPY
+========================= */
+
+.auth-copy {
+  text-align: center;
+}
+
+.auth-copy h2 {
+  font-size: 2rem;
+
+  line-height: 1.1;
+
+  margin-bottom: 10px;
+
+  color: var(--text-primary);
+}
+
+.auth-copy p {
+  color: var(--text-secondary);
+
+  font-size: 1rem;
+
+  line-height: 1.7;
+}
+
+/* =========================
+   FORM
+========================= */
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.form-group label {
+  font-size: 0.95rem;
+
+  font-weight: 600;
+
+  color: #1f2d28;
+}
+
+.form-group input {
+  width: 100%;
+
+  height: 58px;
+
+  padding: 0 18px;
+
+  border-radius: 14px;
+
+  border: 1px solid #d9e2dd;
+
+  background: #f8faf9;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+.form-group input:focus {
+  outline: none;
+
+  border-color: var(--primary);
+
+  background: white;
+
+  box-shadow:
+    0 0 0 4px rgba(15, 95, 70, 0.08);
+}
+
+/* =========================
+   CREATE ACCOUNT BUTTON
+========================= */
+
+.pill-button--solid {
+  width: 100%;
+
+  height: 58px;
+
+  border-radius: 12px; /* box shape */
+
+  background: var(--primary);
+
+  color: white;
+
+  border: none;
+
+  font-size: 1rem;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.pill-button--solid:hover {
+  background: #0c7254;
+
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 12px 24px rgba(15, 95, 70, 0.18);
+}
+
+/* =========================
+   DIVIDER
+========================= */
+
+.auth-divider {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: '';
+
+  flex: 1;
+
+  height: 1px;
+
+  background: #e3e9e6;
+}
+
+.auth-divider span {
+  padding: 0 16px;
+
+  font-size: 0.78rem;
+
+  font-weight: 700;
+
+  letter-spacing: 0.14em;
+
+  color: #7b8782;
+}
+
+/* =========================
+   SOCIAL BUTTONS
+========================= */
+
+.auth-socials {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.social-pill {
+  width: 100%;
+
+  height: 56px;
+
+  border-radius: 14px;
+
+  border: 1px solid #dde5e1;
+
+  background: white;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 12px;
+
+  font-weight: 600;
+
+  color: #1f2d28;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.social-pill:hover {
+  transform: translateY(-2px);
+
+  border-color: rgba(15, 95, 70, 0.18);
+
+  box-shadow:
+    0 10px 24px rgba(15, 95, 70, 0.08);
+}
+
+.social-pill__icon {
+  width: 22px;
+  height: 22px;
+
+  object-fit: contain;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 768px) {
+  .auth-card {
+    padding: 28px 22px;
+
+    border-radius: 22px;
+  }
+
+  .auth-copy h2 {
+    font-size: 1.7rem;
+  }
+}
+
+.floating-home-button:hover {
+  background: #046a4f;
+
+  transform: translateY(-2px);
+
+  box-shadow: 0 14px 30px rgba(6, 78, 59, 0.28);
+}
 
 
 .section-intro h2 {
@@ -1579,10 +1917,84 @@ input {
 }
 
 .auth-socials {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 0.85rem;
-  margin: 1.2rem 0;
+  width: 100%;
+}
+
+.social-pill {
+  width: 100%;
+
+  height: 58px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 12px;
+
+  border-radius: 14px;
+
+  border: 1px solid #dde5e1;
+
+  background: #fff;
+
+  font-size: 1rem;
+  font-weight: 600;
+
+  color: #1f2d28;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+/* Yellow accent like landing page trust ring */
+
+.eyebrow--gold {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+
+  padding: 0;            /* removes box spacing */
+  background: transparent;
+  border: none;
+
+  font-size: 0.78rem;
+  font-weight: 700;
+
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+
+  color: #f6b544 !important;
+}
+
+.eyebrow--gold * {
+  color: #f6b544 !important;
+  fill: #f6b544 !important;
+}
+
+.eyebrow__icon {
+  color: #f6b544 !important;
+  font-size: 0.9rem;
+  line-height: 1;
+}
+
+.auth-visual__chips strong {
+  color: #f6b544;
+
+  font-size: 1.6rem;
+  font-weight: 800;
+
+  letter-spacing: -0.03em;
+}
+
+
+.social-pill:hover {
+  transform: translateY(-2px);
+
+  border-color: rgba(15, 95, 70, 0.18);
+
+  box-shadow: 0 10px 24px rgba(15, 95, 70, 0.08);
 }
 
 .social-button {
