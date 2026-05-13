@@ -81,7 +81,7 @@ input {
 .pill-button {
   appearance: none;
   border: 1px solid transparent;
-  border-radius: 999px;
+  border-radius: 12px;
   padding: 0.95rem 1.35rem;
   display: inline-flex;
   align-items: center;
@@ -872,7 +872,7 @@ input {
 
   padding: 0.55rem 0.95rem;
 
-  border-radius: 999px;
+  border-radius: 12px;
 
   font-size: 0.88rem;
   font-weight: 600;
@@ -902,7 +902,7 @@ input {
   font-weight: 600;
   color: white;
   background: var(--primary);
-  border-radius: 999px;
+  border-radius: 12px;
   border: 1px solid var(--primary);
   box-shadow: 0 6px 18px rgba(6, 78, 59, 0.25);
   transition: all 0.2s ease;
