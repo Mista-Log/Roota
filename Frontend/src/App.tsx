@@ -13,6 +13,7 @@ import EmployerDashboardPage from './pages/Dashboard/EmployerDashboard';
 import FinancesPage from './pages/Dashboard/FinancesPage';
 import InsightsPage from './pages/Dashboard/InsightsPage';
 import JobsPage from './pages/Jobs/JobsPage';
+import JobDetailsPage from './pages/Jobs/JobDetailsPage';
 import WalletPage from './pages/Wallet/WalletPage';
 import TrustScorePage from './pages/TrustScore/TrustScorePage';
 import SettingsPage from './pages/Settings/SettingsPage';
@@ -43,6 +44,16 @@ function App() {
           <ProtectedRoute>
             <AppShell>
               <JobsPage />
+            </AppShell>
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/jobs/:jobId" 
+        element={
+          <ProtectedRoute>
+            <AppShell>
+              <JobDetailsPage />
             </AppShell>
           </ProtectedRoute>
         } 

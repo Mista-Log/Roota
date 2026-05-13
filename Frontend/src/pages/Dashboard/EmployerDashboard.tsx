@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ArrowUpRight, Users, Briefcase, TrendingUp } from 'lucide-react';
+import { ArrowUpRight, Users, Briefcase, TrendingUp, Plus } from 'lucide-react';
 import { motion } from 'framer-motion';
 import AnimatedNumber from '../../components/common/AnimatedNumber';
+import JobCreationModal from '../../components/common/JobCreationModal';
 
 interface Worker {
   id: string;
@@ -53,6 +54,8 @@ export default function EmployerDashboard() {
   const [talent, setTalent] = useState<Talent[]>(mockTalent);
   const [recentHires, setRecentHires] = useState<RecentHire[]>(mockRecentHires);
 
+  const [showJobModal, setShowJobModal] = useState(false);
+
   // Fetch employer data from backend
   useEffect(() => {
     const fetchData = async () => {
@@ -91,6 +94,23 @@ export default function EmployerDashboard() {
   const statVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0 },
+  };
+
+  const handleJobCreation = async (jobData: any) => {
+    try {
+      const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+      const response = await fetch(`${apiUrl}/api/employer/jobs/create/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(jobData),
+      });
+
+      if (response.ok) {
+        console.log('Job created successfully');
+      }
+    } catch (error) {
+      console.error('Error creating job:', error);
+    }
   };
 
   return (
@@ -161,6 +181,23 @@ export default function EmployerDashboard() {
         </motion.div>
       </div>
 
+
+      {/* Create Job Button */}
+      <motion.button
+        initial={{ opacity: 0, y: 12 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        whileHover={{ y: -4 }}
+        onClick={() => setShowJobModal(true)}
+        className="w-full rounded-2xl border-2 border-dashed border-primary-dark bg-primary-dark/5 px-6 py-6 shadow-sm hover:bg-primary-dark/10 transition-all cursor-pointer"
+      >
+        <div className="flex items-center justify-center gap-3">
+          <Plus size={24} className="text-primary-dark" />
+          <div className="text-left">
+            <p className="text-sm font-semibold text-primary-dark">Create a New Job</p>
+            <p className="text-xs text-primary-dark/70">Post a job opening to find talent</p>
+          </div>
+        </div>
+      </motion.button>
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
         {/* Pending Payroll */}
@@ -219,6 +256,7 @@ export default function EmployerDashboard() {
           </div>
         </motion.section>
 
+  <JobCreationModal isOpen={showJobModal} onClose={() => setShowJobModal(false)} onSubmit={handleJobCreation} />
         {/* Top Talent */}
         <motion.section
           variants={statVariants}
