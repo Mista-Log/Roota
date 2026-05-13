@@ -15,6 +15,7 @@ export default function Sidebar() {
     { path: '/wallet', label: 'Wallet', icon: Wallet },
     { path: '/trust-score', label: 'AI Trust Score', icon: ShieldCheck },
     { path: '/settings', label: 'Settings', icon: Settings },
+    { path: '/support', label: 'Support', icon: LifeBuoy },
   ];
 
   const isNavItemActive = (path: string) => {

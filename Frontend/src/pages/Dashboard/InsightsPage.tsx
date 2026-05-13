@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { ShieldAlert, TrendingUp, Target, Globe2 } from 'lucide-react';
 import { MiniBarChart } from '../../components/common/MiniBarChart';
 import { TrustRing } from '../../components/common/TrustRing';
+import AnimatedNumber from '../../components/common/AnimatedNumber';
 
 const mockInsightCards = [
   {
@@ -64,7 +65,9 @@ export default function InsightsPage() {
           className="rounded-2xl border border-border bg-card px-6 py-6 shadow-sm"
         >
           <p className="text-sm text-muted">Total GTV</p>
-          <h3 className="mt-3 text-4xl font-bold text-slate-900">$4.82M</h3>
+          <h3 className="mt-3 text-4xl font-bold text-slate-900">
+            <AnimatedNumber value={4820000} duration={1500} currency="USD" compact />
+          </h3>
           <p className="mt-2 text-sm font-medium text-primary-dark">+12.4% vs LY</p>
           <div className="mt-6 h-10 rounded-xl bg-slate-100" />
         </motion.div>

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { ArrowUpRight, Users, Briefcase, TrendingUp } from 'lucide-react';
 import { motion } from 'framer-motion';
+import AnimatedNumber from '../../components/common/AnimatedNumber';
 
 interface Worker {
   id: string;
@@ -106,7 +107,9 @@ export default function EmployerDashboard() {
           <div className="flex items-start justify-between">
             <div>
               <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-muted">Total Payroll (MTD)</p>
-              <p className="mt-3 text-3xl font-bold text-slate-900">$142,850</p>
+              <p className="mt-3 text-3xl font-bold text-slate-900">
+                <AnimatedNumber value={142850} duration={1500} currency="USD" />
+              </p>
               <p className="mt-2 text-[13px] text-success font-medium">↑ 12.5% vs last month</p>
             </div>
             <div className="h-12 w-12 rounded-lg bg-slate-100 flex items-center justify-center">
@@ -125,7 +128,9 @@ export default function EmployerDashboard() {
           <div className="flex items-start justify-between">
             <div>
               <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-muted">Active Workers</p>
-              <p className="mt-3 text-3xl font-bold text-slate-900">84</p>
+              <p className="mt-3 text-3xl font-bold text-slate-900">
+                <AnimatedNumber value={84} duration={1500} />
+              </p>
               <p className="mt-2 text-[13px] text-muted font-medium">across 12 global regions</p>
             </div>
             <div className="h-12 w-12 rounded-lg bg-slate-100 flex items-center justify-center">
@@ -144,7 +149,9 @@ export default function EmployerDashboard() {
           <div className="flex items-start justify-between">
             <div>
               <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-muted">Open Jobs</p>
-              <p className="mt-3 text-3xl font-bold text-slate-900">06</p>
+              <p className="mt-3 text-3xl font-bold text-slate-900">
+                <AnimatedNumber value={6} duration={1500} />
+              </p>
               <p className="mt-2 text-[13px] text-warning font-medium">◆ 4 high-priority roles</p>
             </div>
             <div className="h-12 w-12 rounded-lg bg-slate-100 flex items-center justify-center">

@@ -4,6 +4,7 @@ import Section from '../../components/layout/Section';
 import TrustScoreCard from '../../components/cards/TrustScoreCard';
 import SkillProgressCard from '../../components/cards/SkillProgressCard';
 import StatCard from '../../components/cards/StatCard';
+import AnimatedNumber from '../../components/common/AnimatedNumber';
 
 const mockTrustData = {
   score: 850,
@@ -56,9 +57,9 @@ export default function TrustScorePage() {
           </div>
           <div className="col-span-3">
             <div className="grid grid-cols-3 gap-6">
-              <StatCard label="Completed Projects" value={String(trustData.completedProjects)} change="All verified" />
-              <StatCard label="Success Rate" value={trustData.successRate} change="Above average" />
-              <StatCard label="Average Rating" value={trustData.averageRating} change="Out of 5.0" tone="gold" />
+              <StatCard label="Completed Projects" value={<AnimatedNumber value={trustData.completedProjects} duration={1500} />} change="All verified" />
+              <StatCard label="Success Rate" value={<AnimatedNumber value={trustData.successRate.replace('%', '')} duration={1500} />} change="Above average" />
+              <StatCard label="Average Rating" value={<AnimatedNumber value={trustData.averageRating} duration={1500} decimals={1} />} change="Out of 5.0" tone="gold" />
             </div>
           </div>
         </div>

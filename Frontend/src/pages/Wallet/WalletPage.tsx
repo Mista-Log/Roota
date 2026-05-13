@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowUpRight, AlertCircle, CheckCircle, Circle, Home, Send, Sparkles, Wallet } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import AnimatedNumber from '../../components/common/AnimatedNumber';
 
 interface Transaction {
   id: string;
@@ -106,7 +107,9 @@ export default function WalletPage() {
           <div className="flex items-start justify-between gap-6">
             <div className="max-w-md">
               <p className="text-sm font-medium text-white/90">Available Balance</p>
-              <h1 className="mt-2 text-[3.65rem] font-bold leading-none tracking-tight">$24,580.45</h1>
+              <h1 className="mt-2 text-[3.65rem] font-bold leading-none tracking-tight">
+                <AnimatedNumber value={24580.45} duration={1500} currency="USD" />
+              </h1>
 
               <div className="mt-8 grid max-w-[370px] grid-cols-2 gap-3">
                 <div className="rounded-2xl bg-white/16 px-4 py-3 backdrop-blur-[1px]">
@@ -249,7 +252,9 @@ export default function WalletPage() {
               />
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-              <p className="text-4xl font-bold text-slate-900">{animatedScore}</p>
+              <p className="text-4xl font-bold text-slate-900">
+                <AnimatedNumber value={850} duration={1500} />
+              </p>
               <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-muted">Trust Score</p>
             </div>
           </div>

@@ -16,6 +16,7 @@ import JobsPage from './pages/Jobs/JobsPage';
 import WalletPage from './pages/Wallet/WalletPage';
 import TrustScorePage from './pages/TrustScore/TrustScorePage';
 import SettingsPage from './pages/Settings/SettingsPage';
+import SupportPage from './pages/Support/SupportPage';
 
 function App() {
   return (
@@ -102,6 +103,16 @@ function App() {
           <ProtectedRoute>
             <AppShell>
               <SettingsPage />
+            </AppShell>
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/support" 
+        element={
+          <ProtectedRoute>
+            <AppShell>
+              <SupportPage />
             </AppShell>
           </ProtectedRoute>
         } 

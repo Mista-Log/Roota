@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Banknote, CreditCard, ReceiptText, ShieldCheck } from 'lucide-react';
+import AnimatedNumber from '../../components/common/AnimatedNumber';
 
 const mockFinancialSummary = [
-  { label: 'Wallet Balance', value: '$8,420.50', meta: 'Available for withdrawal', icon: Banknote },
-  { label: 'Pending Payouts', value: '$3,200.00', meta: 'Processing: 2', icon: ReceiptText },
-  { label: 'Total Tax Paid', value: '$1,120.00', meta: 'YTD compliance active', icon: ShieldCheck },
+  { label: 'Wallet Balance', value: 8420.50, meta: 'Available for withdrawal', icon: Banknote },
+  { label: 'Pending Payouts', value: 3200.00, meta: 'Processing: 2', icon: ReceiptText },
+  { label: 'Total Tax Paid', value: 1120.00, meta: 'YTD compliance active', icon: ShieldCheck },
 ];
 
 const mockRecentTransactions = [
@@ -70,7 +71,9 @@ export default function FinancesPage() {
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-muted">{item.label}</p>
-                  <p className="mt-3 text-3xl font-bold text-slate-900">{item.value}</p>
+                  <p className="mt-3 text-3xl font-bold text-slate-900">
+                    <AnimatedNumber value={item.value} duration={1500} currency="USD" />
+                  </p>
                   <p className="mt-2 text-sm text-muted">{item.meta}</p>
                 </div>
                 <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-slate-100 text-primary-dark">
