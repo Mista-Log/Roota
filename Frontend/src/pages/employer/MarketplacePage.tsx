@@ -137,7 +137,7 @@ export default function EmployerMarketplacePage() {
   };
 
   const handleOpenProfile = (profile: TalentProfile) => {
-    navigate(`/employer/jobs/${profile.id}`, { state: { profile } });
+    navigate(`/employer/talent/${profile.id}`, { state: { profile } });
   };
 
   return (

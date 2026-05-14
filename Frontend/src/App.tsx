@@ -18,6 +18,7 @@ import JobsPage from './pages/Jobs/JobsPage';
 import EmployerJobsPage from './pages/Jobs/EmployerJobsPage';
 import WorkerJobDetailsPage from './pages/worker/JobDetailsPage';
 import EmployerJobDetailsPage from './pages/employer/JobDetailsPage';
+import EmployerTalentDetailsPage from './pages/employer/TalentDetailsPage';
 import WorkerWalletPage from './pages/worker/WalletPage';
 import EmployerWalletPage from './pages/employer/WalletPage';
 import WorkerTransactionsPage from './pages/worker/TransactionsPage';
@@ -177,6 +178,16 @@ function App() {
           <ProtectedRoute allowedRoles={['employer']}>
             <EmployerShell>
               <EmployerMarketplacePage />
+            </EmployerShell>
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/employer/talent/:talentId" 
+        element={
+          <ProtectedRoute allowedRoles={['employer']}>
+            <EmployerShell>
+              <EmployerTalentDetailsPage />
             </EmployerShell>
           </ProtectedRoute>
         } 
