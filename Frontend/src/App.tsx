@@ -1,6 +1,8 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { ProtectedRoute } from './components/common/ProtectedRoute';
 import AppShell from './layouts/AppShell';
+import WorkerShell from './layouts/worker/WorkerShell';
+import EmployerShell from './layouts/employer/EmployerShell';
 
 // Pages
 import LandingPage from './pages/Landing/LandingPage';
@@ -33,9 +35,9 @@ function App() {
         path="/worker/dashboard" 
         element={
           <ProtectedRoute allowedRoles={['worker']}>
-            <AppShell>
+            <WorkerShell>
               <WorkerDashboardPage />
-            </AppShell>
+            </WorkerShell>
           </ProtectedRoute>
         } 
       />
@@ -43,9 +45,9 @@ function App() {
         path="/worker/jobs" 
         element={
           <ProtectedRoute allowedRoles={['worker']}>
-            <AppShell>
+            <WorkerShell>
               <JobsPage />
-            </AppShell>
+            </WorkerShell>
           </ProtectedRoute>
         } 
       />
@@ -53,9 +55,9 @@ function App() {
         path="/worker/jobs/:jobId" 
         element={
           <ProtectedRoute allowedRoles={['worker']}>
-            <AppShell>
+            <WorkerShell>
               <JobDetailsPage />
-            </AppShell>
+            </WorkerShell>
           </ProtectedRoute>
         } 
       />
@@ -65,9 +67,9 @@ function App() {
         path="/employer/dashboard" 
         element={
           <ProtectedRoute allowedRoles={['employer']}>
-            <AppShell>
+            <EmployerShell>
               <EmployerDashboardPage />
-            </AppShell>
+            </EmployerShell>
           </ProtectedRoute>
         } 
       />
@@ -75,9 +77,9 @@ function App() {
         path="/employer/jobs" 
         element={
           <ProtectedRoute allowedRoles={['employer']}>
-            <AppShell>
+            <EmployerShell>
               <EmployerJobsPage />
-            </AppShell>
+            </EmployerShell>
           </ProtectedRoute>
         } 
       />
@@ -85,9 +87,9 @@ function App() {
         path="/employer/jobs/:jobId" 
         element={
           <ProtectedRoute allowedRoles={['employer']}>
-            <AppShell>
+            <EmployerShell>
               <JobDetailsPage />
-            </AppShell>
+            </EmployerShell>
           </ProtectedRoute>
         } 
       />
