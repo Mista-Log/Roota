@@ -7,12 +7,17 @@ import { motion } from 'framer-motion';
 type ActiveTab = 'dashboard' | 'jobs' | 'finances' | 'insights';
 type WorkspaceMode = 'worker' | 'employer' | 'finance' | 'insights';
 
-const tabs = [
-  { to: '/worker', label: 'Dashboard', tab: 'dashboard' },
-  { to: '/marketplace', label: 'Jobs', tab: 'jobs' },
-  { to: '/finances', label: 'Finances', tab: 'finances' },
-  { to: '/insights', label: 'Insights', tab: 'insights' },
-] as const;
+function getTabs(mode: WorkspaceMode) {
+  const dashboardPath = mode === 'employer' ? '/employer/dashboard' : '/worker/dashboard';
+  const jobsPath = mode === 'employer' ? '/employer/jobs' : '/worker/jobs';
+
+  return [
+    { to: dashboardPath, label: 'Dashboard', tab: 'dashboard' },
+    { to: jobsPath, label: 'Jobs', tab: 'jobs' },
+    { to: '/finances', label: 'Finances', tab: 'finances' },
+    { to: '/insights', label: 'Insights', tab: 'insights' },
+  ] as const;
+}
 
 const promoCopy = {
   worker: {
@@ -65,8 +70,8 @@ export function WorkspaceShell({
         <BrandBlock compact={mode !== 'worker'} />
 
         <nav className="workspace-sidebar__nav">
-          <SidebarLink to="/worker" icon={<Grid size={20} />} label="Overview" active={activeTab === 'dashboard'} />
-          <SidebarLink to="/marketplace" icon={<Briefcase size={20} />} label="Marketplace" active={activeTab === 'jobs'} />
+          <SidebarLink to={mode === 'employer' ? '/employer/dashboard' : '/worker/dashboard'} icon={<Grid size={20} />} label="Overview" active={activeTab === 'dashboard'} />
+          <SidebarLink to={mode === 'employer' ? '/employer/jobs' : '/worker/jobs'} icon={<Briefcase size={20} />} label="Marketplace" active={activeTab === 'jobs'} />
           <SidebarLink to="/finances" icon={<Wallet size={20} />} label="Wallet" active={activeTab === 'finances'} />
           <SidebarLink to="/insights" icon={<ShieldCheck size={20} />} label="AI Trust Score" active={activeTab === 'insights'} />
           <SidebarLink to="#settings" icon={<Settings size={20} />} label="Settings" />
@@ -100,7 +105,7 @@ export function WorkspaceShell({
         >
           {showSearch ? <input className="workspace-topbar__search" placeholder="Search talent..." /> : <div className="workspace-topbar__spacer" />}
           <nav className="workspace-topbar__nav">
-            {tabs.map((tab) => (
+            {getTabs(mode).map((tab) => (
               <NavLink
                 key={tab.tab}
                 to={tab.to}
