@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 from pathlib import Path
 from dotenv import load_dotenv
 import os
+from decouple import config
 
 load_dotenv()
 
@@ -173,3 +174,9 @@ CORS_ALLOW_ALL_ORIGINS = True
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:5173",
 ]
+
+
+
+SQUAD_SECRET_KEY = config("SQUAD_SECRET_KEY")
+SQUAD_PUBLIC_KEY = config("SQUAD_PUBLIC_KEY")
+SQUAD_BASE_URL = config("SQUAD_BASE_URL")
