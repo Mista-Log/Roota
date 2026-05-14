@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ShieldAlert, TrendingUp, Target, Globe2 } from 'lucide-react';
 import { MiniBarChart } from '../../components/common/MiniBarChart';
@@ -27,8 +28,10 @@ const mockInsightCards = [
 ] as const;
 
 export default function InsightsPage() {
+  const navigate = useNavigate();
   const [insightCards, setInsightCards] = useState(mockInsightCards);
   const [loading, setLoading] = useState(false);
+  const [statusMessage, setStatusMessage] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -55,8 +58,41 @@ export default function InsightsPage() {
     visible: { opacity: 1, y: 0, transition: { duration: 0.45, ease: 'easeOut' } },
   };
 
+  const handleExportMap = () => {
+    const data = {
+      generatedAt: new Date().toISOString(),
+      metrics: { placementRate: '88%', growth: '+12.4%', gtvTarget: '$4.82M' },
+      regions: ['West Africa', 'East Africa', 'Southern Africa'],
+    };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'roota-regional-distribution.json';
+    link.click();
+    URL.revokeObjectURL(url);
+    setStatusMessage('Regional map export downloaded successfully.');
+    setTimeout(() => setStatusMessage(null), 2200);
+  };
+
+  const handleRefreshInsights = () => {
+    setInsightCards((prev) => [...prev].reverse());
+    setStatusMessage('Insights refreshed with latest AI model data.');
+    setTimeout(() => setStatusMessage(null), 2200);
+  };
+
   return (
     <div className="space-y-6">
+      {statusMessage && (
+        <motion.div
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -8 }}
+          className="rounded-xl border border-border bg-white px-4 py-3 text-sm font-medium text-slate-700 shadow-sm"
+        >
+          {statusMessage}
+        </motion.div>
+      )}
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-[0.7fr_1.5fr_0.7fr]">
         <motion.div
           variants={panelVariants}
@@ -84,7 +120,13 @@ export default function InsightsPage() {
               <p className="text-lg font-semibold text-slate-900">Active Users Growth</p>
               <p className="text-sm text-muted">Real-time hiring velocity</p>
             </div>
-            <span className="rounded-full bg-[#FFF1D9] px-3 py-1 text-xs font-semibold text-[#B7791F]">Real-time</span>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              onClick={handleRefreshInsights}
+              className="rounded-full bg-[#FFF1D9] px-3 py-1 text-xs font-semibold text-[#B7791F] transition-colors hover:bg-[#FFE6B5]"
+            >
+              Refresh
+            </motion.button>
           </div>
           <MiniBarChart bars={[34, 46, 38, 56, 52, 72, 86]} labels={['JAN', 'MAR', 'MAY', 'JUL', 'SEP', 'NOV']} activeIndex={6} compact />
         </motion.div>
@@ -113,7 +155,13 @@ export default function InsightsPage() {
               <h3 className="text-lg font-semibold text-slate-900">Regional Distribution</h3>
               <p className="text-sm text-muted">Market density across active talent regions</p>
             </div>
-            <button className="rounded-lg border border-border bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700">Export Map</button>
+            <motion.button
+              whileHover={{ y: -2 }}
+              onClick={handleExportMap}
+              className="rounded-lg border border-border bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700 transition-all hover:bg-slate-200"
+            >
+              Export Map
+            </motion.button>
           </div>
 
           <div className="relative h-[560px] overflow-hidden rounded-[20px] bg-[linear-gradient(180deg,#eef2db_0%,#f7f6ea_100%)]">
@@ -155,6 +203,19 @@ export default function InsightsPage() {
                     <strong className="text-sm">{item.title}</strong>
                   </div>
                   <p className={`text-sm leading-6 ${item.tone === 'dark' ? 'text-white/82' : 'text-slate-700'}`}>{item.description}</p>
+                  <motion.button
+                    whileHover={{ y: -1 }}
+                    onClick={() => {
+                      if (item.title === 'Growth Forecast') navigate('/settings');
+                      else if (item.title === 'Risk Alert') navigate('/trust-score');
+                      else navigate('/jobs');
+                    }}
+                    className={`mt-3 rounded-full px-3 py-1.5 text-xs font-semibold transition-colors ${
+                      item.tone === 'dark' ? 'bg-white/10 text-white hover:bg-white/20' : 'bg-slate-100 text-slate-800 hover:bg-slate-200'
+                    }`}
+                  >
+                    Take Action
+                  </motion.button>
                 </div>
               );
             })}

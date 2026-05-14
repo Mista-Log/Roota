@@ -28,7 +28,7 @@ export default function JobCard({
 
   const handleViewDetails = () => {
     if (id) {
-      navigate(`/jobs/${id}`);
+      navigate(`/worker/jobs/${id}`);
     }
   };
   return (

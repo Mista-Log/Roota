@@ -109,7 +109,7 @@ export default function WorkerDashboardPage() {
           description="See All"
           action={
             <button
-              onClick={() => navigate('/jobs')}
+                onClick={() => navigate('/worker/jobs')}
               className="text-sm font-medium text-accent transition-colors hover:text-accent/90"
             >
               See All →
