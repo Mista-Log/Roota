@@ -5,6 +5,7 @@ import { ArrowUpRight, AlertCircle, CheckCircle, Circle, Send, Wallet } from 'lu
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import AnimatedNumber from '../../components/common/AnimatedNumber';
 import FundsActionModal from '../../components/common/FundsActionModal';
+import { Banknote, ReceiptText, ShieldCheck } from 'lucide-react';
 
 interface Transaction {
   id: string;
@@ -33,6 +34,7 @@ const payrollData = [
 export default function EmployerWalletPage() {
   const navigate = useNavigate();
   const [transactions, setTransactions] = useState<Transaction[]>(mockTransactions);
+  const [financialSummary, setFinancialSummary] = useState<any[]>([]);
   const [animatedScore, setAnimatedScore] = useState(0);
   const [loading, setLoading] = useState(false);
   const [activeFundsModal, setActiveFundsModal] = useState<'send' | 'withdraw' | null>(null);
@@ -46,6 +48,16 @@ export default function EmployerWalletPage() {
         if (response.ok) {
           const data = await response.json();
           setTransactions(Array.isArray(data.results) ? data.results : data);
+        }
+        // finance metrics
+        try {
+          const metricsRes = await fetch(`${apiUrl}/api/employer/finances/metrics/`);
+          if (metricsRes.ok) {
+            const metricsData = await metricsRes.json();
+            setFinancialSummary(Array.isArray(metricsData.results) ? metricsData.results : metricsData);
+          }
+        } catch (err) {
+          // ignore
         }
       } catch (error) {
         console.error('Error fetching employer wallet data:', error);
@@ -92,6 +104,27 @@ export default function EmployerWalletPage() {
 
   return (
     <div className="space-y-6">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+        {(financialSummary && financialSummary.length > 0 ? financialSummary : [
+          { label: 'Available Budget', value: 28420.5, meta: 'Available for payroll', icon: Banknote },
+          { label: 'Payroll Reserve', value: 18000.0, meta: 'Reserved for next cycle', icon: ReceiptText },
+          { label: 'Open Invoices', value: 12800.0, meta: 'Awaiting payment', icon: ShieldCheck },
+        ]).map((item: any, index: number) => {
+          const Icon = item.icon || Banknote;
+          return (
+            <motion.div key={item.label} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.06 }} className="rounded-2xl border border-border bg-card px-6 py-5 shadow-sm">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-muted">{item.label}</p>
+                  <p className="mt-3 text-3xl font-bold text-slate-900"><AnimatedNumber value={item.value} duration={1200} currency="USD" /></p>
+                  <p className="mt-2 text-sm text-muted">{item.meta}</p>
+                </div>
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-slate-100 text-primary-dark"><Icon size={20} /></div>
+              </div>
+            </motion.div>
+          );
+        })}
+      </div>
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1.45fr_0.9fr]">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="rounded-[28px] bg-gradient-to-br from-[#0b5d4b] to-[#12493d] px-8 py-8 text-white shadow-lg">
           <div className="flex items-start justify-between gap-6">

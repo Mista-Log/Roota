@@ -104,6 +104,28 @@ export default function WorkerWalletPage() {
 
   return (
     <div className="space-y-6">
+      {/* Financial Summary Cards (merged from Finances) */}
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+        {(financialSummary && financialSummary.length > 0 ? financialSummary : [
+          { label: 'Wallet Balance', value: 24580.45, meta: 'Available for withdrawal', icon: Banknote },
+          { label: 'Pending Payouts', value: 1200.0, meta: 'Processing: 2', icon: ReceiptText },
+          { label: 'Total Tax Paid', value: 1120.0, meta: 'YTD compliance active', icon: ShieldCheck },
+        ]).map((item: any, index: number) => {
+          const Icon = item.icon || Banknote;
+          return (
+            <motion.div key={item.label} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.06 }} className="rounded-2xl border border-border bg-card px-6 py-5 shadow-sm">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-muted">{item.label}</p>
+                  <p className="mt-3 text-3xl font-bold text-slate-900"><AnimatedNumber value={item.value} duration={1200} currency="USD" /></p>
+                  <p className="mt-2 text-sm text-muted">{item.meta}</p>
+                </div>
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-slate-100 text-primary-dark"><Icon size={20} /></div>
+              </div>
+            </motion.div>
+          );
+        })}
+      </div>
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1.45fr_0.9fr]">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="rounded-[28px] bg-gradient-to-br from-[#F5A623] to-[#E89617] px-8 py-8 text-white shadow-lg">
           <div className="flex items-start justify-between gap-6">
