@@ -123,7 +123,10 @@ class EmployerProfile(models.Model):
     company_name = models.CharField(max_length=255)
     industry = models.CharField(max_length=150, blank=True)
     website = models.URLField(blank=True)
+
     location = models.CharField(max_length=255, blank=True)
+
+    bio = models.TextField(blank=True)
 
     def __str__(self):
         return f"Employer: {self.company_name}"

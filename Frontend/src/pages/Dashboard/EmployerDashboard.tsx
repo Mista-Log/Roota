@@ -105,6 +105,8 @@ export default function EmployerDashboard() {
         body: JSON.stringify(jobData),
       });
 
+      console.log(jobData);
+
       if (response.ok) {
         console.log('Job created successfully');
       }

@@ -1,16 +1,16 @@
 from django.urls import path
 
 from .views import (
+    GetEmployerProfileView,
     GoogleLoginAPIView,
     MyWorkerProfileView,
     RegisterView,
     LoginView,
     MeView,
+    UpdateEmployerProfileView,
     UpdateWorkerProfileView,
-    WorkerDashboardView,
-    EmployerDashboardView,
-    AdminDashboardView,
-    
+    WorkerListView,
+   
 )
 
 urlpatterns = [
@@ -19,11 +19,11 @@ urlpatterns = [
     path("me/", MeView.as_view()),
     path("workers/me/", MyWorkerProfileView.as_view()),
     path("workers/me/update/", UpdateWorkerProfileView.as_view(), name="update-worker-profile"),
+    path("workers/", WorkerListView.as_view(), name="workers-list"),
+
+    path("employer/profile/", GetEmployerProfileView.as_view(), name="get-employer-profile"),
+    path("employer/profile/update/", UpdateEmployerProfileView.as_view(), name="update-employer-profile"),
 
     path("google/", GoogleLoginAPIView.as_view()),
 
-    # Role Based Routes
-    path("worker/dashboard/", WorkerDashboardView.as_view()),
-    path("employer/dashboard/", EmployerDashboardView.as_view()),
-    path("admin/dashboard/", AdminDashboardView.as_view()),
 ]

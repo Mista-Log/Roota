@@ -1,8 +1,6 @@
 from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
 from .models import User, WorkerProfile
-
-
 from .models import (
     User,
     WorkerProfile,
@@ -184,3 +182,76 @@ class WorkerProfileUpdateSerializer(serializers.ModelSerializer):
         instance.save()
 
         return instance
+
+
+class EmployerProfileSerializer(serializers.ModelSerializer):
+    full_name = serializers.CharField(source="user.full_name", required=False)
+    email = serializers.EmailField(source="user.email", read_only=True)
+    phone = serializers.CharField(source="user.phone", required=False)
+
+    class Meta:
+        model = EmployerProfile
+        fields = [
+            "full_name",
+            "email",
+            "phone",
+            "location",
+            "bio",
+            "company_name",
+            "industry",
+            "website",
+        ]
+
+    def update(self, instance, validated_data):
+        user_data = validated_data.pop("user", {})
+
+        user = instance.user
+
+        if "full_name" in user_data:
+            user.full_name = user_data["full_name"]
+
+        if "phone" in user_data:
+            user.phone = user_data["phone"]
+
+        user.save()
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
+        instance.save()
+
+        return instance
+
+
+from rest_framework import serializers
+from .models import User, WorkerProfile
+
+
+class WorkersProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WorkerProfile
+        fields = [
+            "title",
+            "location",
+            "bio",
+            "skills",
+            "hourly_rate",
+            "availability",
+            "is_verified",
+            "verification_badge",
+        ]
+
+
+class WorkerSerializer(serializers.ModelSerializer):
+    profile = WorkersProfileSerializer(source="workerprofile", read_only=True)
+
+    class Meta:
+        model = User
+        fields = [
+            "id",
+            "email",
+            "full_name",
+            "phone",
+            "profile_picture",
+            "profile",
+        ]
