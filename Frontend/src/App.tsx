@@ -10,9 +10,12 @@ import RoleSelectionPage from './pages/Landing/RoleSelectionPage';
 import AuthPage from './pages/Auth/AuthPage';
 import WorkerDashboardPage from './pages/Dashboard/WorkerDashboard';
 import EmployerDashboardPage from './pages/Dashboard/EmployerDashboard';
-import MarketplacePage from './pages/Marketplace/MarketplacePage';
-import FinancesPage from './pages/Dashboard/FinancesPage';
-import InsightsPage from './pages/Dashboard/InsightsPage';
+import WorkerMarketplacePage from './pages/worker/MarketplacePage';
+import EmployerMarketplacePage from './pages/employer/MarketplacePage';
+import WorkerFinancesPage from './pages/worker/FinancesPage';
+import EmployerFinancesPage from './pages/employer/FinancesPage';
+import WorkerInsightsPage from './pages/worker/InsightsPage';
+import EmployerInsightsPage from './pages/employer/InsightsPage';
 import JobsPage from './pages/Jobs/JobsPage';
 import JobDetailsPage from './pages/Jobs/JobDetailsPage';
 import EmployerJobsPage from './pages/Jobs/EmployerJobsPage';
@@ -61,6 +64,36 @@ function App() {
           </ProtectedRoute>
         } 
       />
+      <Route 
+        path="/worker/marketplace" 
+        element={
+          <ProtectedRoute allowedRoles={['worker']}>
+            <WorkerShell>
+              <WorkerMarketplacePage />
+            </WorkerShell>
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/worker/finances" 
+        element={
+          <ProtectedRoute allowedRoles={['worker']}>
+            <WorkerShell>
+              <WorkerFinancesPage />
+            </WorkerShell>
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/worker/insights" 
+        element={
+          <ProtectedRoute allowedRoles={['worker']}>
+            <WorkerShell>
+              <WorkerInsightsPage />
+            </WorkerShell>
+          </ProtectedRoute>
+        } 
+      />
 
       {/* Employer Routes */}
       <Route 
@@ -93,6 +126,36 @@ function App() {
           </ProtectedRoute>
         } 
       />
+      <Route 
+        path="/employer/marketplace" 
+        element={
+          <ProtectedRoute allowedRoles={['employer']}>
+            <EmployerShell>
+              <EmployerMarketplacePage />
+            </EmployerShell>
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/employer/finances" 
+        element={
+          <ProtectedRoute allowedRoles={['employer']}>
+            <EmployerShell>
+              <EmployerFinancesPage />
+            </EmployerShell>
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/employer/insights" 
+        element={
+          <ProtectedRoute allowedRoles={['employer']}>
+            <EmployerShell>
+              <EmployerInsightsPage />
+            </EmployerShell>
+          </ProtectedRoute>
+        } 
+      />
 
       {/* Legacy redirects for old routes */}
       <Route path="/dashboard" element={<Navigate to="/worker/dashboard" replace />} />
@@ -101,37 +164,6 @@ function App() {
       <Route path="/jobs" element={<Navigate to="/worker/jobs" replace />} />
       <Route path="/jobs/:jobId" element={<Navigate to="/worker/jobs/:jobId" replace />} />
 
-      {/* Shared protected pages */}
-      <Route
-        path="/marketplace"
-        element={
-          <ProtectedRoute>
-            <AppShell>
-              <MarketplacePage />
-            </AppShell>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/finances"
-        element={
-          <ProtectedRoute>
-            <AppShell>
-              <FinancesPage />
-            </AppShell>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/insights"
-        element={
-          <ProtectedRoute>
-            <AppShell>
-              <InsightsPage />
-            </AppShell>
-          </ProtectedRoute>
-        }
-      />
       <Route
         path="/wallet"
         element={

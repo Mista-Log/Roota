@@ -8,6 +8,9 @@ export default function WorkerSidebar() {
   const navItems = [
     { path: '/worker/dashboard', label: 'Overview', icon: LayoutGrid },
     { path: '/worker/jobs', label: 'Jobs', icon: Briefcase },
+    { path: '/worker/marketplace', label: 'Marketplace', icon: Briefcase },
+    { path: '/worker/finances', label: 'Finances', icon: Wallet },
+    { path: '/worker/insights', label: 'Insights', icon: ShieldCheck },
     { path: '/wallet', label: 'Wallet', icon: Wallet },
     { path: '/trust-score', label: 'AI Trust Score', icon: ShieldCheck },
     { path: '/settings', label: 'Settings', icon: Settings },

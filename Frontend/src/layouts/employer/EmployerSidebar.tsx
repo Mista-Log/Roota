@@ -8,6 +8,9 @@ export default function EmployerSidebar() {
   const navItems = [
     { path: '/employer/dashboard', label: 'Overview', icon: LayoutGrid },
     { path: '/employer/jobs', label: 'Jobs', icon: Briefcase },
+    { path: '/employer/marketplace', label: 'Marketplace', icon: Briefcase },
+    { path: '/employer/finances', label: 'Finances', icon: Wallet },
+    { path: '/employer/insights', label: 'Insights', icon: ShieldCheck },
     { path: '/wallet', label: 'Wallet', icon: Wallet },
     { path: '/trust-score', label: 'AI Trust Score', icon: ShieldCheck },
     { path: '/settings', label: 'Settings', icon: Settings },

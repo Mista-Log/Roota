@@ -57,7 +57,7 @@ export function MarketingHeader() {
             Login
           </Link>
 
-          <Link to="/marketplace" className="px-5 py-2.5 bg-primary-dark text-white text-sm font-semibold rounded-full hover:opacity-90 transition-opacity">
+          <Link to="/employer/marketplace" className="px-5 py-2.5 bg-primary-dark text-white text-sm font-semibold rounded-full hover:opacity-90 transition-opacity">
             Get Started
           </Link>
         </motion.div>
