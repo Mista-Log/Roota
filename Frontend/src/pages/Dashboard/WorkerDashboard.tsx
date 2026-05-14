@@ -130,7 +130,7 @@ export default function WorkerDashboardPage() {
             title="Recent Earnings"
             subtitle="Payroll history for the last 6 months"
             activeMonth="Thu"
-            onViewAll={() => navigate('/wallet')}
+            onViewAll={() => navigate('/worker/wallet')}
           />
         </Section>
       </div>

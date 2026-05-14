@@ -12,7 +12,7 @@ export function MarketingFooter({ minimal = false, auth = false }: MarketingFoot
             <div className="space-y-2 md:text-left text-center">
               <h3 className="text-lg font-bold text-slate-900">Roota</h3>
               <p className="text-sm text-slate-600">
-                {auth ? '© 2024 Roota. Built for the African Future.' : 'Building Africa\'s professional future with AI-driven trust.'}
+                {auth ? '© 2026 Roota. Built for the African Future.' : 'Building Africa\'s professional future with AI-driven trust.'}
               </p>
             </div>
             <nav className="flex flex-wrap justify-center md:justify-end gap-6">
@@ -126,7 +126,7 @@ export function MarketingFooter({ minimal = false, auth = false }: MarketingFoot
         </div>
 
         <div className="border-t border-slate-200 pt-8">
-          <p className="text-sm text-slate-600 text-center">© 2024 Roota. Built for the African Future.</p>
+          <p className="text-sm text-slate-600 text-center">© 2026 Roota. Built for the African Future.</p>
         </div>
       </div>
     </footer>

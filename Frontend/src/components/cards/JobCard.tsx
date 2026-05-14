@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { useAuth } from '../../context/AuthContext';
 import { ArrowRight, Building2 } from 'lucide-react';
 
 interface JobCardProps {
@@ -25,10 +26,12 @@ export default function JobCard({
   onApply,
 }: JobCardProps) {
   const navigate = useNavigate();
+  const { userRole } = useAuth();
 
   const handleViewDetails = () => {
     if (id) {
-      navigate(`/worker/jobs/${id}`);
+      const base = userRole === 'employer' ? '/employer' : '/worker';
+      navigate(`${base}/jobs/${id}`);
     }
   };
   return (

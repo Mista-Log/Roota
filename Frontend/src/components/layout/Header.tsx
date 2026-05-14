@@ -3,8 +3,8 @@ import { Link, NavLink } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
 const tabs = [
-  { to: '/worker', label: 'Dashboard', tab: 'dashboard' },
-  { to: '/marketplace', label: 'Jobs', tab: 'jobs' },
+  { to: '/worker/dashboard', label: 'Dashboard', tab: 'dashboard' },
+  { to: '/worker/jobs', label: 'Jobs', tab: 'jobs' },
   { to: '/finances', label: 'Finances', tab: 'finances' },
   { to: '/insights', label: 'Insights', tab: 'insights' },
 ] as const;
@@ -57,7 +57,7 @@ export function MarketingHeader() {
             Login
           </Link>
 
-          <Link to="/marketplace" className="px-5 py-2.5 bg-primary-dark text-white text-sm font-semibold rounded-full hover:opacity-90 transition-opacity">
+          <Link to="/employer/marketplace" className="px-5 py-2.5 bg-primary-dark text-white text-sm font-semibold rounded-full hover:opacity-90 transition-opacity">
             Get Started
           </Link>
         </motion.div>

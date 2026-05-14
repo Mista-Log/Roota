@@ -91,7 +91,7 @@ export default function LandingPage() {
                   <Link to="/role" className="inline-flex items-center justify-center px-7 py-3 bg-[#42BAA7] text-white font-semibold rounded-full hover:opacity-90 transition-opacity shadow-lg">
                     Join as Worker
                   </Link>
-                  <Link to="/marketplace" className="inline-flex items-center justify-center px-7 py-3 border-2 border-white text-white font-semibold rounded-full hover:bg-white/10 transition-colors">
+                  <Link to="/employer/marketplace" className="inline-flex items-center justify-center px-7 py-3 border-2 border-white text-white font-semibold rounded-full hover:bg-white/10 transition-colors">
                     Hire Talent
                   </Link>
                 </motion.div>
@@ -268,7 +268,7 @@ export default function LandingPage() {
               </Link>
             </motion.div>
             <motion.div variants={itemVariants}>
-              <Link to="/marketplace" className="inline-flex items-center justify-center px-7 py-3 border-2 border-slate-300 text-slate-900 font-semibold rounded-full hover:bg-slate-50 transition-colors">
+              <Link to="/employer/marketplace" className="inline-flex items-center justify-center px-7 py-3 border-2 border-slate-300 text-slate-900 font-semibold rounded-full hover:bg-slate-50 transition-colors">
                 Hire Talent
               </Link>
             </motion.div>

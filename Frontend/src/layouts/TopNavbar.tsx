@@ -16,14 +16,20 @@ export default function TopNavbar() {
   const { userRole } = useAuth();
 
   const currentRole = userRole === 'employer' ? 'employer' : 'worker';
-  const dashboardPath = currentRole === 'employer' ? '/employer' : '/dashboard';
+  const dashboardPath = currentRole === 'employer' ? '/employer/dashboard' : '/worker/dashboard';
+  const jobsPath = currentRole === 'employer' ? '/employer/jobs' : '/worker/jobs';
 
-  const topNavItems = [{ path: dashboardPath, label: 'Dashboard' }, ...sharedNavItems];
+  const topNavItems = [
+    { path: dashboardPath, label: 'Dashboard' },
+    { path: jobsPath, label: 'Jobs' },
+    { path: '/finances', label: 'Finances' },
+    { path: '/insights', label: 'Insights' },
+  ];
 
   const isNavItemActive = (path: string) => location.pathname.startsWith(path);
 
   const switchRole = () => {
-    navigate(currentRole === 'worker' ? '/employer' : '/dashboard');
+    navigate(currentRole === 'worker' ? '/employer/dashboard' : '/worker/dashboard');
   };
 
   return (
@@ -37,7 +43,7 @@ export default function TopNavbar() {
       <div className="flex max-w-full items-center justify-between px-8 py-4">
         {/* Left navigation tabs */}
         <div className="flex items-center gap-6">
-          {location.pathname.startsWith('/employer') && (
+          {location.pathname.startsWith('/employer/dashboard') && (
             <div className="hidden xl:flex items-center gap-3 rounded-full border border-border bg-[#f7f8f6] px-4 py-2.5">
               <Search size={16} className="text-muted" />
               <input
