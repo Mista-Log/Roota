@@ -11,15 +11,14 @@ import WorkerDashboardPage from './pages/Dashboard/WorkerDashboard';
 import EmployerDashboardPage from './pages/Dashboard/EmployerDashboard';
 import WorkerMarketplacePage from './pages/worker/MarketplacePage';
 import EmployerMarketplacePage from './pages/employer/MarketplacePage';
-import WorkerFinancesPage from './pages/worker/FinancesPage';
-import EmployerFinancesPage from './pages/employer/FinancesPage';
 import WorkerInsightsPage from './pages/worker/InsightsPage';
 import EmployerInsightsPage from './pages/employer/InsightsPage';
 import JobsPage from './pages/Jobs/JobsPage';
-import JobDetailsPage from './pages/Jobs/JobDetailsPage';
+// shared finances and generic job details removed - using role-specific pages
 import EmployerJobsPage from './pages/Jobs/EmployerJobsPage';
 import WorkerJobDetailsPage from './pages/worker/JobDetailsPage';
 import EmployerJobDetailsPage from './pages/employer/JobDetailsPage';
+import EmployerTalentDetailsPage from './pages/employer/TalentDetailsPage';
 import WorkerWalletPage from './pages/worker/WalletPage';
 import EmployerWalletPage from './pages/employer/WalletPage';
 import WorkerTransactionsPage from './pages/worker/TransactionsPage';
@@ -80,16 +79,7 @@ function App() {
           </ProtectedRoute>
         } 
       />
-      <Route 
-        path="/worker/finances" 
-        element={
-          <ProtectedRoute allowedRoles={['worker']}>
-            <WorkerShell>
-              <WorkerFinancesPage />
-            </WorkerShell>
-          </ProtectedRoute>
-        } 
-      />
+      <Route path="/worker/finances" element={<Navigate to="/worker/wallet" replace />} />
       <Route 
         path="/worker/insights" 
         element={
@@ -193,15 +183,16 @@ function App() {
         } 
       />
       <Route 
-        path="/employer/finances" 
+        path="/employer/talent/:talentId" 
         element={
           <ProtectedRoute allowedRoles={['employer']}>
             <EmployerShell>
-              <EmployerFinancesPage />
+              <EmployerTalentDetailsPage />
             </EmployerShell>
           </ProtectedRoute>
         } 
       />
+      <Route path="/employer/finances" element={<Navigate to="/employer/wallet" replace />} />
       <Route 
         path="/employer/insights" 
         element={
