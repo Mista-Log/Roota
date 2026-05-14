@@ -18,6 +18,8 @@ import EmployerInsightsPage from './pages/employer/InsightsPage';
 import JobsPage from './pages/Jobs/JobsPage';
 import JobDetailsPage from './pages/Jobs/JobDetailsPage';
 import EmployerJobsPage from './pages/Jobs/EmployerJobsPage';
+import WorkerJobDetailsPage from './pages/worker/JobDetailsPage';
+import EmployerJobDetailsPage from './pages/employer/JobDetailsPage';
 import WorkerWalletPage from './pages/worker/WalletPage';
 import EmployerWalletPage from './pages/employer/WalletPage';
 import WorkerTransactionsPage from './pages/worker/TransactionsPage';
@@ -63,7 +65,7 @@ function App() {
         element={
           <ProtectedRoute allowedRoles={['worker']}>
             <WorkerShell>
-              <JobDetailsPage />
+              <WorkerJobDetailsPage />
             </WorkerShell>
           </ProtectedRoute>
         } 
@@ -175,7 +177,7 @@ function App() {
         element={
           <ProtectedRoute allowedRoles={['employer']}>
             <EmployerShell>
-              <JobDetailsPage />
+              <EmployerJobDetailsPage />
             </EmployerShell>
           </ProtectedRoute>
         } 

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowUpRight, AlertCircle, CheckCircle, Circle, Send, Wallet } from 'lucide-react';
+import { ArrowUpRight, AlertCircle, CheckCircle, Circle, Send, Wallet, Banknote, ReceiptText, ShieldCheck, CreditCard } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import AnimatedNumber from '../../components/common/AnimatedNumber';
 import FundsActionModal from '../../components/common/FundsActionModal';
@@ -33,6 +33,7 @@ const earningsData = [
 export default function WorkerWalletPage() {
   const navigate = useNavigate();
   const [transactions, setTransactions] = useState<Transaction[]>(mockTransactions);
+  const [financialSummary, setFinancialSummary] = useState<any[]>([]);
   const [animatedScore, setAnimatedScore] = useState(0);
   const [loading, setLoading] = useState(false);
   const [activeFundsModal, setActiveFundsModal] = useState<'send' | 'withdraw' | null>(null);
@@ -42,10 +43,21 @@ export default function WorkerWalletPage() {
       setLoading(true);
       try {
         const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+        // wallet transactions
         const response = await fetch(`${apiUrl}/api/worker/wallet/transactions/`);
         if (response.ok) {
           const data = await response.json();
           setTransactions(Array.isArray(data.results) ? data.results : data);
+        }
+        // finance summary / metrics
+        try {
+          const metricsRes = await fetch(`${apiUrl}/api/worker/finances/metrics/`);
+          if (metricsRes.ok) {
+            const metricsData = await metricsRes.json();
+            setFinancialSummary(Array.isArray(metricsData.results) ? metricsData.results : metricsData);
+          }
+        } catch (err) {
+          // ignore
         }
       } catch (error) {
         console.error('Error fetching worker wallet data:', error);
