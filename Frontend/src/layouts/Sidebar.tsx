@@ -7,11 +7,18 @@ export default function Sidebar() {
   const location = useLocation();
   const { userRole } = useAuth();
 
-  const homePath = userRole === 'employer' ? '/employer' : '/dashboard';
+  const homePath = userRole === 'employer' ? '/employer/dashboard' : '/worker/dashboard';
 
-  const navItems = [
-    { path: homePath, label: 'Overview', icon: LayoutGrid },
-    { path: '/marketplace', label: 'Marketplace', icon: Briefcase },
+  const navItems = userRole === 'employer' ? [
+    { path: '/employer/dashboard', label: 'Overview', icon: LayoutGrid },
+    { path: '/employer/jobs', label: 'Jobs', icon: Briefcase },
+    { path: '/wallet', label: 'Wallet', icon: Wallet },
+    { path: '/trust-score', label: 'AI Trust Score', icon: ShieldCheck },
+    { path: '/settings', label: 'Settings', icon: Settings },
+    { path: '/support', label: 'Support', icon: LifeBuoy },
+  ] : [
+    { path: '/worker/dashboard', label: 'Overview', icon: LayoutGrid },
+    { path: '/worker/jobs', label: 'Jobs', icon: Briefcase },
     { path: '/wallet', label: 'Wallet', icon: Wallet },
     { path: '/trust-score', label: 'AI Trust Score', icon: ShieldCheck },
     { path: '/settings', label: 'Settings', icon: Settings },

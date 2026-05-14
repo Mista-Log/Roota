@@ -3,8 +3,8 @@ import { Link, NavLink } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
 const tabs = [
-  { to: '/worker', label: 'Dashboard', tab: 'dashboard' },
-  { to: '/marketplace', label: 'Jobs', tab: 'jobs' },
+  { to: '/worker/dashboard', label: 'Dashboard', tab: 'dashboard' },
+  { to: '/worker/jobs', label: 'Jobs', tab: 'jobs' },
   { to: '/finances', label: 'Finances', tab: 'finances' },
   { to: '/insights', label: 'Insights', tab: 'insights' },
 ] as const;

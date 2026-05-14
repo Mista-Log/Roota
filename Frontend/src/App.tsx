@@ -1,4 +1,3 @@
-import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { ProtectedRoute } from './components/common/ProtectedRoute';
 import AppShell from './layouts/AppShell';
@@ -7,13 +6,14 @@ import AppShell from './layouts/AppShell';
 import LandingPage from './pages/Landing/LandingPage';
 import RoleSelectionPage from './pages/Landing/RoleSelectionPage';
 import AuthPage from './pages/Auth/AuthPage';
-import MarketplacePage from './pages/Marketplace/MarketplacePage';
 import WorkerDashboardPage from './pages/Dashboard/WorkerDashboard';
 import EmployerDashboardPage from './pages/Dashboard/EmployerDashboard';
+import MarketplacePage from './pages/Marketplace/MarketplacePage';
 import FinancesPage from './pages/Dashboard/FinancesPage';
 import InsightsPage from './pages/Dashboard/InsightsPage';
 import JobsPage from './pages/Jobs/JobsPage';
 import JobDetailsPage from './pages/Jobs/JobDetailsPage';
+import EmployerJobsPage from './pages/Jobs/EmployerJobsPage';
 import WalletPage from './pages/Wallet/WalletPage';
 import TransactionsPage from './pages/Wallet/TransactionsPage';
 import TrustScorePage from './pages/TrustScore/TrustScorePage';
@@ -28,11 +28,11 @@ function App() {
       <Route path="/role" element={<RoleSelectionPage />} />
       <Route path="/auth" element={<AuthPage />} />
       
-      {/* Protected Routes with AppShell */}
+      {/* Worker Routes */}
       <Route 
-        path="/dashboard" 
+        path="/worker/dashboard" 
         element={
-          <ProtectedRoute>
+          <ProtectedRoute allowedRoles={['worker']}>
             <AppShell>
               <WorkerDashboardPage />
             </AppShell>
@@ -40,9 +40,9 @@ function App() {
         } 
       />
       <Route 
-        path="/jobs" 
+        path="/worker/jobs" 
         element={
-          <ProtectedRoute>
+          <ProtectedRoute allowedRoles={['worker']}>
             <AppShell>
               <JobsPage />
             </AppShell>
@@ -50,97 +50,19 @@ function App() {
         } 
       />
       <Route 
-        path="/jobs/:jobId" 
+        path="/worker/jobs/:jobId" 
         element={
-          <ProtectedRoute>
+          <ProtectedRoute allowedRoles={['worker']}>
             <AppShell>
               <JobDetailsPage />
             </AppShell>
           </ProtectedRoute>
         } 
       />
+
+      {/* Employer Routes */}
       <Route 
-        path="/marketplace" 
-        element={
-          <ProtectedRoute>
-            <AppShell>
-              <MarketplacePage />
-            </AppShell>
-          </ProtectedRoute>
-        } 
-      />
-      <Route 
-        path="/finances" 
-        element={
-          <ProtectedRoute>
-            <AppShell>
-              <FinancesPage />
-            </AppShell>
-          </ProtectedRoute>
-        } 
-      />
-      <Route 
-        path="/insights" 
-        element={
-          <ProtectedRoute>
-            <AppShell>
-              <InsightsPage />
-            </AppShell>
-          </ProtectedRoute>
-        } 
-      />
-      <Route 
-        path="/wallet" 
-        element={
-          <ProtectedRoute>
-            <AppShell>
-              <WalletPage />
-            </AppShell>
-          </ProtectedRoute>
-        } 
-      />
-      <Route 
-        path="/transactions" 
-        element={
-          <ProtectedRoute>
-            <AppShell>
-              <TransactionsPage />
-            </AppShell>
-          </ProtectedRoute>
-        } 
-      />
-      <Route 
-        path="/trust-score" 
-        element={
-          <ProtectedRoute>
-            <AppShell>
-              <TrustScorePage />
-            </AppShell>
-          </ProtectedRoute>
-        } 
-      />
-      <Route 
-        path="/settings" 
-        element={
-          <ProtectedRoute>
-            <AppShell>
-              <SettingsPage />
-            </AppShell>
-          </ProtectedRoute>
-        } 
-      />
-      <Route 
-        path="/support" 
-        element={
-          <ProtectedRoute>
-            <AppShell>
-              <SupportPage />
-            </AppShell>
-          </ProtectedRoute>
-        } 
-      />
-      <Route 
-        path="/employer" 
+        path="/employer/dashboard" 
         element={
           <ProtectedRoute allowedRoles={['employer']}>
             <AppShell>
@@ -150,14 +72,113 @@ function App() {
         } 
       />
       <Route 
-        path="/worker" 
+        path="/employer/jobs" 
         element={
-          <ProtectedRoute allowedRoles={['worker']}>
+          <ProtectedRoute allowedRoles={['employer']}>
             <AppShell>
-              <WorkerDashboardPage />
+              <EmployerJobsPage />
             </AppShell>
           </ProtectedRoute>
         } 
+      />
+      <Route 
+        path="/employer/jobs/:jobId" 
+        element={
+          <ProtectedRoute allowedRoles={['employer']}>
+            <AppShell>
+              <JobDetailsPage />
+            </AppShell>
+          </ProtectedRoute>
+        } 
+      />
+
+      {/* Legacy redirects for old routes */}
+      <Route path="/dashboard" element={<Navigate to="/worker/dashboard" replace />} />
+      <Route path="/worker" element={<Navigate to="/worker/dashboard" replace />} />
+      <Route path="/employer" element={<Navigate to="/employer/dashboard" replace />} />
+      <Route path="/jobs" element={<Navigate to="/worker/jobs" replace />} />
+      <Route path="/jobs/:jobId" element={<Navigate to="/worker/jobs/:jobId" replace />} />
+
+      {/* Shared protected pages */}
+      <Route
+        path="/marketplace"
+        element={
+          <ProtectedRoute>
+            <AppShell>
+              <MarketplacePage />
+            </AppShell>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/finances"
+        element={
+          <ProtectedRoute>
+            <AppShell>
+              <FinancesPage />
+            </AppShell>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/insights"
+        element={
+          <ProtectedRoute>
+            <AppShell>
+              <InsightsPage />
+            </AppShell>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/wallet"
+        element={
+          <ProtectedRoute>
+            <AppShell>
+              <WalletPage />
+            </AppShell>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/transactions"
+        element={
+          <ProtectedRoute>
+            <AppShell>
+              <TransactionsPage />
+            </AppShell>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/trust-score"
+        element={
+          <ProtectedRoute>
+            <AppShell>
+              <TrustScorePage />
+            </AppShell>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/settings"
+        element={
+          <ProtectedRoute>
+            <AppShell>
+              <SettingsPage />
+            </AppShell>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/support"
+        element={
+          <ProtectedRoute>
+            <AppShell>
+              <SupportPage />
+            </AppShell>
+          </ProtectedRoute>
+        }
       />
 
       {/* Fallback */}
