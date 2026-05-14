@@ -44,6 +44,8 @@ INSTALLED_APPS = [
 
 
     "accounts",
+    "jobs",
+    "wallets",
 
     "corsheaders",
     "rest_framework",

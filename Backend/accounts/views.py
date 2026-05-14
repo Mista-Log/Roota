@@ -10,6 +10,16 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from .models import User, WorkerProfile, EmployerProfile
 from django.contrib.auth import get_user_model
 
+from drf_spectacular.utils import extend_schema, OpenApiResponse
+from rest_framework.permissions import IsAuthenticated
+
+from .serializers import (
+    WorkerProfileSerializer,
+    WorkerProfileUpdateSerializer,
+)
+
+
+
 User = get_user_model()
 
 
@@ -253,3 +263,83 @@ class GoogleLoginAPIView(APIView):
                 {"detail": "Invalid Google token"},
                 status=status.HTTP_400_BAD_REQUEST
             )
+        
+
+@extend_schema(
+    tags=["Workers"],
+    summary="Get My Worker Profile",
+    description="Returns the authenticated worker's profile. No parameters required.",
+    responses={
+        200: WorkerProfileSerializer,
+        404: OpenApiResponse(description="Worker profile not found")
+    }
+)
+class MyWorkerProfileView(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        try:
+            profile = WorkerProfile.objects.select_related("user").get(
+                user=request.user
+            )
+        except WorkerProfile.DoesNotExist:
+            return Response(
+                {"error": "Worker profile not found"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        serializer = WorkerProfileSerializer(
+            profile,
+            context={"request": request}
+        )
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@extend_schema(
+    tags=["Workers"],
+    summary="Update My Worker Profile",
+    description="Update authenticated worker profile.",
+    request=WorkerProfileUpdateSerializer,
+    responses={
+        200: WorkerProfileSerializer,
+        404: OpenApiResponse(description="Worker profile not found"),
+    }
+)
+class UpdateWorkerProfileView(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def patch(self, request):
+
+        try:
+            profile = WorkerProfile.objects.select_related("user").get(
+                user=request.user
+            )
+
+        except WorkerProfile.DoesNotExist:
+            return Response(
+                {"error": "Worker profile not found"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        serializer = WorkerProfileUpdateSerializer(
+            profile,
+            data=request.data,
+            partial=True
+        )
+
+        serializer.is_valid(raise_exception=True)
+
+        serializer.save()
+
+        return Response(
+            {
+                "message": "Profile updated successfully",
+                "profile": WorkerProfileSerializer(
+                    profile,
+                    context={"request": request}
+                ).data
+            },
+            status=status.HTTP_200_OK
+        )

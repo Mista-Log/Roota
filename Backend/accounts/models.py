@@ -41,6 +41,8 @@ class CustomUserManager(BaseUserManager):
 # =========================
 # USER MODEL
 # =========================
+# models.py
+
 class User(AbstractBaseUser, PermissionsMixin):
 
     class Role(models.TextChoices):
@@ -51,7 +53,14 @@ class User(AbstractBaseUser, PermissionsMixin):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
     email = models.EmailField(unique=True)
+
     full_name = models.CharField(max_length=255, blank=True, null=True)
+
+    phone = models.CharField(
+        max_length=20,
+        blank=True,
+        null=True
+    )
 
     role = models.CharField(
         max_length=20,
@@ -75,17 +84,35 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     objects = CustomUserManager()
 
-    def __str__(self):
-        return f"{self.full_name} ({self.email}) - {self.role}"
-
 
 class WorkerProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
-    skills = models.JSONField(default=list)
+    # Core profile info (for UI hero)
+    title = models.CharField(max_length=255, blank=True)  # "Senior AI Data Strategist"
+    location = models.CharField(max_length=255, blank=True)  # "Lagos, Nigeria"
+
     bio = models.TextField(blank=True)
-    hourly_rate = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+
+    skills = models.JSONField(default=list)
+
+    hourly_rate = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        null=True,
+        blank=True
+    )
+
     availability = models.CharField(max_length=100, blank=True)
+
+    # Verification system (important for your badge UI)
+    is_verified = models.BooleanField(default=False)
+
+    verification_badge = models.CharField(
+        max_length=255,
+        blank=True,
+        default="Verified Economic Identity"
+    )
 
     def __str__(self):
         return f"Worker: {self.user.full_name}"
