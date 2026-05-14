@@ -11,10 +11,10 @@ export default function EmployerSidebar() {
     { path: '/employer/marketplace', label: 'Marketplace', icon: Briefcase },
     { path: '/employer/finances', label: 'Finances', icon: Wallet },
     { path: '/employer/insights', label: 'Insights', icon: ShieldCheck },
-    { path: '/wallet', label: 'Wallet', icon: Wallet },
-    { path: '/trust-score', label: 'AI Trust Score', icon: ShieldCheck },
-    { path: '/settings', label: 'Settings', icon: Settings },
-    { path: '/support', label: 'Support', icon: LifeBuoy },
+    { path: '/employer/wallet', label: 'Wallet', icon: Wallet },
+    { path: '/employer/trust-score', label: 'AI Trust Score', icon: ShieldCheck },
+    { path: '/employer/settings', label: 'Settings', icon: Settings },
+    { path: '/employer/support', label: 'Support', icon: LifeBuoy },
   ];
 
   const isNavItemActive = (path: string) => location.pathname.startsWith(path);

@@ -11,10 +11,10 @@ export default function WorkerSidebar() {
     { path: '/worker/marketplace', label: 'Marketplace', icon: Briefcase },
     { path: '/worker/finances', label: 'Finances', icon: Wallet },
     { path: '/worker/insights', label: 'Insights', icon: ShieldCheck },
-    { path: '/wallet', label: 'Wallet', icon: Wallet },
-    { path: '/trust-score', label: 'AI Trust Score', icon: ShieldCheck },
-    { path: '/settings', label: 'Settings', icon: Settings },
-    { path: '/support', label: 'Support', icon: LifeBuoy },
+    { path: '/worker/wallet', label: 'Wallet', icon: Wallet },
+    { path: '/worker/trust-score', label: 'AI Trust Score', icon: ShieldCheck },
+    { path: '/worker/settings', label: 'Settings', icon: Settings },
+    { path: '/worker/support', label: 'Support', icon: LifeBuoy },
   ];
 
   const isNavItemActive = (path: string) => location.pathname.startsWith(path);
