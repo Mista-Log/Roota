@@ -5,6 +5,7 @@ import {
   ReactNode,
   useEffect,
 } from "react";
+import { apiGet, apiPost } from '../utils/api';
 
 type UserRole = "WORKER" | "EMPLOYER" | "ADMIN";
 
@@ -37,8 +38,6 @@ type AuthContextType = {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const API_URL = "http://localhost:8000/api";
-
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
 
@@ -51,19 +50,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // FETCH AUTHENTICATED USER
   // ==========================================
   const fetchAuthenticatedUser = async (): Promise<User> => {
-    const token = localStorage.getItem("access");
-
-    const response = await fetch(`${API_URL}/auth/me/`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error("Failed to fetch user");
-    }
-
-    return response.json();
+    return apiGet('/api/auth/me/', false);
   };
 
   // ==========================================
@@ -104,24 +91,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     email: string,
     password: string
   ): Promise<User> => {
-    const response = await fetch(`${API_URL}/auth/login/`, {
-      method: "POST",
-
-      headers: {
-        "Content-Type": "application/json",
-      },
-
-      body: JSON.stringify({
-        email,
-        password,
-      }),
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.detail || "Login failed");
-    }
+    const data = await apiPost('/api/auth/login/', { email, password }, true);
 
     localStorage.setItem("access", data.access);
 
@@ -138,24 +108,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // SIGNUP
   // ==========================================
   const signup = async (signupData: SignupData): Promise<User> => {
-    const response = await fetch(`${API_URL}/auth/register/`, {
-      method: "POST",
-
-      headers: {
-        "Content-Type": "application/json",
-      },
-
-      body: JSON.stringify(signupData),
-    });
-
-    const data = await response.json();
-
-    console.log(data)
-
-
-    if (!response.ok) {
-      throw new Error(data.detail || "Signup failed");
-    }
+    await apiPost('/api/auth/register/', signupData, true);
 
     // Auto login after signup
     return await login(signupData.email, signupData.password);

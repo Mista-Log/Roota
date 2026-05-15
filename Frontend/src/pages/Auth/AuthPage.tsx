@@ -27,6 +27,7 @@ import { GoogleLogin } from "@react-oauth/google";
 import { apiPost } from '../../utils/api';
 
 export default function AuthPage() {
+  const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
   const [isLogin, setIsLogin] = useState(false);
   const { login, signup } = useAuth();
   const navigate = useNavigate();
@@ -453,14 +454,16 @@ export default function AuthPage() {
                 </motion.div>
 
                 {/* ── Social login buttons ── */}
-                <div className="w-full mb-8">
-                  <GoogleLogin
-                    onSuccess={handleGoogleLogin}
-                    onError={() => {
-                      alert("Google Login Failed");
-                    }}
-                  />
-                </div>
+                {googleClientId ? (
+                  <div className="w-full mb-8">
+                    <GoogleLogin
+                      onSuccess={handleGoogleLogin}
+                      onError={() => {
+                        alert("Google Login Failed");
+                      }}
+                    />
+                  </div>
+                ) : null}
 
                 {/* ── Divider ── */}
                 <div className="relative flex items-center mb-8">
