@@ -118,7 +118,7 @@ export default function EmployerInsightsPage() {
       const [profileData, jobsData, transactionsData] = await Promise.all([
         apiGet('/api/auth/employer/profile/'),
         apiGet('/api/employer/jobs/'),
-        apiGet('/api/wallet/transactions/'),
+        apiGet('/api/wallets/transactions/'),
       ]);
 
       setProfile(profileData?.data ?? profileData ?? fallbackProfile);

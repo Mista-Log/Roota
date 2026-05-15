@@ -45,7 +45,7 @@ export default function WalletPage() {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const data = await apiGet('/api/wallet/transactions/');
+        const data = await apiGet('/api/wallets/transactions/');
         setTransactions(Array.isArray(data.results) ? data.results : data);
       } catch (error) {
         console.warn('Error fetching wallet data, using fallback:', error);
