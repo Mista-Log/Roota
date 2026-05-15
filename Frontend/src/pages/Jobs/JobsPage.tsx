@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import Section from '../../components/layout/Section';
 import JobCard from '../../components/cards/JobCard';
+import { apiGet } from '../../utils/api';
 
 interface Job {
   id: string;
@@ -41,14 +42,10 @@ export default function JobsPage() {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
-        const response = await fetch(`${apiUrl}/api/jobs/recommended/`);
-        if (response.ok) {
-          const data = await response.json();
-          setJobs(Array.isArray(data.results) ? data.results : data);
-        }
+        const data = await apiGet('/api/jobs/recommended/');
+        setJobs(Array.isArray(data.results) ? data.results : data);
       } catch (error) {
-        console.error('Error fetching jobs:', error);
+        console.warn('Error fetching jobs, using fallback:', error);
       } finally {
         setLoading(false);
       }

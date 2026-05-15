@@ -5,6 +5,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft, MapPin, DollarSign, Briefcase, Users, CheckCircle, Send, Loader2, X } from 'lucide-react';
 import Section from '../../components/layout/Section';
+import { apiGet, apiPost } from '../../utils/api';
 
 interface Job {
   id: string;
@@ -94,33 +95,20 @@ export default function JobDetailsPage() {
   const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
-    setLoading(true);
-    try {
-      const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
-      // Try to fetch from API first
-      fetch(`${apiUrl}/api/jobs/${jobId}/`)
-        .then((res) => {
-          if (res.ok) {
-            return res.json();
-          }
-          // Fall back to mock data
-          return mockJobDetails[jobId || '1'];
-        })
-        .then((data) => {
-          setJob(data);
-        })
-        .catch(() => {
-          // Use mock data as fallback
-          setJob(mockJobDetails[jobId || '1']);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    } catch (error) {
-      console.error('Error fetching job details:', error);
-      setJob(mockJobDetails[jobId || '1']);
-      setLoading(false);
-    }
+    const fetchJob = async () => {
+      setLoading(true);
+      try {
+        const data = await apiGet(`/api/jobs/${jobId}/`);
+        setJob(data);
+      } catch (error) {
+        console.warn('Error fetching job details, using fallback:', error);
+        setJob(mockJobDetails[jobId || '1']);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchJob();
   }, [jobId]);
 
   const handleApplicationChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -131,24 +119,17 @@ export default function JobDetailsPage() {
   const handleApplicationSubmit = async () => {
     setSubmitting(true);
     try {
-      const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
-      const response = await fetch(`${apiUrl}/api/jobs/${jobId}/apply/`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...applicationData, resumeFileName: resumeFile?.name ?? null }),
-      });
+      await apiPost(`/api/jobs/${jobId}/apply/`, { ...applicationData, resumeFileName: resumeFile?.name ?? null });
 
-      if (response.ok) {
-        setSubmitted(true);
-        setTimeout(() => {
-          setShowApplicationForm(false);
-          setSubmitted(false);
-          setApplicationData({ fullName: '', email: '', phone: '', portfolio: '', coverLetter: '' });
-          setResumeFile(null);
-        }, 2000);
-      }
+      setSubmitted(true);
+      setTimeout(() => {
+        setShowApplicationForm(false);
+        setSubmitted(false);
+        setApplicationData({ fullName: '', email: '', phone: '', portfolio: '', coverLetter: '' });
+        setResumeFile(null);
+      }, 2000);
     } catch (error) {
-      console.error('Error submitting application:', error);
+      console.warn('Error submitting application:', error);
     } finally {
       setSubmitting(false);
     }

@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, easeOut } from 'framer-motion';
 import { Banknote, CreditCard, ReceiptText, ShieldCheck } from 'lucide-react';
 import AnimatedNumber from '../../components/common/AnimatedNumber';
 import FundsActionModal from '../../components/common/FundsActionModal';
+import { apiGet, apiPost } from '../../utils/api';
 
 const mockFinancialSummary = [
   { label: 'Wallet Balance', value: 8420.50, meta: 'Available for withdrawal', icon: Banknote },
@@ -22,33 +23,19 @@ export default function FinancesPage() {
   const navigate = useNavigate();
   const [financialSummary, setFinancialSummary] = useState(mockFinancialSummary);
   const [recentTransactions, setRecentTransactions] = useState(mockRecentTransactions);
-  const [loading, setLoading] = useState(false);
   const [expandedTransactionId, setExpandedTransactionId] = useState<string | null>(null);
   const [activeFundsModal, setActiveFundsModal] = useState<'send' | 'withdraw' | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
-      setLoading(true);
       try {
-        const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
-        
-        // Fetch financial metrics
-        const metricsRes = await fetch(`${apiUrl}/api/finances/metrics/`);
-        if (metricsRes.ok) {
-          const metricsData = await metricsRes.json();
-          setFinancialSummary(Array.isArray(metricsData.results) ? metricsData.results : metricsData);
-        }
+        const metricsData = await apiGet('/api/finances/metrics/');
+        setFinancialSummary(Array.isArray(metricsData.results) ? metricsData.results : metricsData);
 
-        // Fetch transactions
-        const transRes = await fetch(`${apiUrl}/api/finances/transactions/`);
-        if (transRes.ok) {
-          const transData = await transRes.json();
-          setRecentTransactions(Array.isArray(transData.results) ? transData.results : transData);
-        }
+        const transData = await apiGet('/api/finances/transactions/');
+        setRecentTransactions(Array.isArray(transData.results) ? transData.results : transData);
       } catch (error) {
-        console.error('Error fetching finances data:', error);
-      } finally {
-        setLoading(false);
+        console.warn('Error fetching finances data, using fallback:', error);
       }
     };
 
@@ -62,23 +49,18 @@ export default function FinancesPage() {
     bankName: string;
     note: string;
   }) => {
-    const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
     const endpoint = activeFundsModal === 'send' ? '/api/wallet/send/' : '/api/wallet/withdraw/';
 
     try {
-      await fetch(`${apiUrl}${endpoint}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
+      await apiPost(endpoint, payload);
     } catch (error) {
-      console.error('Funds action failed:', error);
+      console.warn('Funds action failed:', error);
     }
   };
 
   const cardVariants = {
     hidden: { opacity: 0, y: 18 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.45, ease: 'easeOut' } },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.45, ease: easeOut } },
   };
 
   return (

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { apiGet } from '../../utils/api';
 
 export default function EmployerJobDetailsPage() {
   const { jobId } = useParams();
@@ -8,15 +9,10 @@ export default function EmployerJobDetailsPage() {
   useEffect(() => {
     const fetchJob = async () => {
       try {
-        const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
-        const res = await fetch(`${apiUrl}/api/jobs/${jobId}/`);
-        if (res.ok) {
-          const data = await res.json();
-          setJob(data);
-        } else {
-          setJob({ id: jobId, title: 'Candidate Profile', company: 'Acme Corp', location: 'Remote', salary: '$8,000 - $12,000', description: 'Employer view of job/candidate details.' });
-        }
+        const data = await apiGet(`/api/jobs/${jobId}/`);
+        setJob(data);
       } catch (e) {
+        console.warn('Failed to fetch job, using fallback:', e);
         setJob({ id: jobId, title: 'Candidate Profile', company: 'Acme Corp', location: 'Remote', salary: '$8,000 - $12,000', description: 'Employer view of job/candidate details.' });
       }
     };

@@ -1,15 +1,17 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { LayoutGrid, Briefcase, Wallet, ShieldCheck, Settings, LifeBuoy, LogOut, Zap } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 
 export default function EmployerSidebar() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { logout } = useAuth();
 
   const navItems = [
     { path: '/employer/dashboard', label: 'Overview', icon: LayoutGrid },
     { path: '/employer/jobs', label: 'Jobs', icon: Briefcase },
     { path: '/employer/marketplace', label: 'Marketplace', icon: Briefcase },
-    { path: '/employer/finances', label: 'Finances', icon: Wallet },
     { path: '/employer/insights', label: 'Insights', icon: ShieldCheck },
     { path: '/employer/wallet', label: 'Wallet', icon: Wallet },
     { path: '/employer/trust-score', label: 'AI Trust Score', icon: ShieldCheck },
@@ -63,11 +65,14 @@ export default function EmployerSidebar() {
 
       <div className="mt-auto space-y-2 border-t border-[#e6efe6] px-4 py-6">
         <button className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-slate-700 hover:bg-[#f0f6f2]">
-          <LifeBuoy size={18} />
-          Support
-        </button>
-        <button className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-slate-700 hover:bg-[#f0f6f2]">
-          <LogOut size={18} />
+          <Life
+          type="button"
+          onClick={() => {
+            logout();
+            navigate('/auth');
+          }}
+          className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-slate-700 hover:bg-[#f0f6f2]"
+        
           Logout
         </button>
       </div>

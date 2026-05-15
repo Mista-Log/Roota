@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import { MapPin, Star, Briefcase, MessageSquare, Clock3 } from 'lucide-react';
-
-const API_BASE_URL = typeof import.meta !== 'undefined' ? (import.meta as any).env?.VITE_API_BASE_URL || 'http://localhost:8000' : 'http://localhost:8000';
+import { apiGet } from '../../utils/api';
 
 const mockTalentProfiles = [
   {
@@ -75,17 +74,10 @@ export default function EmployerTalentDetailsPage() {
       }
 
       try {
-        const response = await fetch(`${API_BASE_URL}/api/employer/marketplace/talent/`, {
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json' },
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          const matchedTalent = (data.results || data || []).find((item: any) => `${item.id}` === `${talentId}`);
-          setTalent(matchedTalent || mockTalentProfiles.find((item) => `${item.id}` === `${talentId}`) || mockTalentProfiles[0]);
-          return;
-        }
+        const data = await apiGet('/api/employer/marketplace/talent/');
+        const matchedTalent = (data.results || data || []).find((item: any) => `${item.id}` === `${talentId}`);
+        setTalent(matchedTalent || mockTalentProfiles.find((item) => `${item.id}` === `${talentId}`) || mockTalentProfiles[0]);
+        return;
       } catch (error) {
         // fall back to mock data below
       }

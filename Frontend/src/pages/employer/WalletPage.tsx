@@ -6,6 +6,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import AnimatedNumber from '../../components/common/AnimatedNumber';
 import FundsActionModal from '../../components/common/FundsActionModal';
 import { Banknote, ReceiptText, ShieldCheck } from 'lucide-react';
+import { apiGet, apiPost } from '../../utils/api';
 
 interface Transaction {
   id: string;
@@ -43,24 +44,18 @@ export default function EmployerWalletPage() {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
-        const response = await fetch(`${apiUrl}/api/employer/wallet/transactions/`);
-        if (response.ok) {
-          const data = await response.json();
-          setTransactions(Array.isArray(data.results) ? data.results : data);
-        }
+        const data = await apiGet('/api/employer/wallet/transactions/');
+        setTransactions(Array.isArray(data.results) ? data.results : data);
+        
         // finance metrics
         try {
-          const metricsRes = await fetch(`${apiUrl}/api/employer/finances/metrics/`);
-          if (metricsRes.ok) {
-            const metricsData = await metricsRes.json();
-            setFinancialSummary(Array.isArray(metricsData.results) ? metricsData.results : metricsData);
-          }
+          const metricsData = await apiGet('/api/employer/finances/metrics/');
+          setFinancialSummary(Array.isArray(metricsData.results) ? metricsData.results : metricsData);
         } catch (err) {
-          // ignore
+          // ignore metrics fetch failure
         }
       } catch (error) {
-        console.error('Error fetching employer wallet data:', error);
+        console.warn('Error fetching employer wallet data, using fallback:', error);
       } finally {
         setLoading(false);
       }
@@ -82,12 +77,11 @@ export default function EmployerWalletPage() {
   }, []);
 
   const handleFundsSubmit = async (payload: { amount: string; recipientName: string; accountNumber: string; bankName: string; note: string }) => {
-    const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
     const endpoint = activeFundsModal === 'send' ? '/api/employer/wallet/send/' : '/api/employer/wallet/withdraw/';
     try {
-      await fetch(`${apiUrl}${endpoint}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+      await apiPost(endpoint, payload);
     } catch (error) {
-      console.error('Funds action failed:', error);
+      console.warn('Funds action failed:', error);
     }
   };
 

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Save, Loader2, CreditCard, Link as LinkIcon, Trash2, Check, Bell, Lock, Eye } from 'lucide-react';
 import Section from '../../components/layout/Section';
+import { apiGet, apiPost, apiDelete } from '../../utils/api';
 
 type TabId = 'profile' | 'account' | 'billing' | 'connected';
 
@@ -54,14 +55,10 @@ export default function SettingsPage() {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
-        const response = await fetch(`${apiUrl}/api/settings/profile/`);
-        if (response.ok) {
-          const data = await response.json();
-          setFormData((prev) => ({ ...prev, ...data }));
-        }
+        const data = await apiGet('/api/settings/profile/');
+        setFormData((prev) => ({ ...prev, ...data }));
       } catch (error) {
-        console.error('Error fetching settings:', error);
+        console.warn('Error fetching settings, using fallback:', error);
       } finally {
         setLoading(false);
       }
@@ -73,23 +70,16 @@ export default function SettingsPage() {
   const handleSave = async () => {
     setSaving(true);
     try {
-      const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
-      const response = await fetch(`${apiUrl}/api/settings/profile/update/`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
+      await apiPost('/api/settings/profile/update/', formData);
 
-      if (response.ok) {
-        setSavedMessage(true);
-        setStatusMessage('Profile updated successfully.');
-        setTimeout(() => {
-          setSavedMessage(false);
-          setStatusMessage(null);
-        }, 1800);
-      }
+      setSavedMessage(true);
+      setStatusMessage('Profile updated successfully.');
+      setTimeout(() => {
+        setSavedMessage(false);
+        setStatusMessage(null);
+      }, 1800);
     } catch (error) {
-      console.error('Error saving settings:', error);
+      console.warn('Error saving settings:', error);
       setStatusMessage('Unable to save profile right now.');
     } finally {
       setSaving(false);
@@ -103,15 +93,10 @@ export default function SettingsPage() {
     setAccountSettings(updated);
 
     try {
-      const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
-      await fetch(`${apiUrl}/api/settings/preferences/update/`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ preferences: updated }),
-      });
+      await apiPost('/api/settings/preferences/update/', { preferences: updated });
       setStatusMessage('Account preferences updated.');
     } catch (error) {
-      console.error('Failed to update preference:', error);
+      console.warn('Failed to update preference:', error);
       setStatusMessage('Preference update failed.');
     }
   };
@@ -153,27 +138,21 @@ export default function SettingsPage() {
     setConnectedAccounts(updated);
 
     try {
-      const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
-      await fetch(`${apiUrl}/api/settings/connections/update/`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ connections: updated }),
-      });
+      await apiPost('/api/settings/connections/update/', { connections: updated });
       setStatusMessage('Connected accounts updated.');
     } catch (error) {
-      console.error('Failed to update connected account:', error);
+      console.warn('Failed to update connected account:', error);
       setStatusMessage('Failed to update connected account.');
     }
   };
 
   const handleDeleteAccount = async () => {
     try {
-      const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
-      await fetch(`${apiUrl}/api/settings/account/delete/`, { method: 'DELETE' });
+      await apiDelete('/api/settings/account/delete/');
       setConfirmDeleteOpen(false);
       setStatusMessage('Delete request submitted. Contact support to complete this action.');
     } catch (error) {
-      console.error('Delete account failed:', error);
+      console.warn('Delete account failed:', error);
       setStatusMessage('Unable to delete account right now.');
     }
   };

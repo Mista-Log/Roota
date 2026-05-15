@@ -31,7 +31,19 @@ export default function JobCard({
   const handleViewDetails = () => {
     if (id) {
       const base = userRole === 'employer' ? '/employer' : '/worker';
-      navigate(`${base}/jobs/${id}`);
+      navigate(`${base}/jobs/${id}`, {
+        state: {
+          job: {
+            id,
+            title,
+            company,
+            location,
+            matchScore,
+            skills,
+            salary,
+          },
+        },
+      });
     }
   };
   return (

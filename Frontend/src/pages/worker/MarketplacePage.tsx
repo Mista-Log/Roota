@@ -3,8 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, MapPin, SlidersHorizontal, Star, Loader } from 'lucide-react';
-
-const API_BASE_URL = typeof import.meta !== 'undefined' ? (import.meta as any).env?.VITE_API_BASE_URL || 'http://localhost:8000' : 'http://localhost:8000';
+import { apiGet, apiPost } from '../../utils/api';
 
 interface Job {
   id: string;
@@ -96,19 +95,10 @@ export default function WorkerMarketplacePage() {
     const fetchJobs = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`${API_BASE_URL}/api/worker/marketplace/jobs/`, {
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json' },
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          setJobs(data.results || mockMarketplaceJobs);
-        } else {
-          setJobs(mockMarketplaceJobs);
-        }
+        const data = await apiGet('/api/worker/marketplace/jobs/');
+        setJobs(data.results || mockMarketplaceJobs);
       } catch (error) {
-        console.log('Using worker mock data - backend unavailable');
+        console.warn('Failed to fetch jobs, using fallback data:', error);
         setJobs(mockMarketplaceJobs);
       } finally {
         setLoading(false);
@@ -121,17 +111,11 @@ export default function WorkerMarketplacePage() {
   useEffect(() => {
     const fetchSuggested = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/api/worker/marketplace/suggested/`, {
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json' },
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          setSuggestedJobs(data.results || mockSuggestedJobs);
-        }
+        const data = await apiGet('/api/worker/marketplace/suggested/');
+        setSuggestedJobs(data.results || mockSuggestedJobs);
       } catch (error) {
-        console.log('Using worker mock suggested jobs - backend unavailable');
+        console.warn('Failed to fetch suggested jobs, using fallback data:', error);
+        setSuggestedJobs(mockSuggestedJobs);
       }
     };
 
@@ -158,16 +142,11 @@ export default function WorkerMarketplacePage() {
         minTrustScore: filters.trustScore.toString(),
       });
 
-      const response = await fetch(`${API_BASE_URL}/api/worker/marketplace/jobs/?${queryParams}`, {
-        headers: { 'Content-Type': 'application/json' },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setJobs(data.results || mockMarketplaceJobs);
-      }
+      const data = await apiGet(`/api/worker/marketplace/jobs/?${queryParams}`);
+      setJobs(data.results || mockMarketplaceJobs);
     } catch (error) {
-      console.log('Worker filter failed, using mock data');
+      console.warn('Worker filter failed, using mock data:', error);
+      setJobs(mockMarketplaceJobs);
     } finally {
       setLoading(false);
       setShowFilters(false);
@@ -176,16 +155,10 @@ export default function WorkerMarketplacePage() {
 
   const handleApplyJob = async (job: Job) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/worker/applications/`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ job_id: job.id }),
-      });
-
-      if (response.ok) {
-        alert(`Applied to ${job.title} at ${job.company}`);
-      }
+      await apiPost('/api/worker/applications/', { job_id: job.id });
+      alert(`Applied to ${job.title} at ${job.company}`);
     } catch (error) {
+      console.warn('Application submission failed:', error);
       alert(`Application submitted for ${job.title}`);
     }
   };

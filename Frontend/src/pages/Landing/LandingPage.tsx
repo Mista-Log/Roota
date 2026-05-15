@@ -53,6 +53,7 @@ function ScrollReveal({
 }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
+
   return (
     <motion.div
       ref={ref}

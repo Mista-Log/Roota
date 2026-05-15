@@ -3,8 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, Users, SlidersHorizontal, Star, Loader } from 'lucide-react';
-
-const API_BASE_URL = typeof import.meta !== 'undefined' ? (import.meta as any).env?.VITE_API_BASE_URL || 'http://localhost:8000' : 'http://localhost:8000';
+import { apiGet } from '../../utils/api';
 
 interface TalentProfile {
   id: string;
@@ -84,19 +83,10 @@ export default function EmployerMarketplacePage() {
     const fetchTalent = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`${API_BASE_URL}/api/employer/marketplace/talent/`, {
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json' },
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          setTalent(data.results || mockTalentProfiles);
-        } else {
-          setTalent(mockTalentProfiles);
-        }
+        const data = await apiGet('/api/employer/marketplace/talent/');
+        setTalent(data.results || mockTalentProfiles);
       } catch (error) {
-        console.log('Using employer mock talent - backend unavailable');
+        console.warn('Failed to fetch talent, using fallback data:', error);
         setTalent(mockTalentProfiles);
       } finally {
         setLoading(false);
@@ -109,17 +99,11 @@ export default function EmployerMarketplacePage() {
   useEffect(() => {
     const fetchSuggested = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/api/employer/marketplace/suggested/`, {
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json' },
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          setSuggestedTalent(data.results || mockSuggestedTalent);
-        }
+        const data = await apiGet('/api/employer/marketplace/suggested/');
+        setSuggestedTalent(data.results || mockSuggestedTalent);
       } catch (error) {
-        console.log('Using employer mock suggested talent - backend unavailable');
+        console.warn('Failed to fetch suggested talent, using fallback data:', error);
+        setSuggestedTalent(mockSuggestedTalent);
       }
     };
 

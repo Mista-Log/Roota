@@ -1,11 +1,12 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { LayoutGrid, Briefcase, Wallet, ShieldCheck, Settings, LifeBuoy, LogOut, Zap } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 export default function Sidebar() {
   const location = useLocation();
-  const { userRole } = useAuth();
+  const navigate = useNavigate();
+  const { userRole, logout } = useAuth();
 
   const homePath = userRole === 'employer' ? '/employer/dashboard' : '/worker/dashboard';
 
@@ -101,7 +102,14 @@ export default function Sidebar() {
           <LifeBuoy size={18} />
           Support
         </button>
-        <button className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-slate-700 transition-colors duration-200 hover:bg-[#dcebe4] hover:text-slate-900">
+        <button
+          type="button"
+          onClick={() => {
+            logout();
+            navigate('/auth');
+          }}
+          className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-slate-700 transition-colors duration-200 hover:bg-[#dcebe4] hover:text-slate-900"
+        >
           <LogOut size={18} />
           Logout
         </button>

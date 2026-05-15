@@ -23,6 +23,8 @@ const fadeUp = {
     transition: { duration: 0.5, delay: d, ease: [0.22, 1, 0.36, 1] },
   }),
 };
+import { GoogleLogin } from "@react-oauth/google";
+import { apiPost } from '../../utils/api';
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(false);
@@ -65,13 +67,35 @@ export default function AuthPage() {
     }
   };
 
-  const handleGoogleLogin = async () => {
-    // Google OAuth handled externally — wire up as needed
-    alert('Google login coming soon');
-  };
+  const handleGoogleLogin = async (credentialResponse: any) => {
+    try {
+      setLoading(true);
+      const data = await apiPost('/api/auth/google/', {
+        token: credentialResponse.credential,
+        role,
+      }, true);
 
-  const handleLinkedInLogin = async () => {
-    alert('LinkedIn login coming soon');
+      // save tokens
+      localStorage.setItem("access", data.access);
+
+      localStorage.setItem("refresh", data.refresh);
+
+      localStorage.removeItem("selectedRole");
+
+      // redirect
+      if (data.user.role === "WORKER") {
+        navigate("/worker/dashboard");
+      } else {
+        navigate("/employer/dashboard");
+      }
+
+    } catch (error: any) {
+      console.error(error);
+
+      alert(error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

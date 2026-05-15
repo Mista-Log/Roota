@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Save, CreditCard, Link as LinkIcon, Trash2, Bell, Lock, Eye } from 'lucide-react';
 import Section from '../../components/layout/Section';
+import { apiGet, apiPost, apiDelete } from '../../utils/api';
 
 type TabId = 'profile' | 'account' | 'billing' | 'connected';
 
@@ -47,14 +48,10 @@ export default function WorkerSettingsPage() {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
-        const response = await fetch(`${apiUrl}/api/worker/settings/profile/`);
-        if (response.ok) {
-          const data = await response.json();
-          setFormData((prev) => ({ ...prev, ...data }));
-        }
+        const data = await apiGet('/api/worker/settings/profile/');
+        setFormData((prev) => ({ ...prev, ...data }));
       } catch (error) {
-        console.error('Error fetching worker settings:', error);
+        console.warn('Error fetching worker settings, using fallback:', error);
       } finally {
         setLoading(false);
       }
@@ -65,19 +62,12 @@ export default function WorkerSettingsPage() {
   const handleSave = async () => {
     setSaving(true);
     try {
-      const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
-      const response = await fetch(`${apiUrl}/api/worker/settings/profile/update/`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
-      if (response.ok) {
-        setSavedMessage(true);
-        setStatusMessage('Profile updated successfully.');
-        setTimeout(() => { setSavedMessage(false); setStatusMessage(null); }, 1800);
-      }
+      await apiPost('/api/worker/settings/profile/update/', formData);
+      setSavedMessage(true);
+      setStatusMessage('Profile updated successfully.');
+      setTimeout(() => { setSavedMessage(false); setStatusMessage(null); }, 1800);
     } catch (error) {
-      console.error('Error saving worker settings:', error);
+      console.warn('Error saving worker settings:', error);
       setStatusMessage('Unable to save profile right now.');
     } finally {
       setSaving(false);
@@ -88,11 +78,10 @@ export default function WorkerSettingsPage() {
     const updated = accountSettings.map((setting) => setting.key === key ? { ...setting, enabled: !setting.enabled } : setting);
     setAccountSettings(updated);
     try {
-      const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
-      await fetch(`${apiUrl}/api/worker/settings/preferences/update/`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ preferences: updated }) });
+      await apiPost('/api/worker/settings/preferences/update/', { preferences: updated });
       setStatusMessage('Account preferences updated.');
     } catch (error) {
-      console.error('Failed to update preference:', error);
+      console.warn('Failed to update preference:', error);
       setStatusMessage('Preference update failed.');
     }
   };
@@ -123,23 +112,21 @@ export default function WorkerSettingsPage() {
     const updated = connectedAccounts.map((account) => account.key === key ? { ...account, connected: !account.connected } : account);
     setConnectedAccounts(updated);
     try {
-      const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
-      await fetch(`${apiUrl}/api/worker/settings/connections/update/`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ connections: updated }) });
+      await apiPost('/api/worker/settings/connections/update/', { connections: updated });
       setStatusMessage('Connected accounts updated.');
     } catch (error) {
-      console.error('Failed to update connected account:', error);
+      console.warn('Failed to update connected account:', error);
       setStatusMessage('Failed to update connected account.');
     }
   };
 
   const handleDeleteAccount = async () => {
     try {
-      const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
-      await fetch(`${apiUrl}/api/worker/settings/account/delete/`, { method: 'DELETE' });
+      await apiDelete('/api/worker/settings/account/delete/');
       setConfirmDeleteOpen(false);
       setStatusMessage('Delete request submitted. Contact support to complete this action.');
     } catch (error) {
-      console.error('Delete account failed:', error);
+      console.warn('Delete account failed:', error);
       setStatusMessage('Unable to delete account right now.');
     }
   };
