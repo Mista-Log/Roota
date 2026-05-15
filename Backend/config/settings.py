@@ -201,7 +201,6 @@ SIMPLE_JWT = {
 
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 
-CSRF_TRUSTED_ORIGINS = os.getenv(
-    "CSRF_TRUSTED_ORIGINS",
-    ""
-).split(",")
+CSRF_TRUSTED_ORIGINS = [
+    "https://roota-production.up.railway.app",
+]
