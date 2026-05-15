@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion, easeOut } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import Section from '../../components/layout/Section';
 import StatCard from '../../components/cards/StatCard';
@@ -164,7 +164,7 @@ export default function WorkerDashboardPage() {
                     <motion.div
                       initial={{ width: 0 }}
                       whileInView={{ width: `${skill.progress}%` }}
-                      transition={{ duration: 1, ease: 'easeOut' }}
+                      transition={{ duration: 1, ease: easeOut }}
                       className={`h-full rounded-full ${skill.status === 'in-progress' ? 'bg-[#2F63D8]' : 'bg-[#0B5D4B]'}`}
                     />
                   </div>

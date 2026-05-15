@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, easeOut } from 'framer-motion';
 import { ShieldAlert, TrendingUp, Target, Globe2 } from 'lucide-react';
 import { MiniBarChart } from '../../components/common/MiniBarChart';
 import { TrustRing } from '../../components/common/TrustRing';
@@ -52,7 +52,7 @@ export default function WorkerInsightsPage() {
 
   const panelVariants = {
     hidden: { opacity: 0, y: 18 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.45, ease: 'easeOut' } },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.45, ease: easeOut } },
   };
 
   const handleExportMap = () => {

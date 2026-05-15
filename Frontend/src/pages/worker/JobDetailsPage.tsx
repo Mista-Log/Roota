@@ -2,13 +2,13 @@ import { useEffect, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import { Star, MapPin } from 'lucide-react';
 import { apiGet, apiPost } from '../../utils/api';
+import JobApplicationModal from '../../components/common/JobApplicationModal';
 
 export default function WorkerJobDetailsPage() {
   const { jobId } = useParams();
   const location = useLocation();
   const [job, setJob] = useState<any | null>((location.state as any)?.job || null);
-  const [applying, setApplying] = useState(false);
-  const [applicationStatus, setApplicationStatus] = useState<string | null>(null);
+  const [showApplicationModal, setShowApplicationModal] = useState(false);
 
   useEffect(() => {
     const fetchJob = async () => {
@@ -34,20 +34,17 @@ export default function WorkerJobDetailsPage() {
     fetchJob();
   }, [jobId, location.state]);
 
-  const handleApply = async () => {
-    if (!jobId) return;
-
-    setApplying(true);
-    setApplicationStatus(null);
+  const handleApplicationSubmit = async (applicationData: any) => {
+    if (!jobId) throw new Error('Job ID is missing');
 
     try {
-      await apiPost(`/api/jobs/${jobId}/apply/`, { job_id: jobId });
-      setApplicationStatus(`Applied to ${job?.title || 'this job'} successfully.`);
+      await apiPost(`/api/jobs/${jobId}/apply/`, {
+        ...applicationData,
+        job_id: jobId,
+      });
     } catch (error) {
-      console.warn('Failed to apply for job:', error);
-      setApplicationStatus(`Your application for ${job?.title || 'this job'} could not be submitted right now.`);
-    } finally {
-      setApplying(false);
+      console.warn('Failed to submit application:', error);
+      throw error;
     }
   };
 
@@ -74,15 +71,20 @@ export default function WorkerJobDetailsPage() {
             onClick={handleApply}
             disabled={applying}
             className="rounded-lg bg-primary-dark px-4 py-2 text-white font-semibold disabled:cursor-not-allowed disabled:opacity-60"
+          >() => setShowApplicationModal(true)}
+            className="rounded-lg bg-primary-dark px-4 py-2 text-white font-semibold hover:bg-primary-dark/90"
           >
-            {applying ? 'Applying...' : 'Apply to this job'}
+            Apply to this job
           </button>
-          {applicationStatus && <p className="mt-3 text-sm text-slate-700">{applicationStatus}</p>}
         </div>
       </section>
 
-      <section className="rounded-2xl border border-border bg-card p-6">
-        <h2 className="text-lg font-semibold">Job Details</h2>
+      <JobApplicationModal
+        isOpen={showApplicationModal}
+        jobTitle={job?.title || 'this job'}
+        onClose={() => setShowApplicationModal(false)}
+        onSubmit={handleApplicationSubmit}
+      /ssName="text-lg font-semibold">Job Details</h2>
         <ul className="mt-3 space-y-2 text-sm text-slate-700">
           <li><strong>Location:</strong> {job.location}</li>
           <li><strong>Salary:</strong> {job.salary}</li>

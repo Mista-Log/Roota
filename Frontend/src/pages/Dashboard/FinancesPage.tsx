@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, easeOut } from 'framer-motion';
 import { Banknote, CreditCard, ReceiptText, ShieldCheck } from 'lucide-react';
 import AnimatedNumber from '../../components/common/AnimatedNumber';
 import FundsActionModal from '../../components/common/FundsActionModal';
@@ -23,13 +23,11 @@ export default function FinancesPage() {
   const navigate = useNavigate();
   const [financialSummary, setFinancialSummary] = useState(mockFinancialSummary);
   const [recentTransactions, setRecentTransactions] = useState(mockRecentTransactions);
-  const [loading, setLoading] = useState(false);
   const [expandedTransactionId, setExpandedTransactionId] = useState<string | null>(null);
   const [activeFundsModal, setActiveFundsModal] = useState<'send' | 'withdraw' | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
-      setLoading(true);
       try {
         const metricsData = await apiGet('/api/finances/metrics/');
         setFinancialSummary(Array.isArray(metricsData.results) ? metricsData.results : metricsData);
@@ -38,8 +36,6 @@ export default function FinancesPage() {
         setRecentTransactions(Array.isArray(transData.results) ? transData.results : transData);
       } catch (error) {
         console.warn('Error fetching finances data, using fallback:', error);
-      } finally {
-        setLoading(false);
       }
     };
 
@@ -64,7 +60,7 @@ export default function FinancesPage() {
 
   const cardVariants = {
     hidden: { opacity: 0, y: 18 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.45, ease: 'easeOut' } },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.45, ease: easeOut } },
   };
 
   return (
