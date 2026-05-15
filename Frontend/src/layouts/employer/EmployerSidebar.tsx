@@ -65,14 +65,11 @@ export default function EmployerSidebar() {
 
       <div className="mt-auto space-y-2 border-t border-[#e6efe6] px-4 py-6">
         <button className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-slate-700 hover:bg-[#f0f6f2]">
-          <Life
-          type="button"
-          onClick={() => {
-            logout();
-            navigate('/auth');
-          }}
-          className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-slate-700 hover:bg-[#f0f6f2]"
-        
+          <LifeBuoy size={18} />
+          Support
+        </button>
+        <button className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-slate-700 hover:bg-[#f0f6f2]">
+          <LogOut size={18} />
           Logout
         </button>
       </div>

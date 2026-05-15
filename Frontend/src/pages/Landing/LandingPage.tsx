@@ -1,5 +1,6 @@
 import { motion, useInView, type Variants } from 'framer-motion';
 import { useRef } from 'react';
+
 import { Link } from 'react-router-dom';
 import { MarketingHeader } from '../../components/layout/Header';
 import { MarketingFooter } from '../../components/layout/Footer';
