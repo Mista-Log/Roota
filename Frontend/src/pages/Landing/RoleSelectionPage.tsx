@@ -324,7 +324,7 @@ export default function RoleSelectionPage() {
 
             {/* Copyright */}
             <p style={{ color: '#404944', fontSize: 16, lineHeight: '24px' }}>
-              © 2024 Roota. Built for the African Future.
+              © 2026 Roota. Built for the African Future.
             </p>
           </div>
         </footer>
