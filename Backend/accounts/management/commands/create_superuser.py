@@ -4,29 +4,35 @@ import os
 
 
 class Command(BaseCommand):
-    help = "Create superuser if it does not exist"
+    help = "Create superuser if it doesn't exist"
 
     def handle(self, *args, **kwargs):
         User = get_user_model()
 
-        email = os.getenv("DJANGO_SUPERUSER_EMAIL")
-        password = os.getenv("DJANGO_SUPERUSER_PASSWORD")
-
-        username = os.getenv(
-            "DJANGO_SUPERUSER_USERNAME",
-            "admin"
+        email = os.getenv(
+            "DJANGO_SUPERUSER_EMAIL"
         )
 
-        login_field = User.USERNAME_FIELD
-
-        lookup_value = (
-            email
-            if login_field == "email"
-            else username
+        password = os.getenv(
+            "DJANGO_SUPERUSER_PASSWORD"
         )
 
+        full_name = os.getenv(
+            "DJANGO_SUPERUSER_FULL_NAME",
+            "Admin"
+        )
+
+        if not email or not password:
+            self.stdout.write(
+                self.style.ERROR(
+                    "Missing superuser env variables"
+                )
+            )
+            return
+
+        # Avoid duplicate creation
         if User.objects.filter(
-            **{login_field: lookup_value}
+            email=email
         ).exists():
 
             self.stdout.write(
@@ -36,25 +42,10 @@ class Command(BaseCommand):
             )
             return
 
-        create_kwargs = {
-            login_field: lookup_value,
-            "password": password,
-        }
-
-        # Add username only if model has it
-        model_fields = [
-            field.name
-            for field in User._meta.fields
-        ]
-
-        if "username" in model_fields:
-            create_kwargs["username"] = username
-
-        if "email" in model_fields:
-            create_kwargs["email"] = email
-
         User.objects.create_superuser(
-            **create_kwargs
+            email=email,
+            full_name=full_name,
+            password=password,
         )
 
         self.stdout.write(
