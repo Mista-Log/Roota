@@ -7,6 +7,7 @@ import { ArrowUpRight, AlertCircle, CheckCircle, Circle, Home, Send, Sparkles, W
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import AnimatedNumber from '../../components/common/AnimatedNumber';
 import FundsActionModal from '../../components/common/FundsActionModal';
+import { apiGet, apiPost } from '../../utils/api';
 
 interface Transaction {
   id: string;
@@ -44,16 +45,10 @@ export default function WalletPage() {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
-        
-        // Fetch wallet transactions
-        const response = await fetch(`${apiUrl}/api/wallet/transactions/`);
-        if (response.ok) {
-          const data = await response.json();
-          setTransactions(Array.isArray(data.results) ? data.results : data);
-        }
+        const data = await apiGet('/api/wallet/transactions/');
+        setTransactions(Array.isArray(data.results) ? data.results : data);
       } catch (error) {
-        console.error('Error fetching wallet data:', error);
+        console.warn('Error fetching wallet data, using fallback:', error);
       } finally {
         setLoading(false);
       }
@@ -91,17 +86,12 @@ export default function WalletPage() {
     bankName: string;
     note: string;
   }) => {
-    const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
     const endpoint = activeFundsModal === 'send' ? '/api/wallet/send/' : '/api/wallet/withdraw/';
 
     try {
-      await fetch(`${apiUrl}${endpoint}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
+      await apiPost(endpoint, payload);
     } catch (error) {
-      console.error('Funds action failed:', error);
+      console.warn('Funds action failed:', error);
     }
   };
 

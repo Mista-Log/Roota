@@ -2,7 +2,7 @@
 
 **Session Start**: Comprehensive frontend audit completed  
 **Current Phase**: Centralized API integration with authentication  
-**Status**: In Progress
+**Status**: API migration complete for all page-level fetch calls
 
 ---
 
@@ -35,7 +35,7 @@
   - 🔴 **DEMO ONLY**: UI-only prototypes (4 screens)
 - **Summary**: ~65% frontend is wired for backend, ~35% is demo-only
 
-### 4. Integrated API Utility Into Key Pages
+### 4. Integrated API Utility Into All Pages Using Raw Fetch
 
 #### Worker Pages Updated ✅
 - [x] **MarketplacePage.tsx**
@@ -69,23 +69,11 @@
 
 ## 📋 REMAINING WORK
 
-### High Priority - API Integration (Remaining Pages)
-Pages still requiring fetch() → apiFetch() updates:
-
-#### Worker Pages
-- [ ] **JobDetailsPage.tsx** - Replace fetch for job detail + apply
-- [ ] **TrustScorePage.tsx** - Replace fetch for trust metrics
-- [ ] **TransactionsPage.tsx** - Replace fetch for transaction list (if any real endpoint)
-- [ ] **InsightsPage.tsx** - Replace fetch for recommendations
-- [ ] **DashboardPage.tsx** - Replace fetch calls for dashboard data
-
-#### Employer Pages
-- [ ] **JobDetailsPage.tsx** (employer) - Replace fetch for job detail
-- [ ] **TalentDetailsPage.tsx** - Replace fetch for talent profile
-- [ ] **TrustScorePage.tsx** (employer) - Replace fetch for trust metrics
-- [ ] **TransactionsPage.tsx** (employer) - Replace fetch for transaction list
-- [ ] **InsightsPage.tsx** (employer) - Replace fetch for recommendations
-- [ ] **DashboardPage.tsx** (employer) - Replace fetch for dashboard data
+### High Priority - API Integration
+- [x] All page-level `fetch()` calls migrated to `apiGet/apiPost/apiDelete`
+- [x] Shared pages migrated (`Jobs`, `JobDetails`, `Marketplace`, `Settings`, `Wallet`, `TrustScore`)
+- [x] Worker and employer variants migrated (`Finances`, `Insights`, `TrustScore`, `TalentDetails`)
+- [x] Google OAuth call in auth page migrated to centralized API utility with `skipAuth=true`
 
 ### Medium Priority - Enhancement
 - [ ] Add retry logic with exponential backoff for failed API calls
@@ -108,24 +96,24 @@ Pages still requiring fetch() → apiFetch() updates:
 | Worker Marketplace | GET/POST | ✅ Done | Fetch, filter, apply all wired |
 | Worker Wallet | GET/POST | ✅ Done | Transactions, metrics, send/withdraw wired |
 | Worker Settings | GET/POST/DELETE | ✅ Done | Profile, preferences, connections, delete all wired |
-| Worker Jobs Detail | GET/POST | ⏳ Pending | Job fetch + apply endpoint |
-| Worker Trust Score | GET | ⏳ Pending | Metrics endpoint |
+| Worker Jobs Detail | GET/POST | ✅ Done | Job fetch + apply endpoint wired |
+| Worker Trust Score | GET | ✅ Done | Metrics endpoint wired |
 | Worker Transactions | None | ⏳ Pending | Mock-only, no API endpoint yet |
-| Worker Insights | GET | ⏳ Pending | Recommendations endpoint |
-| Worker Dashboard | GET | ⏳ Pending | Stats, jobs, skills endpoints |
+| Worker Insights | GET | ✅ Done | Recommendations endpoint wired |
+| Worker Dashboard | GET | ✅ Done | Payroll, talent, and hires wired |
 | **Employer Marketplace** | GET | ✅ Done | Talent, suggested wired |
 | **Employer Wallet** | GET/POST | ✅ Done | Transactions, metrics, send/withdraw wired |
-| Employer Jobs | GET | ⏳ Pending | Job list endpoint |
-| Employer Jobs Detail | GET | ⏳ Pending | Job detail endpoint |
-| Employer Talent Details | GET | ⏳ Pending | Talent profile endpoint |
-| Employer Trust Score | GET | ⏳ Pending | Metrics endpoint |
+| Employer Jobs | GET | ✅ Done | Job list endpoint wired |
+| Employer Jobs Detail | GET | ✅ Done | Job detail endpoint wired |
+| Employer Talent Details | GET | ✅ Done | Talent profile endpoint wired |
+| Employer Trust Score | GET | ✅ Done | Metrics endpoint wired |
 | Employer Transactions | None | ⏳ Pending | Mock-only |
-| Employer Insights | GET | ⏳ Pending | Recommendations endpoint |
-| Employer Dashboard | GET/POST | ⏳ Pending | Payroll, talent, job creation |
+| Employer Insights | GET | ✅ Done | Recommendations endpoint wired |
+| Employer Dashboard | GET/POST | ✅ Done | Payroll, talent, and job creation wired |
 | Auth Pages | POST | ✅ Live | Login, signup, Google OAuth all functional |
 | Landing | None | ✅ Live | Marketing page, no API needed |
 
-**Overall**: 8/20 pages updated with centralized API, 12 remaining
+**Overall**: All pages that previously used raw `fetch()` now use centralized API utility
 
 ---
 
@@ -142,27 +130,20 @@ Pages still requiring fetch() → apiFetch() updates:
 
 ## 📝 NEXT IMMEDIATE ACTIONS
 
-1. **Update remaining dashboard pages** (~5 minutes per page)
-   - Import `apiGet`, `apiPost`, `apiDelete` from utils/api
-   - Replace raw fetch() calls
-   - Remove API_BASE_URL constants
+1. **Test auth flow end-to-end** (~10 minutes)
+  - Register new user
+  - Verify token stored in localStorage
+  - Verify protected routes redirect properly
+  - Test token cleanup on 401
 
-2. **Test auth flow end-to-end** (~10 minutes)
-   - Register new user
-   - Verify token stored in localStorage
-   - Verify protected routes redirect properly
-   - Test token refresh on 401
-
-3. **Audit for any remaining raw fetch() calls** (~5 minutes)
-   - `grep -r "fetch(" src/` to find stragglers
-   - Update job detail pages
-   - Update insight pages
-   - Update trust score pages
-
-4. **Verify all pages gracefully degrade when backend unavailable** (~15 minutes)
+2. **Verify all pages gracefully degrade when backend unavailable** (~15 minutes)
    - Each page should show mock data, not 404s
    - Error messages should be user-friendly
    - Loading states should clear
+
+3. **Optional cleanup**
+  - Remove remaining legacy docs/checklists that still show pending API migration
+  - Align route names and copy in docs with the current app shells
 
 ---
 
@@ -171,8 +152,7 @@ Pages still requiring fetch() → apiFetch() updates:
 - [x] Auth flow fully functional (tokens stored/injected)
 - [x] Route protection enabled
 - [x] Centralized API utility deployed
-- [x] 8 key pages integrated with centralized API
-- [ ] All remaining pages integrated with centralized API
+- [x] All pages with raw fetch integrated with centralized API
 - [ ] Error handling improved across all pages
 - [ ] Graceful degradation when backend missing
 - [ ] All mock fallbacks tested

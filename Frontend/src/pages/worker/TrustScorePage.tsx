@@ -5,6 +5,7 @@ import TrustScoreCard from '../../components/cards/TrustScoreCard';
 import SkillProgressCard from '../../components/cards/SkillProgressCard';
 import StatCard from '../../components/cards/StatCard';
 import AnimatedNumber from '../../components/common/AnimatedNumber';
+import { apiGet } from '../../utils/api';
 
 const mockTrustData = {
   score: 850,
@@ -33,14 +34,10 @@ export default function WorkerTrustScorePage() {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
-        const response = await fetch(`${apiUrl}/api/worker/trust-score/metrics/`);
-        if (response.ok) {
-          const data = await response.json();
-          setTrustData(data);
-        }
+        const data = await apiGet('/api/worker/trust-score/metrics/');
+        setTrustData(data);
       } catch (error) {
-        console.error('Error fetching worker trust score:', error);
+        console.warn('Error fetching worker trust score, using fallback:', error);
       } finally {
         setLoading(false);
       }

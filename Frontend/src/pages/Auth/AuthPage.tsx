@@ -5,6 +5,7 @@ import { SimpleHeader } from '../../components/layout/Header';
 import { MarketingFooter } from '../../components/layout/Footer';
 import { useAuth } from '../../context/AuthContext';
 import { GoogleLogin } from "@react-oauth/google";
+import { apiPost } from '../../utils/api';
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(false);
@@ -81,28 +82,10 @@ export default function AuthPage() {
   const handleGoogleSuccess = async (credentialResponse: any) => {
     try {
       setLoading(true);
-
-      const response = await fetch(
-        "http://localhost:8000/api/auth/google/",
-        {
-          method: "POST",
-
-          headers: {
-            "Content-Type": "application/json",
-          },
-
-          body: JSON.stringify({
-            token: credentialResponse.credential,
-            role,
-          }),
-        }
-      );
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.detail);
-      }
+      const data = await apiPost('/api/auth/google/', {
+        token: credentialResponse.credential,
+        role,
+      }, true);
 
       // save tokens
       localStorage.setItem("access", data.access);

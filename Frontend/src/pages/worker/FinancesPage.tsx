@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Banknote, CreditCard, ReceiptText, ShieldCheck } from 'lucide-react';
 import AnimatedNumber from '../../components/common/AnimatedNumber';
 import FundsActionModal from '../../components/common/FundsActionModal';
+import { apiGet, apiPost } from '../../utils/api';
 
 const mockFinancialSummary = [
   { label: 'Wallet Balance', value: 8420.5, meta: 'Available for withdrawal', icon: Banknote },
@@ -30,20 +31,13 @@ export default function WorkerFinancesPage() {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
-        const metricsRes = await fetch(`${apiUrl}/api/worker/finances/metrics/`);
-        if (metricsRes.ok) {
-          const metricsData = await metricsRes.json();
-          setFinancialSummary(Array.isArray(metricsData.results) ? metricsData.results : metricsData);
-        }
+        const metricsData = await apiGet('/api/worker/finances/metrics/');
+        setFinancialSummary(Array.isArray(metricsData.results) ? metricsData.results : metricsData);
 
-        const transRes = await fetch(`${apiUrl}/api/worker/finances/transactions/`);
-        if (transRes.ok) {
-          const transData = await transRes.json();
-          setRecentTransactions(Array.isArray(transData.results) ? transData.results : transData);
-        }
+        const transData = await apiGet('/api/worker/finances/transactions/');
+        setRecentTransactions(Array.isArray(transData.results) ? transData.results : transData);
       } catch (error) {
-        console.error('Error fetching worker finances data:', error);
+        console.warn('Error fetching worker finances data, using fallback:', error);
       } finally {
         setLoading(false);
       }
@@ -59,17 +53,12 @@ export default function WorkerFinancesPage() {
     bankName: string;
     note: string;
   }) => {
-    const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
     const endpoint = activeFundsModal === 'send' ? '/api/worker/wallet/send/' : '/api/worker/wallet/withdraw/';
 
     try {
-      await fetch(`${apiUrl}${endpoint}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
+      await apiPost(endpoint, payload);
     } catch (error) {
-      console.error('Worker funds action failed:', error);
+      console.warn('Worker funds action failed:', error);
     }
   };
 

@@ -5,6 +5,7 @@ import { ShieldAlert, TrendingUp, Target, Globe2 } from 'lucide-react';
 import { MiniBarChart } from '../../components/common/MiniBarChart';
 import { TrustRing } from '../../components/common/TrustRing';
 import AnimatedNumber from '../../components/common/AnimatedNumber';
+import { apiGet } from '../../utils/api';
 
 const mockInsightCards = [
   {
@@ -37,14 +38,10 @@ export default function InsightsPage() {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
-        const response = await fetch(`${apiUrl}/api/insights/recommendations/`);
-        if (response.ok) {
-          const data = await response.json();
-          setInsightCards(Array.isArray(data.results) ? data.results : data);
-        }
+        const data = await apiGet('/api/insights/recommendations/');
+        setInsightCards(Array.isArray(data.results) ? data.results : data);
       } catch (error) {
-        console.error('Error fetching insights:', error);
+        console.warn('Error fetching insights, using fallback:', error);
       } finally {
         setLoading(false);
       }
