@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Save, CreditCard, Link as LinkIcon, Trash2, Bell, Lock, Eye } from 'lucide-react';
 import Section from '../../components/layout/Section';
+import { apiGet, apiPost, apiDelete } from '../../utils/api';
 
 type TabId = 'profile' | 'account' | 'billing' | 'connected';
 
@@ -47,14 +48,10 @@ export default function EmployerSettingsPage() {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
-        const response = await fetch(`${apiUrl}/api/employer/settings/profile/`);
-        if (response.ok) {
-          const data = await response.json();
-          setFormData((prev) => ({ ...prev, ...data }));
-        }
+        const data = await apiGet('/api/employer/settings/profile/');
+        setFormData((prev) => ({ ...prev, ...data }));
       } catch (error) {
-        console.error('Error fetching employer settings:', error);
+        console.warn('Error fetching employer settings, using fallback:', error);
       } finally {
         setLoading(false);
       }
@@ -65,19 +62,12 @@ export default function EmployerSettingsPage() {
   const handleSave = async () => {
     setSaving(true);
     try {
-      const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
-      const response = await fetch(`${apiUrl}/api/employer/settings/profile/update/`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
-      if (response.ok) {
-        setSavedMessage(true);
-        setStatusMessage('Profile updated successfully.');
-        setTimeout(() => { setSavedMessage(false); setStatusMessage(null); }, 1800);
-      }
+      await apiPost('/api/employer/settings/profile/update/', formData);
+      setSavedMessage(true);
+      setStatusMessage('Profile updated successfully.');
+      setTimeout(() => { setSavedMessage(false); setStatusMessage(null); }, 1800);
     } catch (error) {
-      console.error('Error saving employer settings:', error);
+      console.warn('Error saving employer settings:', error);
       setStatusMessage('Unable to save profile right now.');
     } finally {
       setSaving(false);
@@ -88,8 +78,7 @@ export default function EmployerSettingsPage() {
     const updated = accountSettings.map((setting) => setting.key === key ? { ...setting, enabled: !setting.enabled } : setting);
     setAccountSettings(updated);
     try {
-      const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
-      await fetch(`${apiUrl}/api/employer/settings/preferences/update/`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ preferences: updated }) });
+      await apiPost('/api/employer/settings/preferences/update/', { preferences: updated });
       setStatusMessage('Account preferences updated.');
     } catch (error) {
       console.error('Failed to update preference:', error);
@@ -123,8 +112,7 @@ export default function EmployerSettingsPage() {
     const updated = connectedAccounts.map((account) => account.key === key ? { ...account, connected: !account.connected } : account);
     setConnectedAccounts(updated);
     try {
-      const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
-      await fetch(`${apiUrl}/api/employer/settings/connections/update/`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ connections: updated }) });
+      await apiPost('/api/employer/settings/connections/update/', { connections: updated });
       setStatusMessage('Connected accounts updated.');
     } catch (error) {
       console.error('Failed to update connected account:', error);
@@ -134,8 +122,7 @@ export default function EmployerSettingsPage() {
 
   const handleDeleteAccount = async () => {
     try {
-      const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
-      await fetch(`${apiUrl}/api/employer/settings/account/delete/`, { method: 'DELETE' });
+      await apiDelete('/api/employer/settings/account/delete/');
       setConfirmDeleteOpen(false);
       setStatusMessage('Delete request submitted. Contact support to complete this action.');
     } catch (error) {

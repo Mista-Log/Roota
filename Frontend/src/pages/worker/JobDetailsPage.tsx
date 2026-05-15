@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Star, MapPin } from 'lucide-react';
+import { apiGet, apiPost } from '../../utils/api';
 
 export default function WorkerJobDetailsPage() {
   const { jobId } = useParams();
@@ -9,15 +10,10 @@ export default function WorkerJobDetailsPage() {
   useEffect(() => {
     const fetchJob = async () => {
       try {
-        const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
-        const res = await fetch(`${apiUrl}/api/jobs/${jobId}/`);
-        if (res.ok) {
-          const data = await res.json();
-          setJob(data);
-        } else {
-          setJob({ id: jobId, title: 'Sample Job', company: 'Acme Corp', location: 'Remote', salary: '$8,000 - $12,000', description: 'This is a sample job description tailored for workers.' });
-        }
+        const data = await apiGet(`/api/jobs/${jobId}/`);
+        setJob(data);
       } catch (e) {
+        console.warn('Failed to fetch job, using fallback:', e);
         setJob({ id: jobId, title: 'Sample Job', company: 'Acme Corp', location: 'Remote', salary: '$8,000 - $12,000', description: 'This is a sample job description tailored for workers.' });
       }
     };

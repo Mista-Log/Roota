@@ -5,6 +5,7 @@ import { ArrowUpRight, Users, Briefcase, TrendingUp, Plus } from 'lucide-react';
 import { motion } from 'framer-motion';
 import AnimatedNumber from '../../components/common/AnimatedNumber';
 import JobCreationModal from '../../components/common/JobCreationModal';
+import { apiGet, apiPost } from '../../utils/api';
 
 interface Worker {
   id: string;
@@ -60,31 +61,16 @@ export default function EmployerDashboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+        const workersData = await apiGet('/api/employer/payroll/');
+        setWorkers(Array.isArray(workersData.results) ? workersData.results : workersData);
         
-        // Fetch payroll workers
-        const workersRes = await fetch(`${apiUrl}/api/employer/payroll/`);
-        if (workersRes.ok) {
-          const workersData = await workersRes.json();
-          setWorkers(Array.isArray(workersData.results) ? workersData.results : workersData);
-        }
-
-        // Fetch top talent
-        const talentRes = await fetch(`${apiUrl}/api/employer/talent/`);
-        if (talentRes.ok) {
-          const talentData = await talentRes.json();
-          setTalent(Array.isArray(talentData.results) ? talentData.results : talentData);
-        }
-
-        // Fetch recent hires
-        const hiresRes = await fetch(`${apiUrl}/api/employer/recent-hires/`);
-        if (hiresRes.ok) {
-          const hiresData = await hiresRes.json();
-          setRecentHires(Array.isArray(hiresData.results) ? hiresData.results : hiresData);
-        }
+        const talentData = await apiGet('/api/employer/talent/');
+        setTalent(Array.isArray(talentData.results) ? talentData.results : talentData);
+        
+        const hiresData = await apiGet('/api/employer/recent-hires/');
+        setRecentHires(Array.isArray(hiresData.results) ? hiresData.results : hiresData);
       } catch (error) {
-        console.error('Error fetching employer data:', error);
-        // Use mock data as fallback
+        console.warn('Error fetching employer data, using fallback:', error);
       }
     };
 
@@ -98,16 +84,8 @@ export default function EmployerDashboard() {
 
   const handleJobCreation = async (jobData: any) => {
     try {
-      const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
-      const response = await fetch(`${apiUrl}/api/employer/jobs/create/`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(jobData),
-      });
-
-      if (response.ok) {
-        console.log('Job created successfully');
-      }
+      await apiPost('/api/employer/jobs/create/', jobData);
+      console.log('Job created successfully');
     } catch (error) {
       console.error('Error creating job:', error);
     }
