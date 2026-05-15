@@ -102,10 +102,9 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    "default": dj_database_url.config(
+        default=os.getenv("DATABASE_URL")
+    )
 }
 
 
@@ -167,15 +166,10 @@ STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 STORAGES = {
-    "default": {
-        "BACKEND":
-            "cloudinary_storage.storage.MediaCloudinaryStorage"
-    },
-
     "staticfiles": {
         "BACKEND":
             "whitenoise.storage.CompressedManifestStaticFilesStorage"
-    },
+    }
 }
 
 AUTH_USER_MODEL = "accounts.User"
@@ -190,11 +184,11 @@ CLOUDINARY_STORAGE = {
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
-    "https://roota-production.up.railway.app",
+    "https://roota.onrender.com",
 ]
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:5173",
-    "https://roota-production.up.railway.app",
+    "https://roota.onrender.com",
 ]
 
 
