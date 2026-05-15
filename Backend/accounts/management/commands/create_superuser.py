@@ -9,19 +9,26 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         User = get_user_model()
 
-        username = os.getenv("DJANGO_SUPERUSER_USERNAME")
         email = os.getenv("DJANGO_SUPERUSER_EMAIL")
         password = os.getenv("DJANGO_SUPERUSER_PASSWORD")
 
-        if not username or not password:
-            self.stdout.write(
-                self.style.WARNING(
-                    "Superuser env variables not set"
-                )
-            )
-            return
+        username = os.getenv(
+            "DJANGO_SUPERUSER_USERNAME",
+            "admin"
+        )
 
-        if User.objects.filter(username=username).exists():
+        login_field = User.USERNAME_FIELD
+
+        lookup_value = (
+            email
+            if login_field == "email"
+            else username
+        )
+
+        if User.objects.filter(
+            **{login_field: lookup_value}
+        ).exists():
+
             self.stdout.write(
                 self.style.SUCCESS(
                     "Superuser already exists"
@@ -29,10 +36,25 @@ class Command(BaseCommand):
             )
             return
 
+        create_kwargs = {
+            login_field: lookup_value,
+            "password": password,
+        }
+
+        # Add username only if model has it
+        model_fields = [
+            field.name
+            for field in User._meta.fields
+        ]
+
+        if "username" in model_fields:
+            create_kwargs["username"] = username
+
+        if "email" in model_fields:
+            create_kwargs["email"] = email
+
         User.objects.create_superuser(
-            username=username,
-            email=email,
-            password=password,
+            **create_kwargs
         )
 
         self.stdout.write(
