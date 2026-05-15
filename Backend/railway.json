@@ -5,7 +5,7 @@
   },
   "deploy": {
     "startCommand": "gunicorn config.wsgi:application",
-    "preDeployCommand": "python manage.py migrate && python manage.py collectstatic --noinput",
+    "preDeployCommand": "python manage.py migrate && python manage.py collectstatic --noinput && python manage.py create_superuser",
     "restartPolicyType": "ON_FAILURE"
   }
 }
