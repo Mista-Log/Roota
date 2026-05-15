@@ -179,9 +179,9 @@ CSRF_TRUSTED_ORIGINS = [
 
 
 
-SQUAD_SECRET_KEY = config("SQUAD_SECRET_KEY")
-SQUAD_PUBLIC_KEY = config("SQUAD_PUBLIC_KEY")
-SQUAD_BASE_URL = config("SQUAD_BASE_URL")
+SQUAD_SECRET_KEY = config("SQUAD_SECRET_KEY", default=None)
+SQUAD_PUBLIC_KEY = config("SQUAD_PUBLIC_KEY", default=None)
+SQUAD_BASE_URL = config("SQUAD_BASE_URL", default=None)
 
 SIMPLE_JWT = {
     # Access token lifetime
