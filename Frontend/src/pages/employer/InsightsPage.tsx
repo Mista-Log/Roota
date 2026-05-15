@@ -2,6 +2,16 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, easeOut } from 'framer-motion';
 import { ShieldAlert, TrendingUp, Target, Globe2 } from 'lucide-react';
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts';
 import { MiniBarChart } from '../../components/common/MiniBarChart';
 import { TrustRing } from '../../components/common/TrustRing';
 import AnimatedNumber from '../../components/common/AnimatedNumber';
@@ -27,6 +37,20 @@ const mockInsightCards = [
     tone: 'dark',
   },
 ] as const;
+
+const regionalHiringDistribution = [
+  { region: 'West Africa', share: 42, density: 84, color: '#0b5d4b' },
+  { region: 'East Africa', share: 28, density: 68, color: '#0f7a65' },
+  { region: 'Southern Africa', share: 18, density: 51, color: '#f5a623' },
+  { region: 'North Africa', share: 12, density: 37, color: '#b96e1f' },
+];
+
+const distributionChartData = regionalHiringDistribution.map((item) => ({
+  region: item.region,
+  share: item.share,
+  density: item.density,
+  color: item.color,
+}));
 
 export default function EmployerInsightsPage() {
   const navigate = useNavigate();
@@ -56,19 +80,18 @@ export default function EmployerInsightsPage() {
   };
 
   const handleExportMap = () => {
-    const data = {
-      generatedAt: new Date().toISOString(),
-      metrics: { placementRate: '88%', growth: '+12.4%', gtvTarget: '$4.82M' },
-      regions: ['West Africa', 'East Africa', 'Southern Africa'],
-    };
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const rows = [
+      ['Region', 'Hiring Share (%)', 'Market Density Index'],
+      ...regionalHiringDistribution.map((item) => [item.region, String(item.share), String(item.density)]),
+    ];
+    const blob = new Blob([rows.map((row) => row.join(',')).join('\n')], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = 'roota-employer-insights.json';
+    link.download = 'roota-regional-hiring-distribution.csv';
     link.click();
     URL.revokeObjectURL(url);
-    setStatusMessage('Employer insights export downloaded successfully.');
+    setStatusMessage('Regional hiring distribution CSV downloaded successfully.');
     setTimeout(() => setStatusMessage(null), 2200);
   };
 
@@ -121,14 +144,49 @@ export default function EmployerInsightsPage() {
               <p className="text-sm text-muted">Market density across active hiring regions</p>
             </div>
             <motion.button whileHover={{ y: -2 }} onClick={handleExportMap} className="rounded-lg border border-border bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700 transition-all hover:bg-slate-200">
-              Export Map
+              Export CSV
             </motion.button>
           </div>
 
-          <div className="relative h-[560px] overflow-hidden rounded-[20px] bg-[linear-gradient(180deg,#eef2db_0%,#f7f6ea_100%)]">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_20%,rgba(11,93,75,0.16),transparent_24%),radial-gradient(circle_at_65%_34%,rgba(245,166,35,0.25),transparent_18%),radial-gradient(circle_at_55%_72%,rgba(11,93,75,0.12),transparent_20%)]" />
-            <div className="absolute left-1/2 top-1/2 h-[340px] w-[420px] -translate-x-1/2 -translate-y-1/2 rotate-[-11deg] rounded-[48%_52%_50%_50%/58%_46%_54%_42%] bg-gradient-to-br from-[#f9e4b8] via-[#42baa7] to-[#0b5d4b] opacity-95 shadow-[0_40px_80px_rgba(11,93,75,0.18)]" />
-            <div className="absolute bottom-14 right-10 h-28 w-16 rotate-12 rounded-[45%] bg-gradient-to-br from-[#f8d18b] to-[#b96e1f] opacity-90 shadow-lg" />
+          <div className="rounded-[20px] border border-border bg-white p-6">
+            <div className="h-[380px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={distributionChartData} layout="vertical" margin={{ top: 8, right: 24, left: 8, bottom: 8 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" horizontal={false} />
+                  <XAxis type="number" domain={[0, 100]} tickLine={false} axisLine={false} tick={{ fill: '#64748b', fontSize: 12 }} />
+                  <YAxis
+                    type="category"
+                    dataKey="region"
+                    tickLine={false}
+                    axisLine={false}
+                    width={120}
+                    tick={{ fill: '#334155', fontSize: 12, fontWeight: 600 }}
+                  />
+                  <Tooltip
+                    cursor={{ fill: 'rgba(15, 118, 110, 0.08)' }}
+                    formatter={(value, name) => [name === 'share' ? `${value}%` : value, name === 'share' ? 'Hiring share' : 'Market density']}
+                    labelStyle={{ color: '#0f172a', fontWeight: 600 }}
+                    contentStyle={{ borderRadius: '16px', borderColor: '#e2e8f0' }}
+                  />
+                  <Bar dataKey="share" radius={[0, 14, 14, 0]} barSize={20}>
+                    {distributionChartData.map((entry) => (
+                      <Cell key={entry.region} fill={entry.color} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+
+            <div className="mt-6 grid grid-cols-2 gap-4 rounded-2xl bg-slate-50 p-4 sm:grid-cols-4">
+              {distributionChartData.map((item) => (
+                <div key={`${item.region}-summary`} className="text-center">
+                  <div className="mx-auto mb-2 h-3 w-3 rounded-full" style={{ backgroundColor: item.color }} />
+                  <div className="text-xs font-medium text-muted">{item.region}</div>
+                  <div className="mt-1 text-lg font-bold text-slate-900">{item.share}%</div>
+                  <div className="text-[11px] text-slate-500">Density {item.density}</div>
+                </div>
+              ))}
+            </div>
           </div>
         </motion.section>
 
