@@ -652,7 +652,7 @@ export default function AuthPage() {
                 Roota
               </div>
               <div style={{ color: '#404944', fontSize: 16, lineHeight: '24px' }}>
-                © 2024 Roota. Built for the African Future.
+                © 2026 Roota. Built for the African Future.
               </div>
             </div>
             <div className="flex flex-wrap justify-center gap-6">
