@@ -10,7 +10,7 @@ export default function WorkerHeader() {
       role="banner"
       className="sticky top-0 z-40 bg-white border-b border-border"
     >
-      <div className="flex max-w-full items-center justify-between px-8 py-4">
+      <div className="flex max-w-full items-center justify-between px-4 py-3 sm:px-8 sm:py-4">
         <div className="flex items-center gap-6">
           <Link to="/worker/dashboard" className="text-lg font-bold">Roota</Link>
         </div>

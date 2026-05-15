@@ -37,7 +37,7 @@ export default function Sidebar() {
       transition={{ duration: 0.24 }}
       role="navigation"
       aria-label="Main navigation"
-      className="fixed z-50 flex h-screen w-72 flex-col overflow-y-auto border-r border-[#d6e4dc] bg-[#edf6f1] text-slate-900"
+      className="fixed z-50 hidden h-screen w-72 flex-col overflow-y-auto border-r border-[#d6e4dc] bg-[#edf6f1] text-slate-900 md:flex"
     >
       {/* Logo section */}
       <div className="border-b border-[#d6e4dc] bg-[#0b5d4b] px-6 py-5 text-white">

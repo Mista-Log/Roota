@@ -28,7 +28,7 @@ export default function EmployerSidebar() {
       transition={{ duration: 0.24 }}
       role="navigation"
       aria-label="Employer navigation"
-      className="fixed z-50 flex h-screen w-72 flex-col overflow-y-auto border-r border-[#d6e4dc] bg-[#f8faf8] text-slate-900"
+      className="fixed z-50 hidden h-screen w-72 flex-col overflow-y-auto border-r border-[#d6e4dc] bg-[#f8faf8] text-slate-900 md:flex"
     >
       <div className="border-b border-[#e6efe6] px-6 py-5">
         <Link to="/employer/dashboard" className="flex items-center gap-3">

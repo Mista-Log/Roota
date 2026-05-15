@@ -2,6 +2,8 @@ import type { ReactNode } from 'react';
 import { motion } from 'framer-motion';
 import EmployerSidebar from './EmployerSidebar';
 import EmployerHeader from './EmployerHeader';
+import MobileBottomNav from '../MobileBottomNav';
+import { LayoutGrid, Briefcase, Wallet, ShieldCheck } from 'lucide-react';
 
 interface EmployerShellProps {
   children: ReactNode;
@@ -13,7 +15,7 @@ export default function EmployerShell({ children }: EmployerShellProps) {
       <a href="#main-content" className="skip-link">Skip to content</a>
       <EmployerSidebar />
 
-      <div className="flex-1 flex flex-col overflow-hidden ml-72">
+      <div className="flex-1 flex flex-col overflow-hidden md:ml-72">
         <EmployerHeader />
 
         <motion.main
@@ -22,13 +24,23 @@ export default function EmployerShell({ children }: EmployerShellProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.3 }}
-          className="flex-1 overflow-auto bg-transparent"
+          className="flex-1 overflow-auto bg-transparent pb-24 md:pb-0"
         >
-          <div className="p-8">
+          <div className="p-4 sm:p-6 lg:p-8">
             {children}
           </div>
         </motion.main>
       </div>
+
+      <MobileBottomNav
+        items={[
+          { path: '/employer/dashboard', label: 'Home', icon: LayoutGrid },
+          { path: '/employer/jobs', label: 'Jobs', icon: Briefcase },
+          { path: '/employer/wallet', label: 'Wallet', icon: Wallet },
+          { path: '/employer/insights', label: 'Insights', icon: ShieldCheck },
+        ]}
+        label="Employer mobile navigation"
+      />
     </div>
   );
 }

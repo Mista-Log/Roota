@@ -40,7 +40,7 @@ export default function TopNavbar() {
       role="banner"
       className="sticky top-0 z-40 bg-card border-b border-border shadow-sm"
     >
-      <div className="flex max-w-full items-center justify-between px-8 py-4">
+      <div className="flex max-w-full items-center justify-between px-4 py-3 sm:px-8 sm:py-4">
         {/* Left navigation tabs */}
         <div className="flex items-center gap-6">
           {location.pathname.startsWith('/employer/dashboard') && (
@@ -55,7 +55,7 @@ export default function TopNavbar() {
             </div>
           )}
 
-          <nav aria-label="Top Navigation" className="flex items-center gap-8">
+          <nav aria-label="Top Navigation" className="hidden md:flex items-center gap-8">
           {topNavItems.map((item) => {
             const isActive = isNavItemActive(item.path);
             return (
@@ -85,7 +85,7 @@ export default function TopNavbar() {
         </div>
 
         {/* Right section with buttons and profile */}
-        <div className="flex items-center gap-4">
+        <div className="hidden md:flex items-center gap-4">
           <button
             onClick={switchRole}
             className="rounded-lg border border-border px-4 py-2 text-sm font-medium text-muted transition-all duration-200 hover:border-primary-dark hover:text-primary-dark"

@@ -2,12 +2,31 @@ import type { ReactNode } from 'react';
 import { motion } from 'framer-motion';
 import Sidebar from './Sidebar';
 import TopNavbar from './TopNavbar';
+import { useAuth } from '../context/AuthContext';
+import MobileBottomNav from './MobileBottomNav';
+import { LayoutGrid, Briefcase, Wallet, ShieldCheck, Settings, LifeBuoy } from 'lucide-react';
 
 interface AppShellProps {
   children: ReactNode;
 }
 
 export default function AppShell({ children }: AppShellProps) {
+  const { userRole } = useAuth();
+  const isEmployer = userRole === 'employer';
+  const mobileNavItems = isEmployer
+    ? [
+        { path: '/employer/dashboard', label: 'Home', icon: LayoutGrid },
+        { path: '/employer/jobs', label: 'Jobs', icon: Briefcase },
+        { path: '/employer/wallet', label: 'Wallet', icon: Wallet },
+        { path: '/employer/insights', label: 'Insights', icon: ShieldCheck },
+      ]
+    : [
+        { path: '/worker/dashboard', label: 'Home', icon: LayoutGrid },
+        { path: '/worker/jobs', label: 'Jobs', icon: Briefcase },
+        { path: '/worker/wallet', label: 'Wallet', icon: Wallet },
+        { path: '/worker/insights', label: 'Insights', icon: ShieldCheck },
+      ];
+
   return (
     <div className="flex min-h-screen app-bg">
       {/* Skip link for keyboard users */}
@@ -16,7 +35,7 @@ export default function AppShell({ children }: AppShellProps) {
       <Sidebar />
 
       {/* Main content area (offset by sidebar width) */}
-      <div className="flex-1 flex flex-col overflow-hidden ml-72">
+      <div className="flex-1 flex flex-col overflow-hidden md:ml-72">
         {/* Top navbar */}
         <TopNavbar />
 
@@ -27,13 +46,15 @@ export default function AppShell({ children }: AppShellProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.3 }}
-          className="flex-1 overflow-auto bg-transparent"
+          className="flex-1 overflow-auto bg-transparent pb-24 md:pb-0"
         >
-          <div className="p-8">
+          <div className="p-4 sm:p-6 lg:p-8">
             {children}
           </div>
         </motion.main>
       </div>
+
+      <MobileBottomNav items={mobileNavItems} />
     </div>
   );
 }
