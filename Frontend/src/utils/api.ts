@@ -12,6 +12,7 @@ interface FetchOptions extends RequestInit {
 
 async function buildApiError(response: Response): Promise<Error> {
   let message = `API Error: ${response.status} ${response.statusText}`;
+  const isServerError = response.status >= 500;
 
   try {
     const contentType = response.headers.get('content-type') || '';
@@ -20,7 +21,15 @@ async function buildApiError(response: Response): Promise<Error> {
       : await response.text();
 
     if (typeof payload === 'string' && payload.trim().length > 0) {
-      message = payload;
+      const looksLikeHtml = /<\s*(!doctype|html|head|body|title)/i.test(payload);
+
+      if (looksLikeHtml) {
+        message = isServerError
+          ? 'Server error. Please try again in a moment.'
+          : `Request failed with status ${response.status}.`;
+      } else {
+        message = payload.length > 220 ? `${payload.slice(0, 220)}...` : payload;
+      }
     } else if (payload && typeof payload === 'object') {
       const detail = (payload as any).detail;
       const messageField = (payload as any).message;
@@ -38,6 +47,10 @@ async function buildApiError(response: Response): Promise<Error> {
     }
   } catch {
     // Keep fallback error message when response body cannot be parsed.
+  }
+
+  if (isServerError && (!message || /^API Error:/.test(message))) {
+    message = 'Server error. Please try again in a moment.';
   }
 
   return new Error(message);
