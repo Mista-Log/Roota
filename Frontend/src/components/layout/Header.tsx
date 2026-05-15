@@ -24,27 +24,38 @@ export function MarketingHeader() {
         </motion.div>
 
         <nav className="hidden lg:flex items-center gap-8">
-          {tabs.map((tab, idx) => (
-            <motion.div
-              key={tab.tab}
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.05, duration: 0.5 }}
+        {tabs.map((tab, idx) => (
+          <motion.div
+            key={tab.tab}
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: idx * 0.05, duration: 0.5 }}
+            className="group"
+          >
+            <NavLink
+              to={tab.to}
+              className={({ isActive }) =>
+                `relative text-sm font-medium pb-1 transition-colors duration-300 ${
+                  isActive
+                    ? 'text-[#003527]'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`
+              }
             >
-              <NavLink
-                to={tab.to}
-                className={({ isActive }) =>
-                  `text-sm font-medium transition-colors ${
-                    isActive
-                      ? 'text-primary-dark border-b-2 border-primary-dark pb-1'
-                      : 'text-slate-600 hover:text-slate-900'
-                  }`
-                }
-              >
-                {tab.label}
-              </NavLink>
-            </motion.div>
-          ))}
+              {({ isActive }) => (
+                <>
+                  {tab.label}
+
+                  <span
+                    className={`absolute left-0 bottom-0 h-[2px] bg-[#003527] transition-all duration-300 ${
+                      isActive ? 'w-full' : 'w-0 group-hover:w-full'
+                    }`}
+                  />
+                </>
+              )}
+            </NavLink>
+          </motion.div>
+        ))}
         </nav>
 
         <motion.div
@@ -53,11 +64,17 @@ export function MarketingHeader() {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <Link to="/role" className="px-4 py-2 text-sm font-medium text-slate-700 hover:text-slate-900 transition-colors">
+          <Link
+            to="/role"
+            className="px-5 py-2.5 text-sm font-medium text-slate-700 border border-slate-300 rounded-md hover:border-[#003527] hover:text-[#003527] transition-all duration-300"
+          >
             Login
           </Link>
 
-          <Link to="/employer/marketplace" className="px-5 py-2.5 bg-primary-dark text-white text-sm font-semibold rounded-full hover:opacity-90 transition-opacity">
+          <Link
+            to="/role"
+            className="px-5 py-2.5 bg-[#003527] text-white text-sm font-semibold rounded-md hover:bg-[#064e3b] transition-all duration-300"
+          >
             Get Started
           </Link>
         </motion.div>

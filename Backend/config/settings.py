@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 from pathlib import Path
 from dotenv import load_dotenv
 import os
+from datetime import timedelta
 from decouple import config
 
 load_dotenv()
@@ -54,6 +55,7 @@ INSTALLED_APPS = [
     "cloudinary",
     "cloudinary_storage",
     "drf_spectacular",
+    "rest_framework_simplejwt.token_blacklist",
 ]
 
 MIDDLEWARE = [
@@ -180,3 +182,12 @@ CSRF_TRUSTED_ORIGINS = [
 SQUAD_SECRET_KEY = config("SQUAD_SECRET_KEY")
 SQUAD_PUBLIC_KEY = config("SQUAD_PUBLIC_KEY")
 SQUAD_BASE_URL = config("SQUAD_BASE_URL")
+
+SIMPLE_JWT = {
+    # Access token lifetime
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
+
+    # Refresh token lifetime
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+
+}

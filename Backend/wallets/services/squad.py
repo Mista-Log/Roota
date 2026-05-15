@@ -32,7 +32,18 @@ def create_virtual_account(data, user):
         headers=headers
     )
 
-    return response.json()
+    # 🔴 ADD THIS DEBUG
+    print("STATUS CODE:", response.status_code)
+    print("RAW RESPONSE:", response.text)
+
+    try:
+        return response.json()
+    except Exception:
+        return {
+            "success": False,
+            "message": "Invalid JSON from Squad",
+            "raw": response.text
+        }
 
 
 

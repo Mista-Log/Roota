@@ -87,15 +87,9 @@ class CreateVirtualAccountAPIView(APIView):
 
             VirtualAccount.objects.create(
                 wallet=wallet,
-                customer_identifier=response_data.get(
-                    "customer_identifier"
-                ),
-                account_number=response_data.get(
-                    "virtual_account_number"
-                ),
-                bank_code=response_data.get(
-                    "bank_code"
-                ),
+                customer_identifier=response_data.get("customer_identifier"),
+                account_number=response_data.get("virtual_account_number"),
+                bank_code=response_data.get("bank_code"),
 
                 first_name=serializer.validated_data["first_name"],
                 last_name=serializer.validated_data["last_name"],
@@ -105,11 +99,8 @@ class CreateVirtualAccountAPIView(APIView):
                 dob=serializer.validated_data["dob"],
                 address=serializer.validated_data["address"],
                 gender=serializer.validated_data["gender"],
-                beneficiary_account=serializer.validated_data[
-                    "beneficiary_account"
-                ]
+                beneficiary_account=serializer.validated_data["beneficiary_account"]
             )
-
         return Response(squad_response)
 
 

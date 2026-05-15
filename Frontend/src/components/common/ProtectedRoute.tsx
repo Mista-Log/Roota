@@ -15,11 +15,11 @@
   // }
 */
 
-interface ProtectedRouteProps {
-  children: React.ReactNode;
-  allowedRoles?: Array<'worker' | 'employer' | 'admin'>;
-}
+// interface ProtectedRouteProps {
+//   children: React.ReactNode;
+//   allowedRoles?: Array<'worker' | 'employer' | 'admin'>;
+// }
 
-export function ProtectedRoute({ children }: ProtectedRouteProps) {
-  return <>{children}</>;
-}
+// export function ProtectedRoute({ children }: ProtectedRouteProps) {
+//   return <>{children}</>;
+// }
