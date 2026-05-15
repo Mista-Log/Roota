@@ -166,15 +166,10 @@ STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 STORAGES = {
-    "default": {
-        "BACKEND":
-            "cloudinary_storage.storage.MediaCloudinaryStorage"
-    },
-
     "staticfiles": {
         "BACKEND":
             "whitenoise.storage.CompressedManifestStaticFilesStorage"
-    },
+    }
 }
 
 AUTH_USER_MODEL = "accounts.User"
@@ -189,11 +184,11 @@ CLOUDINARY_STORAGE = {
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
-    "https://roota-production.up.railway.app",
+    "https://roota.onrender.com",
 ]
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:5173",
-    "https://roota-production.up.railway.app",
+    "https://roota.onrender.com",
 ]
 
 
