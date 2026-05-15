@@ -3,10 +3,57 @@
  * All API calls should use this instead of raw fetch() to ensure tokens are sent
  */
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+// Default to the production backend if no VITE_API_BASE_URL is supplied
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://roota-production.up.railway.app';
 
 interface FetchOptions extends RequestInit {
   skipAuth?: boolean;
+}
+
+async function buildApiError(response: Response): Promise<Error> {
+  let message = `API Error: ${response.status} ${response.statusText}`;
+  const isServerError = response.status >= 500;
+
+  try {
+    const contentType = response.headers.get('content-type') || '';
+    const payload = contentType.includes('application/json')
+      ? await response.json()
+      : await response.text();
+
+    if (typeof payload === 'string' && payload.trim().length > 0) {
+      const looksLikeHtml = /<\s*(!doctype|html|head|body|title)/i.test(payload);
+
+      if (looksLikeHtml) {
+        message = isServerError
+          ? 'Server error. Please try again in a moment.'
+          : `Request failed with status ${response.status}.`;
+      } else {
+        message = payload.length > 220 ? `${payload.slice(0, 220)}...` : payload;
+      }
+    } else if (payload && typeof payload === 'object') {
+      const detail = (payload as any).detail;
+      const messageField = (payload as any).message;
+
+      if (typeof detail === 'string' && detail.trim().length > 0) {
+        message = detail;
+      } else if (typeof messageField === 'string' && messageField.trim().length > 0) {
+        message = messageField;
+      } else {
+        const firstValue = Object.values(payload as Record<string, unknown>)[0];
+        if (Array.isArray(firstValue) && typeof firstValue[0] === 'string') {
+          message = firstValue[0];
+        }
+      }
+    }
+  } catch {
+    // Keep fallback error message when response body cannot be parsed.
+  }
+
+  if (isServerError && (!message || /^API Error:/.test(message))) {
+    message = 'Server error. Please try again in a moment.';
+  }
+
+  return new Error(message);
 }
 
 /**
@@ -60,7 +107,7 @@ export async function apiFetch(endpoint: string, options: FetchOptions = {}): Pr
 export async function apiGet(endpoint: string, skipAuth = false): Promise<any> {
   const response = await apiFetch(endpoint, { method: 'GET', skipAuth });
   if (!response.ok) {
-    throw new Error(`API Error: ${response.status} ${response.statusText}`);
+    throw await buildApiError(response);
   }
   return response.json();
 }
@@ -75,7 +122,7 @@ export async function apiPost(endpoint: string, data?: any, skipAuth = false): P
     skipAuth,
   });
   if (!response.ok) {
-    throw new Error(`API Error: ${response.status} ${response.statusText}`);
+    throw await buildApiError(response);
   }
   return response.json();
 }
@@ -90,7 +137,7 @@ export async function apiPut(endpoint: string, data?: any, skipAuth = false): Pr
     skipAuth,
   });
   if (!response.ok) {
-    throw new Error(`API Error: ${response.status} ${response.statusText}`);
+    throw await buildApiError(response);
   }
   return response.json();
 }
@@ -101,7 +148,7 @@ export async function apiPut(endpoint: string, data?: any, skipAuth = false): Pr
 export async function apiDelete(endpoint: string, skipAuth = false): Promise<any> {
   const response = await apiFetch(endpoint, { method: 'DELETE', skipAuth });
   if (!response.ok) {
-    throw new Error(`API Error: ${response.status} ${response.statusText}`);
+    throw await buildApiError(response);
   }
   return response.json();
 }
