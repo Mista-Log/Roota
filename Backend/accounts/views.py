@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny
-
+from django.conf import settings
 from google.oauth2 import id_token
 from google.auth.transport import requests
 
@@ -153,6 +153,7 @@ class GoogleLoginAPIView(APIView):
             idinfo = id_token.verify_oauth2_token(
                 token,
                 requests.Request(),
+                settings.GOOGLE_CLIENT_ID
             )
 
             email = idinfo["email"]

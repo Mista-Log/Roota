@@ -454,34 +454,12 @@ export default function AuthPage() {
 
                 {/* ── Social login buttons ── */}
                 <div className="w-full mb-8">
-                  <button
-                    type="button"
-                    className="social-btn w-full flex items-center justify-center gap-3"
-                    onClick={handleGoogleLogin}
-                    style={{
-                      width: '100%',
-                      padding: '14px 20px',
-                      border: '1px solid rgba(191,201,195,0.4)',
-                      borderRadius: 12,
-                      background: '#fff',
+                  <GoogleLogin
+                    onSuccess={handleGoogleLogin}
+                    onError={() => {
+                      alert("Google Login Failed");
                     }}
-                  >
-                    <img
-                      src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
-                      alt="Google"
-                      className="w-5 h-5 object-contain flex-shrink-0"
-                    />
-                    <span
-                      className="roota-display"
-                      style={{
-                        fontSize: 15,
-                        fontWeight: 600,
-                        color: '#191c1e',
-                      }}
-                    >
-                      Continue with Google
-                    </span>
-                  </button>
+                  />
                 </div>
 
                 {/* ── Divider ── */}
