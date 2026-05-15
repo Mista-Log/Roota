@@ -2,16 +2,22 @@ import React, { ReactNode } from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import { BrandBlock } from '../components/common/BrandBlock';
 import { Grid, Briefcase, Wallet, ShieldCheck, Settings } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 type ActiveTab = 'dashboard' | 'jobs' | 'finances' | 'insights';
 type WorkspaceMode = 'worker' | 'employer' | 'finance' | 'insights';
 
-const tabs = [
-  { to: '/worker', label: 'Dashboard', tab: 'dashboard' },
-  { to: '/marketplace', label: 'Jobs', tab: 'jobs' },
-  { to: '/finances', label: 'Finances', tab: 'finances' },
-  { to: '/insights', label: 'Insights', tab: 'insights' },
-] as const;
+function getTabs(mode: WorkspaceMode) {
+  const dashboardPath = mode === 'employer' ? '/employer/dashboard' : '/worker/dashboard';
+  const jobsPath = mode === 'employer' ? '/employer/jobs' : '/worker/jobs';
+
+  return [
+    { to: dashboardPath, label: 'Dashboard', tab: 'dashboard' },
+    { to: jobsPath, label: 'Jobs', tab: 'jobs' },
+    { to: '/finances', label: 'Finances', tab: 'finances' },
+    { to: '/insights', label: 'Insights', tab: 'insights' },
+  ] as const;
+}
 
 const promoCopy = {
   worker: {
@@ -55,12 +61,17 @@ export function WorkspaceShell({
 }: WorkspaceShellProps) {
   return (
     <div className={`workspace-page workspace-page--${mode}`}>
-      <aside className="workspace-sidebar">
+      <motion.aside
+        className="workspace-sidebar"
+        initial={{ opacity: 0, x: -18 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.45, ease: 'easeOut' }}
+      >
         <BrandBlock compact={mode !== 'worker'} />
 
         <nav className="workspace-sidebar__nav">
-          <SidebarLink to="/worker" icon={<Grid size={20} />} label="Overview" active={activeTab === 'dashboard'} />
-          <SidebarLink to="/marketplace" icon={<Briefcase size={20} />} label="Marketplace" active={activeTab === 'jobs'} />
+          <SidebarLink to={mode === 'employer' ? '/employer/dashboard' : '/worker/dashboard'} icon={<Grid size={20} />} label="Overview" active={activeTab === 'dashboard'} />
+          <SidebarLink to={mode === 'employer' ? '/employer/jobs' : '/worker/jobs'} icon={<Briefcase size={20} />} label="Marketplace" active={activeTab === 'jobs'} />
           <SidebarLink to="/finances" icon={<Wallet size={20} />} label="Wallet" active={activeTab === 'finances'} />
           <SidebarLink to="/insights" icon={<ShieldCheck size={20} />} label="AI Trust Score" active={activeTab === 'insights'} />
           <SidebarLink to="#settings" icon={<Settings size={20} />} label="Settings" />
@@ -78,13 +89,23 @@ export function WorkspaceShell({
           <a href="#support">Support</a>
           <a href="#logout">Logout</a>
         </div>
-      </aside>
+      </motion.aside>
 
-      <main className="workspace-main">
-        <header className="workspace-topbar">
+      <motion.main
+        className="workspace-main"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.35, delay: 0.05 }}
+      >
+        <motion.header
+          className="workspace-topbar"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, ease: 'easeOut' }}
+        >
           {showSearch ? <input className="workspace-topbar__search" placeholder="Search talent..." /> : <div className="workspace-topbar__spacer" />}
           <nav className="workspace-topbar__nav">
-            {tabs.map((tab) => (
+            {getTabs(mode).map((tab) => (
               <NavLink
                 key={tab.tab}
                 to={tab.to}
@@ -103,16 +124,18 @@ export function WorkspaceShell({
             </Link>
             <div className={`avatar avatar--${mode}`} />
           </div>
-        </header>
+        </motion.header>
 
         <section className={`workspace-content workspace-content--${activeTab}`}>
-          <div className="page-heading">
-            <h1>{title}</h1>
-            {subtitle ? <p>{subtitle}</p> : null}
-          </div>
+          {title || subtitle ? (
+            <div className="page-heading">
+              {title ? <h1>{title}</h1> : null}
+              {subtitle ? <p>{subtitle}</p> : null}
+            </div>
+          ) : null}
           {children}
         </section>
-      </main>
+      </motion.main>
     </div>
   );
 }

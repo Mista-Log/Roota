@@ -10,6 +10,22 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from .models import User, WorkerProfile, EmployerProfile
 from django.contrib.auth import get_user_model
 
+from drf_spectacular.utils import extend_schema, OpenApiResponse
+from rest_framework.permissions import IsAuthenticated
+
+from .serializers import (
+    WorkerProfileSerializer,
+    WorkerProfileUpdateSerializer,
+)
+
+from .serializers import EmployerProfileSerializer
+
+from rest_framework import generics
+from .serializers import WorkerSerializer
+
+
+
+
 User = get_user_model()
 
 
@@ -117,63 +133,6 @@ class MeView(APIView):
         return Response(serializer.data)
 
 
-# =========================
-# WORKER ONLY VIEW
-# =========================
-@extend_schema(
-    tags=["Authentication"],
-    summary="Worker Dashboard",
-    description="Accessible only by Workers.",
-)
-class WorkerDashboardView(APIView):
-
-    permission_classes = [IsWorker]
-
-    def get(self, request):
-
-        return Response({
-            "message": "Welcome Worker"
-        })
-
-
-# =========================
-# EMPLOYER ONLY VIEW
-# =========================
-@extend_schema(
-    tags=["Authentication"],
-    summary="Employer Dashboard",
-    description="Accessible only by Employers.",
-)
-class EmployerDashboardView(APIView):
-
-    permission_classes = [IsEmployer]
-
-    def get(self, request):
-
-        return Response({
-            "message": "Welcome Employer"
-        })
-
-
-# =========================
-# ADMIN ONLY VIEW
-# =========================
-@extend_schema(
-    tags=["Authentication"],
-    summary="Admin Dashboard",
-    description="Accessible only by Admins.",
-)
-class AdminDashboardView(APIView):
-
-    permission_classes = [IsAdmin]
-
-    def get(self, request):
-
-        return Response({
-            "message": "Welcome Admin"
-        })
-
-
 class GoogleLoginAPIView(APIView):
 
     permission_classes = [AllowAny]
@@ -253,3 +212,180 @@ class GoogleLoginAPIView(APIView):
                 {"detail": "Invalid Google token"},
                 status=status.HTTP_400_BAD_REQUEST
             )
+        
+
+@extend_schema(
+    tags=["Workers"],
+    summary="Get My Worker Profile",
+    description="Returns the authenticated worker's profile. No parameters required.",
+    responses={
+        200: WorkerProfileSerializer,
+        404: OpenApiResponse(description="Worker profile not found")
+    }
+)
+class MyWorkerProfileView(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        try:
+            profile = WorkerProfile.objects.select_related("user").get(
+                user=request.user
+            )
+        except WorkerProfile.DoesNotExist:
+            return Response(
+                {"error": "Worker profile not found"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        serializer = WorkerProfileSerializer(
+            profile,
+            context={"request": request}
+        )
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@extend_schema(
+    tags=["Workers"],
+    summary="Update My Worker Profile",
+    description="Update authenticated worker profile.",
+    request=WorkerProfileUpdateSerializer,
+    responses={
+        200: WorkerProfileSerializer,
+        404: OpenApiResponse(description="Worker profile not found"),
+    }
+)
+class UpdateWorkerProfileView(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def patch(self, request):
+
+        try:
+            profile = WorkerProfile.objects.select_related("user").get(
+                user=request.user
+            )
+
+        except WorkerProfile.DoesNotExist:
+            return Response(
+                {"error": "Worker profile not found"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        serializer = WorkerProfileUpdateSerializer(
+            profile,
+            data=request.data,
+            partial=True
+        )
+
+        serializer.is_valid(raise_exception=True)
+
+        serializer.save()
+
+        return Response(
+            {
+                "message": "Profile updated successfully",
+                "profile": WorkerProfileSerializer(
+                    profile,
+                    context={"request": request}
+                ).data
+            },
+            status=status.HTTP_200_OK
+        )
+    
+
+
+
+# =========================
+# GET EMPLOYER PROFILE
+# =========================
+class GetEmployerProfileView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @extend_schema(
+        tags=["Employer Profile"],
+        responses=EmployerProfileSerializer,
+        description="Get authenticated employer profile"
+    )
+    def get(self, request):
+        try:
+            profile = EmployerProfile.objects.get(user=request.user)
+
+            serializer = EmployerProfileSerializer(profile)
+
+            return Response(
+                {
+                    "success": True,
+                    "message": "Employer profile fetched successfully",
+                    "data": serializer.data
+                },
+                status=status.HTTP_200_OK
+            )
+
+        except EmployerProfile.DoesNotExist:
+            return Response(
+                {
+                    "success": False,
+                    "message": "Employer profile not found"
+                },
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+
+# =========================
+# UPDATE EMPLOYER PROFILE
+# =========================
+class UpdateEmployerProfileView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @extend_schema(
+        tags=["Employer Profile"],
+        request=EmployerProfileSerializer,
+        responses=EmployerProfileSerializer,
+        description="Update authenticated employer profile"
+    )
+    def patch(self, request):
+        try:
+            profile = EmployerProfile.objects.get(user=request.user)
+
+            serializer = EmployerProfileSerializer(
+                profile,
+                data=request.data,
+                partial=True
+            )
+
+            if serializer.is_valid():
+                serializer.save()
+
+                return Response(
+                    {
+                        "success": True,
+                        "message": "Employer profile updated successfully",
+                        "data": serializer.data
+                    },
+                    status=status.HTTP_200_OK
+                )
+
+            return Response(
+                {
+                    "success": False,
+                    "errors": serializer.errors
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        except EmployerProfile.DoesNotExist:
+            return Response(
+                {
+                    "success": False,
+                    "message": "Employer profile not found"
+                },
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+
+class WorkerListView(generics.ListAPIView):
+    serializer_class = WorkerSerializer
+
+    def get_queryset(self):
+        return User.objects.filter(role=User.Role.WORKER).select_related("workerprofile")

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
-
+from .models import User, WorkerProfile
 from .models import (
     User,
     WorkerProfile,
@@ -91,3 +91,167 @@ class LoginSerializer(serializers.Serializer):
             }
 
         raise serializers.ValidationError("Invalid credentials")
+
+
+class WorkerProfileSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(source="user.full_name")
+    image = serializers.SerializerMethodField()
+    verified = serializers.BooleanField(source="is_verified")
+    verificationBadge = serializers.CharField(source="verification_badge")
+
+    class Meta:
+        model = WorkerProfile
+        fields = [
+            "name",
+            "title",
+            "location",
+            "image",
+            "verified",
+            "skills",
+            "verificationBadge",
+            "bio",
+            "hourly_rate",
+            "availability",
+        ]
+
+    def get_image(self, obj):
+        request = self.context.get("request")
+        if obj.user.profile_picture:
+            url = obj.user.profile_picture.url
+            return request.build_absolute_uri(url) if request else url
+        return None
+
+
+class WorkerProfileUpdateSerializer(serializers.ModelSerializer):
+
+    full_name = serializers.CharField(
+        source="user.full_name",
+        required=False
+    )
+
+    phone = serializers.CharField(
+        source="user.phone",
+        required=False
+    )
+
+    profile_picture = serializers.ImageField(
+        source="user.profile_picture",
+        required=False
+    )
+
+    class Meta:
+        model = WorkerProfile
+
+        fields = [
+            "full_name",
+            "phone",
+            "profile_picture",
+            "location",
+            "bio",
+        ]
+
+    def update(self, instance, validated_data):
+
+        user_data = validated_data.pop("user", {})
+
+        # Update User model
+        user = instance.user
+
+        if "full_name" in user_data:
+            user.full_name = user_data["full_name"]
+
+        if "phone" in user_data:
+            user.phone = user_data["phone"]
+
+        if "profile_picture" in user_data:
+            user.profile_picture = user_data["profile_picture"]
+
+        user.save()
+
+        # Update WorkerProfile model
+        instance.location = validated_data.get(
+            "location",
+            instance.location
+        )
+
+        instance.bio = validated_data.get(
+            "bio",
+            instance.bio
+        )
+
+        instance.save()
+
+        return instance
+
+
+class EmployerProfileSerializer(serializers.ModelSerializer):
+    full_name = serializers.CharField(source="user.full_name", required=False)
+    email = serializers.EmailField(source="user.email", read_only=True)
+    phone = serializers.CharField(source="user.phone", required=False)
+
+    class Meta:
+        model = EmployerProfile
+        fields = [
+            "full_name",
+            "email",
+            "phone",
+            "location",
+            "bio",
+            "company_name",
+            "industry",
+            "website",
+        ]
+
+    def update(self, instance, validated_data):
+        user_data = validated_data.pop("user", {})
+
+        user = instance.user
+
+        if "full_name" in user_data:
+            user.full_name = user_data["full_name"]
+
+        if "phone" in user_data:
+            user.phone = user_data["phone"]
+
+        user.save()
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
+        instance.save()
+
+        return instance
+
+
+from rest_framework import serializers
+from .models import User, WorkerProfile
+
+
+class WorkersProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WorkerProfile
+        fields = [
+            "title",
+            "location",
+            "bio",
+            "skills",
+            "hourly_rate",
+            "availability",
+            "is_verified",
+            "verification_badge",
+        ]
+
+
+class WorkerSerializer(serializers.ModelSerializer):
+    profile = WorkersProfileSerializer(source="workerprofile", read_only=True)
+
+    class Meta:
+        model = User
+        fields = [
+            "id",
+            "email",
+            "full_name",
+            "phone",
+            "profile_picture",
+            "profile",
+        ]

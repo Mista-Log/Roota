@@ -1,80 +1,269 @@
-import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
 import { ProtectedRoute } from './components/common/ProtectedRoute';
+import WorkerShell from './layouts/worker/WorkerShell';
+import EmployerShell from './layouts/employer/EmployerShell';
 
 // Pages
 import LandingPage from './pages/Landing/LandingPage';
 import RoleSelectionPage from './pages/Landing/RoleSelectionPage';
 import AuthPage from './pages/Auth/AuthPage';
-import MarketplacePage from './pages/Marketplace/MarketplacePage';
 import WorkerDashboardPage from './pages/Dashboard/WorkerDashboard';
 import EmployerDashboardPage from './pages/Dashboard/EmployerDashboard';
-import FinancesPage from './pages/Dashboard/FinancesPage';
-import InsightsPage from './pages/Dashboard/InsightsPage';
+import WorkerMarketplacePage from './pages/worker/MarketplacePage';
+import EmployerMarketplacePage from './pages/employer/MarketplacePage';
+import WorkerInsightsPage from './pages/worker/InsightsPage';
+import EmployerInsightsPage from './pages/employer/InsightsPage';
+import JobsPage from './pages/Jobs/JobsPage';
+// shared finances and generic job details removed - using role-specific pages
+import EmployerJobsPage from './pages/Jobs/EmployerJobsPage';
+import WorkerJobDetailsPage from './pages/worker/JobDetailsPage';
+import EmployerJobDetailsPage from './pages/employer/JobDetailsPage';
+import EmployerTalentDetailsPage from './pages/employer/TalentDetailsPage';
+import WorkerWalletPage from './pages/worker/WalletPage';
+import EmployerWalletPage from './pages/employer/WalletPage';
+import WorkerTransactionsPage from './pages/worker/TransactionsPage';
+import EmployerTransactionsPage from './pages/employer/TransactionsPage';
+import WorkerTrustScorePage from './pages/worker/TrustScorePage';
+import EmployerTrustScorePage from './pages/employer/TrustScorePage';
+import WorkerSettingsPage from './pages/worker/SettingsPage';
+import EmployerSettingsPage from './pages/employer/SettingsPage';
+import WorkerSupportPage from './pages/worker/SupportPage';
+import EmployerSupportPage from './pages/employer/SupportPage';
 
 function App() {
   return (
-    <AuthProvider>
-      <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/role" element={<RoleSelectionPage />} />
-        <Route path="/auth" element={<AuthPage />} />
-        
-        {/* Protected Routes */}
-        <Route 
-          path="/marketplace" 
-          element={
-            <ProtectedRoute>
-              <MarketplacePage />
-            </ProtectedRoute>
-          } 
-        />
-        <Route 
-          path="/worker" 
-          element={
-            <ProtectedRoute allowedRoles={['worker']}>
+    <Routes>
+      {/* Public Routes */}
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/role" element={<RoleSelectionPage />} />
+      <Route path="/auth" element={<AuthPage />} />
+      
+      {/* Worker Routes */}
+      <Route 
+        path="/worker/dashboard" 
+        element={
+          <ProtectedRoute allowedRoles={['worker']}>
+            <WorkerShell>
               <WorkerDashboardPage />
-            </ProtectedRoute>
-          } 
-        />
-        <Route 
-          path="/employer" 
-          element={
-            <ProtectedRoute allowedRoles={['employer']}>
-              <EmployerDashboardPage />
-            </ProtectedRoute>
-          } 
-        />
-        <Route 
-          path="/dashboard" 
-          element={
-            <ProtectedRoute>
-              <WorkerDashboardPage />
-            </ProtectedRoute>
-          } 
-        />
-        <Route 
-          path="/finances" 
-          element={
-            <ProtectedRoute>
-              <FinancesPage />
-            </ProtectedRoute>
-          } 
-        />
-        <Route 
-          path="/insights" 
-          element={
-            <ProtectedRoute>
-              <InsightsPage />
-            </ProtectedRoute>
-          } 
-        />
+            </WorkerShell>
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/worker/jobs" 
+        element={
+          <ProtectedRoute allowedRoles={['worker']}>
+            <WorkerShell>
+              <JobsPage />
+            </WorkerShell>
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/worker/jobs/:jobId" 
+        element={
+          <ProtectedRoute allowedRoles={['worker']}>
+            <WorkerShell>
+              <WorkerJobDetailsPage />
+            </WorkerShell>
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/worker/marketplace" 
+        element={
+          <ProtectedRoute allowedRoles={['worker']}>
+            <WorkerShell>
+              <WorkerMarketplacePage />
+            </WorkerShell>
+          </ProtectedRoute>
+        } 
+      />
+      <Route path="/worker/finances" element={<Navigate to="/worker/wallet" replace />} />
+      <Route 
+        path="/worker/insights" 
+        element={
+          <ProtectedRoute allowedRoles={['worker']}>
+            <WorkerShell>
+              <WorkerInsightsPage />
+            </WorkerShell>
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/worker/wallet" 
+        element={
+          <ProtectedRoute allowedRoles={['worker']}>
+            <WorkerShell>
+              <WorkerWalletPage />
+            </WorkerShell>
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/worker/transactions" 
+        element={
+          <ProtectedRoute allowedRoles={['worker']}>
+            <WorkerShell>
+              <WorkerTransactionsPage />
+            </WorkerShell>
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/worker/trust-score" 
+        element={
+          <ProtectedRoute allowedRoles={['worker']}>
+            <WorkerShell>
+              <WorkerTrustScorePage />
+            </WorkerShell>
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/worker/settings" 
+        element={
+          <ProtectedRoute allowedRoles={['worker']}>
+            <WorkerShell>
+              <WorkerSettingsPage />
+            </WorkerShell>
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/worker/support" 
+        element={
+          <ProtectedRoute allowedRoles={['worker']}>
+            <WorkerShell>
+              <WorkerSupportPage />
+            </WorkerShell>
+          </ProtectedRoute>
+        } 
+      />
 
-        {/* Fallback */}
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </AuthProvider>
+      {/* Employer Routes */}
+      <Route 
+        path="/employer/dashboard" 
+        element={
+          <ProtectedRoute allowedRoles={['employer']}>
+            <EmployerShell>
+              <EmployerDashboardPage />
+            </EmployerShell>
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/employer/jobs" 
+        element={
+          <ProtectedRoute allowedRoles={['employer']}>
+            <EmployerShell>
+              <EmployerJobsPage />
+            </EmployerShell>
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/employer/jobs/:jobId" 
+        element={
+          <ProtectedRoute allowedRoles={['employer']}>
+            <EmployerShell>
+              <EmployerJobDetailsPage />
+            </EmployerShell>
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/employer/marketplace" 
+        element={
+          <ProtectedRoute allowedRoles={['employer']}>
+            <EmployerShell>
+              <EmployerMarketplacePage />
+            </EmployerShell>
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/employer/talent/:talentId" 
+        element={
+          <ProtectedRoute allowedRoles={['employer']}>
+            <EmployerShell>
+              <EmployerTalentDetailsPage />
+            </EmployerShell>
+          </ProtectedRoute>
+        } 
+      />
+      <Route path="/employer/finances" element={<Navigate to="/employer/wallet" replace />} />
+      <Route 
+        path="/employer/insights" 
+        element={
+          <ProtectedRoute allowedRoles={['employer']}>
+            <EmployerShell>
+              <EmployerInsightsPage />
+            </EmployerShell>
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/employer/wallet" 
+        element={
+          <ProtectedRoute allowedRoles={['employer']}>
+            <EmployerShell>
+              <EmployerWalletPage />
+            </EmployerShell>
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/employer/transactions" 
+        element={
+          <ProtectedRoute allowedRoles={['employer']}>
+            <EmployerShell>
+              <EmployerTransactionsPage />
+            </EmployerShell>
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/employer/trust-score" 
+        element={
+          <ProtectedRoute allowedRoles={['employer']}>
+            <EmployerShell>
+              <EmployerTrustScorePage />
+            </EmployerShell>
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/employer/settings" 
+        element={
+          <ProtectedRoute allowedRoles={['employer']}>
+            <EmployerShell>
+              <EmployerSettingsPage />
+            </EmployerShell>
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/employer/support" 
+        element={
+          <ProtectedRoute allowedRoles={['employer']}>
+            <EmployerShell>
+              <EmployerSupportPage />
+            </EmployerShell>
+          </ProtectedRoute>
+        } 
+      />
+
+      {/* Legacy redirects for old routes */}
+      <Route path="/dashboard" element={<Navigate to="/worker/dashboard" replace />} />
+      <Route path="/worker" element={<Navigate to="/worker/dashboard" replace />} />
+      <Route path="/employer" element={<Navigate to="/employer/dashboard" replace />} />
+      <Route path="/jobs" element={<Navigate to="/worker/jobs" replace />} />
+      <Route path="/jobs/:jobId" element={<Navigate to="/worker/jobs/:jobId" replace />} />
+
+      {/* Fallback */}
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   );
 }
 

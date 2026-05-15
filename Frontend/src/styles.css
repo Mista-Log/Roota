@@ -1,45 +1,10 @@
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+/* Legacy stylesheet archived. The full original is in
+   `src/styles/legacy/styles.css` for reference.
+   Use `src/styles/globals.css` (Tailwind) for the new design.
+*/
 
-:root {
-  --bg: #f4f6f3;
-  --surface: #ffffff;
-  --surface-2: #eef2ef;
-  --dark: #17372f;
-  --darker: #0f2a24;
-  --text: #15342d;
-  --muted: #68726e;
-  --border: #dfe5e1;
-  --green: #0f5a46;
-  --green-2: #184d3d;
-  --mint: #c6f1df;
-  --gold: #f5a30a;
-  --shadow: 0 18px 40px rgba(18, 38, 33, 0.09);
-  font-family: 'Manrope', sans-serif;
-}
-
-* { box-sizing: border-box; }
-html, body, #root { min-height: 100%; }
-body {
-  margin: 0;
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'Manrope', sans-serif;
-}
-
-a { color: inherit; text-decoration: none; }
-button, input { font: inherit; }
-
-.primary-cta, .secondary-cta, .ghost-cta, .gold-cta, .dark-cta, .switch-role {
-  border: 1px solid transparent;
-  border-radius: 10px;
-  padding: 0.85rem 1.35rem;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  cursor: pointer;
-  transition: transform 160ms ease, background 160ms ease, border-color 160ms ease;
-}
+/* Placeholder to avoid accidental legacy imports. */
+:root {}
 
 .primary-cta { background: var(--green); color: #fff; box-shadow: 0 10px 18px rgba(14, 79, 61, 0.15); }
 .primary-cta.small { padding: 0.65rem 1rem; }
