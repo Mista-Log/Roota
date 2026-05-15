@@ -1,4 +1,4 @@
-import { motion, type Variants } from 'framer-motion';
+import { motion, easeOut, type Variants } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { FeatureTile } from '../../components/landing/FeatureTile';
 import { TrustRing } from '../../components/common/TrustRing';
