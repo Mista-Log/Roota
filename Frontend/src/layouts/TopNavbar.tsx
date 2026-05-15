@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Search, User } from 'lucide-react';
+import { Search, User, Menu, X, Settings, LifeBuoy, LogOut } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import type { MouseEvent } from 'react';
 
 const sharedNavItems = [
   { path: '/jobs', label: 'Jobs' },
@@ -10,10 +11,11 @@ const sharedNavItems = [
   { path: '/insights', label: 'Insights' },
 ];
 
-export default function TopNavbar() {
+export default function TopNavbar({ onToggleSidebar }: { onToggleSidebar?: () => void }) {
   const location = useLocation();
   const navigate = useNavigate();
-  const { userRole } = useAuth();
+  const { userRole, logout } = useAuth();
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
 
   const currentRole = userRole === 'employer' ? 'employer' : 'worker';
   const dashboardPath = currentRole === 'employer' ? '/employer/dashboard' : '/worker/dashboard';
@@ -43,6 +45,16 @@ export default function TopNavbar() {
       <div className="flex max-w-full items-center justify-between px-4 py-3 sm:px-8 sm:py-4">
         {/* Left navigation tabs */}
         <div className="flex items-center gap-6">
+          {/* Mobile hamburger */}
+          <div className="flex items-center md:hidden">
+            <button
+              onClick={() => onToggleSidebar && onToggleSidebar()}
+              aria-label="Open navigation"
+              className="mr-2 inline-flex h-10 w-10 items-center justify-center rounded-lg border border-border bg-white text-slate-700"
+            >
+              <Menu size={18} />
+            </button>
+          </div>
           {location.pathname.startsWith('/employer/dashboard') && (
             <div className="hidden xl:flex items-center gap-3 rounded-full border border-border bg-[#f7f8f6] px-4 py-2.5">
               <Search size={16} className="text-muted" />
@@ -82,6 +94,56 @@ export default function TopNavbar() {
             );
           })}
           </nav>
+        </div>
+
+        {/* Mobile right: profile & dropdown */}
+        <div className="flex items-center gap-2 md:hidden">
+          <div className="relative">
+            <button
+              onClick={(e: MouseEvent) => {
+                e.stopPropagation();
+                setShowProfileMenu((s) => !s);
+              }}
+              aria-expanded={showProfileMenu}
+              aria-label="Open profile menu"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-slate-100"
+            >
+              <User size={18} className="text-slate-700" />
+            </button>
+
+            {showProfileMenu && (
+              <div className="absolute right-0 mt-2 w-40 rounded-md border border-border bg-white shadow-lg">
+                <button
+                  onClick={() => {
+                    setShowProfileMenu(false);
+                    navigate('/settings');
+                  }}
+                  className="flex w-full items-center gap-2 px-3 py-2 text-sm hover:bg-slate-50"
+                >
+                  <Settings size={16} /> Settings
+                </button>
+                <button
+                  onClick={() => {
+                    setShowProfileMenu(false);
+                    navigate('/support');
+                  }}
+                  className="flex w-full items-center gap-2 px-3 py-2 text-sm hover:bg-slate-50"
+                >
+                  <LifeBuoy size={16} /> Support
+                </button>
+                <button
+                  onClick={() => {
+                    setShowProfileMenu(false);
+                    logout();
+                    navigate('/auth');
+                  }}
+                  className="flex w-full items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-slate-50"
+                >
+                  <LogOut size={16} /> Logout
+                </button>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Right section with buttons and profile */}

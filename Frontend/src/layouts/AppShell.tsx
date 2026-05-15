@@ -11,6 +11,7 @@ interface AppShellProps {
 }
 
 export default function AppShell({ children }: AppShellProps) {
+  const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
   const { userRole } = useAuth();
   const isEmployer = userRole === 'employer';
   const mobileNavItems = isEmployer
@@ -31,13 +32,13 @@ export default function AppShell({ children }: AppShellProps) {
     <div className="flex min-h-screen app-bg">
       {/* Skip link for keyboard users */}
       <a href="#main-content" className="skip-link">Skip to content</a>
-      {/* Sidebar */}
-      <Sidebar />
+      {/* Sidebar (desktop) and mobile drawer */}
+      <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
 
       {/* Main content area (offset by sidebar width) */}
       <div className="flex-1 flex flex-col overflow-hidden md:ml-72">
         {/* Top navbar */}
-        <TopNavbar />
+        <TopNavbar onToggleSidebar={() => setIsSidebarOpen((s) => !s)} />
 
         {/* Page content */}
         <motion.main
