@@ -15,6 +15,7 @@ from dotenv import load_dotenv
 import os
 from datetime import timedelta
 from decouple import config
+import dj_database_url
 
 load_dotenv()
 
@@ -31,7 +32,7 @@ SECRET_KEY = 'django-insecure-1=^b*9-2kp%8c-vk2sf9dvsy-f819=63dcn15g=k2%^03nmmy1
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -60,6 +61,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
 
+    "whitenoise.middleware.WhiteNoiseMiddleware",
 
     "corsheaders.middleware.CorsMiddleware",
 
@@ -158,7 +160,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = "static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
+STATICFILES_STORAGE = (
+    "whitenoise.storage.CompressedManifestStaticFilesStorage"
+)
 
 
 AUTH_USER_MODEL = "accounts.User"
@@ -191,3 +198,5 @@ SIMPLE_JWT = {
     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
 
 }
+
+GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
