@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import toast from 'react-hot-toast';
 import { useAuth } from '../../context/AuthContext';
 
 // ─── Design tokens (from HTML Tailwind config) ────────────────────────────────
@@ -41,15 +42,21 @@ export default function AuthPage() {
   );
   const [loading, setLoading] = useState(false);
 
+  const getErrorMessage = (error: unknown, fallback: string) => {
+    if (error instanceof Error && error.message.trim().length > 0) return error.message;
+    return fallback;
+  };
+
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       setLoading(true);
       const user = await signup({ full_name: fullName, email, password, role });
       localStorage.removeItem('selectedRole');
+      toast.success('Signup successful. Welcome to Roota!');
       navigate(user.role === 'WORKER' ? '/worker/dashboard' : '/employer/dashboard');
-    } catch (err: any) {
-      alert(err.response?.data?.detail || 'Signup failed');
+    } catch (err) {
+      toast.error(getErrorMessage(err, 'Signup failed'));
     } finally {
       setLoading(false);
     }
@@ -60,9 +67,10 @@ export default function AuthPage() {
     try {
       setLoading(true);
       const user = await login(email, password);
+      toast.success('Login successful.');
       navigate(user.role === 'WORKER' ? '/worker/dashboard' : '/employer/dashboard');
-    } catch (err: any) {
-      alert(err.response?.data?.detail || 'Login failed');
+    } catch (err) {
+      toast.error(getErrorMessage(err, 'Login failed'));
     } finally {
       setLoading(false);
     }
@@ -90,10 +98,9 @@ export default function AuthPage() {
         navigate("/employer/dashboard");
       }
 
-    } catch (error: any) {
+    } catch (error) {
       console.error(error);
-
-      alert(error.message);
+      toast.error(getErrorMessage(error, 'Google login failed'));
     } finally {
       setLoading(false);
     }
@@ -459,7 +466,7 @@ export default function AuthPage() {
                     <GoogleLogin
                       onSuccess={handleGoogleLogin}
                       onError={() => {
-                        alert("Google Login Failed");
+                        toast.error('Google login failed');
                       }}
                     />
                   </div>

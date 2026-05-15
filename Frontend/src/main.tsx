@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import { Toaster } from 'react-hot-toast';
 import App from './App';
 import { AuthProvider } from './context/AuthContext';
 import './styles/globals.css';
@@ -20,6 +21,17 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
         ) : (
           <App />
         )}
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            duration: 4000,
+            style: {
+              borderRadius: '12px',
+              background: '#0f172a',
+              color: '#f8fafc',
+            },
+          }}
+        />
       </AuthProvider>
     </BrowserRouter>
   </React.StrictMode>,

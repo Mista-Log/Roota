@@ -10,6 +10,39 @@ interface FetchOptions extends RequestInit {
   skipAuth?: boolean;
 }
 
+async function buildApiError(response: Response): Promise<Error> {
+  let message = `API Error: ${response.status} ${response.statusText}`;
+
+  try {
+    const contentType = response.headers.get('content-type') || '';
+    const payload = contentType.includes('application/json')
+      ? await response.json()
+      : await response.text();
+
+    if (typeof payload === 'string' && payload.trim().length > 0) {
+      message = payload;
+    } else if (payload && typeof payload === 'object') {
+      const detail = (payload as any).detail;
+      const messageField = (payload as any).message;
+
+      if (typeof detail === 'string' && detail.trim().length > 0) {
+        message = detail;
+      } else if (typeof messageField === 'string' && messageField.trim().length > 0) {
+        message = messageField;
+      } else {
+        const firstValue = Object.values(payload as Record<string, unknown>)[0];
+        if (Array.isArray(firstValue) && typeof firstValue[0] === 'string') {
+          message = firstValue[0];
+        }
+      }
+    }
+  } catch {
+    // Keep fallback error message when response body cannot be parsed.
+  }
+
+  return new Error(message);
+}
+
 /**
  * Get the stored auth token from localStorage
  */
@@ -61,7 +94,7 @@ export async function apiFetch(endpoint: string, options: FetchOptions = {}): Pr
 export async function apiGet(endpoint: string, skipAuth = false): Promise<any> {
   const response = await apiFetch(endpoint, { method: 'GET', skipAuth });
   if (!response.ok) {
-    throw new Error(`API Error: ${response.status} ${response.statusText}`);
+    throw await buildApiError(response);
   }
   return response.json();
 }
@@ -76,7 +109,7 @@ export async function apiPost(endpoint: string, data?: any, skipAuth = false): P
     skipAuth,
   });
   if (!response.ok) {
-    throw new Error(`API Error: ${response.status} ${response.statusText}`);
+    throw await buildApiError(response);
   }
   return response.json();
 }
@@ -91,7 +124,7 @@ export async function apiPut(endpoint: string, data?: any, skipAuth = false): Pr
     skipAuth,
   });
   if (!response.ok) {
-    throw new Error(`API Error: ${response.status} ${response.statusText}`);
+    throw await buildApiError(response);
   }
   return response.json();
 }
@@ -102,7 +135,7 @@ export async function apiPut(endpoint: string, data?: any, skipAuth = false): Pr
 export async function apiDelete(endpoint: string, skipAuth = false): Promise<any> {
   const response = await apiFetch(endpoint, { method: 'DELETE', skipAuth });
   if (!response.ok) {
-    throw new Error(`API Error: ${response.status} ${response.statusText}`);
+    throw await buildApiError(response);
   }
   return response.json();
 }
