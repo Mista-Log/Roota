@@ -3,7 +3,8 @@
  * All API calls should use this instead of raw fetch() to ensure tokens are sent
  */
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+// Default to the production backend if no VITE_API_BASE_URL is supplied
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://roota-production.up.railway.app';
 
 interface FetchOptions extends RequestInit {
   skipAuth?: boolean;

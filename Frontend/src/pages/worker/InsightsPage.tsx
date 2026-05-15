@@ -135,7 +135,7 @@ export default function WorkerInsightsPage() {
         apiGet('/api/auth/workers/me/'),
         apiGet('/api/worker/marketplace/jobs/'),
         apiGet('/api/worker/marketplace/suggested/'),
-        apiGet('/api/wallet/transactions/'),
+        apiGet('/api/wallets/transactions/'),
       ]);
 
       setProfile(profileData?.data ?? profileData ?? fallbackProfile);
