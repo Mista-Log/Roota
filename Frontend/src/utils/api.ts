@@ -127,6 +127,20 @@ export async function apiPost(endpoint: string, data?: any, skipAuth = false): P
   return response.json();
 }
 
+export async function apiPatch(endpoint: string, data?: any, skipAuth = false): Promise<any> {
+  const response = await apiFetch(endpoint, {
+    method: 'PATCH',
+    body: data ? JSON.stringify(data) : undefined,
+    skipAuth,
+  });
+
+  if (!response.ok) {
+    throw await buildApiError(response);
+  }
+
+  return response.json();
+}
+
 /**
  * Convenience wrapper for PUT requests
  */

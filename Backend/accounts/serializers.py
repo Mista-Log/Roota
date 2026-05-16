@@ -94,31 +94,36 @@ class LoginSerializer(serializers.Serializer):
 
 
 class WorkerProfileSerializer(serializers.ModelSerializer):
-    name = serializers.CharField(source="user.full_name")
-    image = serializers.SerializerMethodField()
-    verified = serializers.BooleanField(source="is_verified")
-    verificationBadge = serializers.CharField(source="verification_badge")
+
+    full_name = serializers.CharField(source="user.full_name")
+    email = serializers.EmailField(source="user.email")
+    phone = serializers.CharField(source="user.phone")
+    profile_picture = serializers.SerializerMethodField()
 
     class Meta:
         model = WorkerProfile
         fields = [
-            "name",
+            "full_name",
+            "email",
+            "phone",
+            "profile_picture",
             "title",
             "location",
-            "image",
-            "verified",
-            "skills",
-            "verificationBadge",
             "bio",
+            "skills",
             "hourly_rate",
             "availability",
+            "is_verified",
+            "verification_badge",
         ]
 
-    def get_image(self, obj):
+    def get_profile_picture(self, obj):
         request = self.context.get("request")
+
         if obj.user.profile_picture:
             url = obj.user.profile_picture.url
             return request.build_absolute_uri(url) if request else url
+
         return None
 
 

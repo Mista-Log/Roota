@@ -2,11 +2,18 @@ import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Save, CreditCard, Link as LinkIcon, Trash2, Bell, Lock, Eye } from 'lucide-react';
 import Section from '../../components/layout/Section';
-import { apiGet, apiPost, apiDelete } from '../../utils/api';
+import { apiGet, apiPatch, apiPost, apiDelete } from '../../utils/api';
 
 type TabId = 'profile' | 'account' | 'billing' | 'connected';
 
-const mockFormData = { fullName: 'Alexander Roota', email: 'alexander@roota.ai', phone: '+234 (0) 8123456789', location: 'Lagos, Nigeria', bio: 'AI Specialist | Freelancer' };
+const mockFormData = {
+  full_name: '',
+  email: '',
+  phone: '',
+  location: '',
+  bio: '',
+};
+
 const tabs: Array<{ id: TabId; label: string; icon: string }> = [
   { id: 'profile', label: 'Profile', icon: 'P' },
   { id: 'account', label: 'Account', icon: 'A' },
@@ -48,7 +55,7 @@ export default function WorkerSettingsPage() {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const data = await apiGet('/api/worker/settings/profile/');
+        const data = await apiGet('/api/auth/workers/me/');
         setFormData((prev) => ({ ...prev, ...data }));
       } catch (error) {
         console.warn('Error fetching worker settings, using fallback:', error);
@@ -62,7 +69,7 @@ export default function WorkerSettingsPage() {
   const handleSave = async () => {
     setSaving(true);
     try {
-      await apiPost('/api/worker/settings/profile/update/', formData);
+      await apiPatch('/api/auth/workers/me/update/', formData);
       setSavedMessage(true);
       setStatusMessage('Profile updated successfully.');
       setTimeout(() => { setSavedMessage(false); setStatusMessage(null); }, 1800);
@@ -142,7 +149,7 @@ export default function WorkerSettingsPage() {
         <Section title="Profile Information" description="Update your personal details">
           <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-6 rounded-2xl border border-border bg-card p-8 shadow-sm">
             <div className="flex items-center gap-6">
-              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-primary to-primary-dark text-2xl font-bold text-white">{formData.fullName.split(' ').map((n) => n[0]).join('')}</div>
+              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-primary to-primary-dark text-2xl font-bold text-white">{formData.full_name.split(' ').map((n) => n[0]).join('')}</div>
               <div>
                 <p className="font-semibold text-slate-900">Profile Picture</p>
                 <p className="mt-1 text-sm text-muted">PNG or JPG, max 5MB</p>
@@ -152,7 +159,7 @@ export default function WorkerSettingsPage() {
               </div>
             </div>
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-              <div className="sm:col-span-2"><label className="mb-2 block text-sm font-semibold text-slate-900">Full Name</label><input type="text" value={formData.fullName} onChange={(e) => setFormData({ ...formData, fullName: e.target.value })} className="w-full rounded-xl border border-border bg-white px-4 py-2.5 text-sm outline-none transition-colors focus:border-primary-dark" /></div>
+              <div className="sm:col-span-2"><label className="mb-2 block text-sm font-semibold text-slate-900">Full Name</label><input type="text" value={formData.full_name} onChange={(e) => setFormData({ ...formData, full_name: e.target.value })} className="w-full rounded-xl border border-border bg-white px-4 py-2.5 text-sm outline-none transition-colors focus:border-primary-dark" /></div>
               <div><label className="mb-2 block text-sm font-semibold text-slate-900">Email</label><input type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} className="w-full rounded-xl border border-border bg-white px-4 py-2.5 text-sm outline-none transition-colors focus:border-primary-dark" /></div>
               <div><label className="mb-2 block text-sm font-semibold text-slate-900">Phone</label><input type="tel" value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} className="w-full rounded-xl border border-border bg-white px-4 py-2.5 text-sm outline-none transition-colors focus:border-primary-dark" /></div>
               <div><label className="mb-2 block text-sm font-semibold text-slate-900">Location</label><input type="text" value={formData.location} onChange={(e) => setFormData({ ...formData, location: e.target.value })} className="w-full rounded-xl border border-border bg-white px-4 py-2.5 text-sm outline-none transition-colors focus:border-primary-dark" /></div>
