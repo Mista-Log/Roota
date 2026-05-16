@@ -14,6 +14,10 @@ type User = {
   email: string;
   full_name: string;
   role: UserRole;
+  avatar?: string;
+  profile_image?: string;
+  profile_picture?: string;
+  image_url?: string;
 };
 
 type SignupData = {

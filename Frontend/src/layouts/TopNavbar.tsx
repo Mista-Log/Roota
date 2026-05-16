@@ -14,8 +14,14 @@ const sharedNavItems = [
 export default function TopNavbar({ onToggleSidebar }: { onToggleSidebar?: () => void }) {
   const location = useLocation();
   const navigate = useNavigate();
-  const { userRole, logout } = useAuth();
+  const { userRole, logout, user } = useAuth();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const avatarSrc =
+    user?.avatar ||
+    user?.profile_image ||
+    user?.profile_picture ||
+    user?.image_url ||
+    `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.full_name || 'User')}&background=E2E8F0&color=1E293B`;
 
   const currentRole = userRole === 'employer' ? 'employer' : 'worker';
   const dashboardPath = currentRole === 'employer' ? '/employer/dashboard' : '/worker/dashboard';
@@ -108,7 +114,13 @@ export default function TopNavbar({ onToggleSidebar }: { onToggleSidebar?: () =>
               aria-label="Open profile menu"
               className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-slate-100"
             >
-              <User size={18} className="text-slate-700" />
+              <img
+                src={avatarSrc}
+                alt="Profile"
+                className="h-10 w-10 rounded-full object-cover"
+                loading="lazy"
+                referrerPolicy="no-referrer"
+              />
             </button>
 
             {showProfileMenu && (
@@ -166,7 +178,13 @@ export default function TopNavbar({ onToggleSidebar }: { onToggleSidebar?: () =>
             whileTap={{ scale: 0.95 }}
             className="w-10 h-10 bg-slate-200 rounded-full flex items-center justify-center transition-all duration-200 hover:shadow-md"
           >
-            <User size={20} className="text-slate-600" />
+            <img
+              src={avatarSrc}
+              alt="Profile"
+              className="h-10 w-10 rounded-full object-cover"
+              loading="lazy"
+              referrerPolicy="no-referrer"
+            />
           </motion.button>
         </div>
       </div>
