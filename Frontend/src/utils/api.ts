@@ -71,9 +71,10 @@ export async function apiFetch(endpoint: string, options: FetchOptions = {}): Pr
   const { skipAuth = false, ...fetchOptions } = options;
 
   const headers = new Headers(fetchOptions.headers || {});
+  const isFormDataPayload = typeof FormData !== 'undefined' && fetchOptions.body instanceof FormData;
 
   // Add content-type if not already set
-  if (!headers.has('Content-Type')) {
+  if (!headers.has('Content-Type') && !isFormDataPayload) {
     headers.set('Content-Type', 'application/json');
   }
 

@@ -36,6 +36,7 @@ type AuthContextType = {
   login: (email: string, password: string) => Promise<User>;
 
   signup: (data: SignupData) => Promise<User>;
+  refreshUser: () => Promise<void>;
 
   logout: () => void;
 };
@@ -57,6 +58,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return apiGet('/api/auth/me/', false);
   };
 
+  const refreshUser = async (): Promise<void> => {
+    const userData = await fetchAuthenticatedUser();
+    setUser(userData);
+  };
+
   // ==========================================
   // LOAD USER ON REFRESH
   // ==========================================
@@ -70,9 +76,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
 
       try {
-        const userData = await fetchAuthenticatedUser();
-
-        setUser(userData);
+        await refreshUser();
       } catch (error) {
         console.error(error);
 
@@ -138,6 +142,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         userRole,
         login,
         signup,
+        refreshUser,
         logout,
       }}
     >
