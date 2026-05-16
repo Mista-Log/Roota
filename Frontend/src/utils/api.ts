@@ -4,7 +4,7 @@
  */
 
 // Default to the production backend if no VITE_API_BASE_URL is supplied
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://roota-production.up.railway.app';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://roota.onrender.com';
 
 interface FetchOptions extends RequestInit {
   skipAuth?: boolean;
