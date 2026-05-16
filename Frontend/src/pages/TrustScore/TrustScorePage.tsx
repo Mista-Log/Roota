@@ -48,12 +48,12 @@ export default function TrustScorePage() {
   return (
     <div className="space-y-8">
       <Section title="AI Trust Score" description="Your verified trust metrics">
-        <div className="grid grid-cols-4 gap-6">
-          <div className="col-span-1">
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-4 lg:gap-6">
+          <div className="lg:col-span-1">
             <TrustScoreCard score={trustData.score} />
           </div>
-          <div className="col-span-3">
-            <div className="grid grid-cols-3 gap-6">
+          <div className="lg:col-span-3">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 xl:gap-6">
               <StatCard label="Completed Projects" value={<AnimatedNumber value={trustData.completedProjects} duration={1500} />} change="All verified" />
               <StatCard label="Success Rate" value={<AnimatedNumber value={trustData.successRate.replace('%', '')} duration={1500} />} change="Above average" />
               <StatCard label="Average Rating" value={<AnimatedNumber value={trustData.averageRating} duration={1500} decimals={1} />} change="Out of 5.0" tone="gold" />
@@ -63,7 +63,7 @@ export default function TrustScorePage() {
       </Section>
 
       <Section title="Verification Tasks" description="Complete these to increase your score">
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-6">
           {trustData.verificationTasks.map((task, idx) => (
             <SkillProgressCard
               key={idx}
@@ -77,7 +77,7 @@ export default function TrustScorePage() {
       </Section>
 
       <Section title="Trust Evaluation" description="How we calculate your score">
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-6">
           {trustData.evaluation.map((item, idx) => (
             <motion.div
               key={idx}

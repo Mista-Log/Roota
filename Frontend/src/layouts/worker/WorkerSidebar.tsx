@@ -1,9 +1,9 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { LayoutGrid, Briefcase, Wallet, ShieldCheck, Settings, LifeBuoy, LogOut, Zap } from 'lucide-react';
+import { LayoutGrid, Briefcase, Wallet, ShieldCheck, Settings, LifeBuoy, LogOut, Zap, X } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
-export default function WorkerSidebar() {
+export default function WorkerSidebar({ isOpen, onClose }: { isOpen?: boolean; onClose?: () => void }) {
   const location = useLocation();
   const navigate = useNavigate();
   const { logout } = useAuth();
@@ -22,60 +22,129 @@ export default function WorkerSidebar() {
   const isNavItemActive = (path: string) => location.pathname.startsWith(path);
 
   return (
-    <motion.aside
-      initial={{ x: -12, opacity: 0 }}
-      animate={{ x: 0, opacity: 1 }}
-      transition={{ duration: 0.24 }}
-      role="navigation"
-      aria-label="Worker navigation"
-      className="fixed z-50 flex h-screen w-72 flex-col overflow-y-auto border-r border-[#d6e4dc] bg-[#f8faf8] text-slate-900"
-    >
-      <div className="border-b border-[#e6efe6] px-6 py-5">
-        <Link to="/worker/dashboard" className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent font-bold text-primary-dark">Ⓡ</div>
-          <div>
-            <div className="text-sm font-bold">Roota AI</div>
-            <div className="text-xs text-slate-500">Worker Workspace</div>
-          </div>
-        </Link>
-      </div>
-
-      <nav className="flex flex-1 flex-col gap-2 px-4 py-6">
-        {navItems.map((item) => {
-          const Icon = item.icon;
-          const isActive = isNavItemActive(item.path);
-
-          return (
-            <motion.div key={item.path} whileHover={{ x: 4 }} transition={{ duration: 0.18 }}>
-              <Link
-                to={item.path}
-                aria-current={isActive ? 'page' : undefined}
-                className={`relative flex items-center gap-3 rounded-xl px-4 py-3 font-medium transition-colors duration-200 ${
-                  isActive ? 'bg-[#0b5d4b] text-white shadow-sm' : 'text-slate-700 hover:bg-[#dcebe4] hover:text-slate-900'
-                }`}
-              >
-                <Icon size={18} />
-                <span className="text-sm">{item.label}</span>
-                {isActive && <span className="absolute left-0 -ml-4 h-full w-1 rounded-r-md bg-[#0b5d4b]" aria-hidden />}
+    <>
+      {/* Mobile drawer */}
+      {isOpen && (
+        <div className="fixed inset-0 z-50 md:hidden">
+          <div onClick={onClose} className="absolute inset-0 bg-black/40" />
+          <motion.aside
+            initial={{ x: -320 }}
+            animate={{ x: 0 }}
+            transition={{ duration: 0.18 }}
+            role="navigation"
+            aria-label="Mobile worker navigation"
+            className="relative z-50 h-full w-72 flex-col overflow-y-auto border-r border-[#d6e4dc] bg-[#f8faf8] text-slate-900"
+          >
+            <div className="flex items-center justify-between border-b border-[#d6e4dc] px-6 py-4">
+              <Link to="/worker/dashboard" className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent font-bold text-primary-dark">Ⓡ</div>
+                <div>
+                  <div className="text-sm font-bold">Roota AI</div>
+                  <div className="text-xs text-slate-500">Worker Workspace</div>
+                </div>
               </Link>
-            </motion.div>
-          );
-        })}
-      </nav>
+              <button onClick={onClose} className="rounded-md p-2">
+                <X size={18} />
+              </button>
+            </div>
 
-      <div className="mt-auto space-y-2 border-t border-[#e6efe6] px-4 py-6">
-        <button
-          type="button"
-          onClick={() => {
-            logout();
-            navigate('/auth');
-          }}
-          className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-slate-700 hover:bg-[#f0f6f2]"
-        >
-          <LogOut size={18} />
-          Logout
-        </button>
-      </div>
-    </motion.aside>
+            <nav className="flex flex-1 flex-col gap-2 px-4 py-6">
+              {navItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = isNavItemActive(item.path);
+
+                return (
+                  <motion.div key={item.path} whileHover={{ x: 4 }} transition={{ duration: 0.18 }}>
+                    <Link
+                      to={item.path}
+                      aria-current={isActive ? 'page' : undefined}
+                      onClick={onClose}
+                      className={`relative flex items-center gap-3 rounded-xl px-4 py-3 font-medium transition-colors duration-200 ${
+                        isActive ? 'bg-[#0b5d4b] text-white shadow-sm' : 'text-slate-700 hover:bg-[#dcebe4] hover:text-slate-900'
+                      }`}
+                    >
+                      <Icon size={18} />
+                      <span className="text-sm">{item.label}</span>
+                      {isActive && <span className="absolute left-0 -ml-4 h-full w-1 rounded-r-md bg-[#0b5d4b]" aria-hidden />}
+                    </Link>
+                  </motion.div>
+                );
+              })}
+            </nav>
+
+            <div className="mt-auto space-y-2 border-t border-[#d6e4dc] px-4 py-6">
+              <button
+                type="button"
+                onClick={() => {
+                  logout();
+                  navigate('/auth');
+                }}
+                className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-slate-700 hover:bg-[#f0f6f2]"
+              >
+                <LogOut size={18} />
+                Logout
+              </button>
+            </div>
+          </motion.aside>
+        </div>
+      )}
+
+      {/* Desktop sidebar */}
+      <motion.aside
+        initial={{ x: -12, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        transition={{ duration: 0.24 }}
+        role="navigation"
+        aria-label="Worker navigation"
+        className="fixed z-50 hidden h-screen w-72 flex-col overflow-y-auto border-r border-[#d6e4dc] bg-[#f8faf8] text-slate-900 md:flex"
+      >
+        <div className="border-b border-[#e6efe6] px-6 py-5">
+          <Link to="/worker/dashboard" className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent font-bold text-primary-dark">Ⓡ</div>
+            <div>
+              <div className="text-sm font-bold">Roota AI</div>
+              <div className="text-xs text-slate-500">Worker Workspace</div>
+            </div>
+          </Link>
+        </div>
+
+        <nav className="flex flex-1 flex-col gap-2 px-4 py-6">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = isNavItemActive(item.path);
+
+            return (
+              <motion.div key={item.path} whileHover={{ x: 4 }} transition={{ duration: 0.18 }}>
+                <Link
+                  to={item.path}
+                  aria-current={isActive ? 'page' : undefined}
+                  className={`relative flex items-center gap-3 rounded-xl px-4 py-3 font-medium transition-colors duration-200 ${
+                    isActive ? 'bg-[#0b5d4b] text-white shadow-sm' : 'text-slate-700 hover:bg-[#dcebe4] hover:text-slate-900'
+                  }`}
+                >
+                  <Icon size={18} />
+                  <span className="text-sm">{item.label}</span>
+                  {isActive && <span className="absolute left-0 -ml-4 h-full w-1 rounded-r-md bg-[#0b5d4b]" aria-hidden />}
+                </Link>
+              </motion.div>
+            );
+          })}
+        </nav>
+
+        <div className="mt-auto space-y-2 border-t border-[#e6efe6] px-4 py-6">
+          <button
+            type="button"
+            onClick={() => {
+              logout();
+              navigate('/auth');
+            }}
+            className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-slate-700 hover:bg-[#f0f6f2]"
+          >
+            <LogOut size={18} />
+            Logout
+          </button>
+        </div>
+      </motion.aside>
+    </>
   );
 }
