@@ -54,7 +54,7 @@ export default function AuthPage() {
       const user = await signup({ full_name: fullName, email, password, role });
       localStorage.removeItem('selectedRole');
       toast.success('Signup successful. Welcome to Roota!');
-      navigate(user.role === 'WORKER' ? '/worker/dashboard' : '/employer/dashboard');
+      navigate(user.role === 'WORKER' ? '/worker/onboarding' : '/employer/onboarding');
     } catch (err) {
       toast.error(getErrorMessage(err, 'Signup failed'));
     } finally {
@@ -92,10 +92,13 @@ export default function AuthPage() {
       localStorage.removeItem("selectedRole");
 
       // redirect
-      if (data.user.role === "WORKER") {
-        navigate("/worker/dashboard");
+      const onboardingPath = data.user.role === "WORKER" ? '/worker/onboarding' : '/employer/onboarding';
+      const dashboardPath = data.user.role === "WORKER" ? '/worker/dashboard' : '/employer/dashboard';
+
+      if (data.redirect === '/confirm') {
+        navigate(onboardingPath);
       } else {
-        navigate("/employer/dashboard");
+        navigate(dashboardPath);
       }
 
     } catch (error) {

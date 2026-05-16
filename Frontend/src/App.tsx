@@ -7,6 +7,8 @@ import EmployerShell from './layouts/employer/EmployerShell';
 import LandingPage from './pages/Landing/LandingPage';
 import RoleSelectionPage from './pages/Landing/RoleSelectionPage';
 import AuthPage from './pages/Auth/AuthPage';
+import WorkerOnboardingPage from './pages/Onboarding/WorkerOnboardingPage';
+import EmployerOnboardingPage from './pages/Onboarding/EmployerOnboardingPage';
 import WorkerDashboardPage from './pages/Dashboard/WorkerDashboard';
 import EmployerDashboardPage from './pages/Dashboard/EmployerDashboard';
 import WorkerMarketplacePage from './pages/worker/MarketplacePage';
@@ -37,6 +39,23 @@ function App() {
       <Route path="/" element={<LandingPage />} />
       <Route path="/role" element={<RoleSelectionPage />} />
       <Route path="/auth" element={<AuthPage />} />
+
+      <Route
+        path="/worker/onboarding"
+        element={
+          <ProtectedRoute allowedRoles={['worker']}>
+            <WorkerOnboardingPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/employer/onboarding"
+        element={
+          <ProtectedRoute allowedRoles={['employer']}>
+            <EmployerOnboardingPage />
+          </ProtectedRoute>
+        }
+      />
       
       {/* Worker Routes */}
       <Route 
