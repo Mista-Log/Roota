@@ -184,10 +184,12 @@ CLOUDINARY_STORAGE = {
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "https://roota.onrender.com",
+    "https://roota-beta.vercel.app",
 ]
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:5173",
     "https://roota.onrender.com",
+    "https://roota-beta.vercel.app/",
 ]
 
 
@@ -214,4 +216,5 @@ GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 
 CSRF_TRUSTED_ORIGINS = [
     "https://roota-production.up.railway.app",
+    "https://roota-beta.vercel.app",
 ]
