@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { motion, easeOut } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import Section from '../../components/layout/Section';
@@ -10,9 +10,56 @@ import SkillProgressCard from '../../components/cards/SkillProgressCard';
 import InsightCard from '../../components/cards/InsightCard';
 import EarningsChart from '../../components/charts/EarningsChart';
 import { Briefcase, TrendingUp } from 'lucide-react';
+import { apiGet } from '../../utils/api';
+
+interface WorkerProfileSummary {
+  name: string;
+  title: string;
+  location: string;
+  image?: string;
+  verified: boolean;
+  skills: string[];
+  verificationBadge: string;
+}
+
+const fallbackProfile: WorkerProfileSummary = {
+  name: 'Marcus Chen',
+  title: 'Senior AI Data Strategist',
+  location: 'Lagos, Nigeria',
+  image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop',
+  verified: true,
+  skills: ['PyTorch', 'Prompt Engineering', 'LLM Tuning', '+4 More'],
+  verificationBadge: 'Verified Economic Identity',
+};
 
 export default function WorkerDashboardPage() {
   const navigate = useNavigate();
+  const [profile, setProfile] = useState<WorkerProfileSummary>(fallbackProfile);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const data = await apiGet('/api/auth/workers/me/');
+
+        const mappedProfile: WorkerProfileSummary = {
+          name: data?.name || fallbackProfile.name,
+          title: data?.title || 'AI Professional',
+          location: data?.location || 'Location not set',
+          image: data?.image || undefined,
+          verified: Boolean(data?.verified),
+          skills: Array.isArray(data?.skills) ? data.skills : [],
+          verificationBadge: data?.verificationBadge || 'Verified Economic Identity',
+        };
+
+        setProfile(mappedProfile);
+      } catch (error) {
+        console.warn('Error fetching worker dashboard profile, using fallback:', error);
+        setProfile(fallbackProfile);
+      }
+    };
+
+    fetchProfile();
+  }, []);
 
   const chartData = [
     { month: 'Mon', amount: 2400 },
@@ -63,13 +110,13 @@ export default function WorkerDashboardPage() {
     <div className="space-y-8">
       <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1.45fr)_minmax(320px,0.78fr)]">
         <ProfileHero
-          name="Marcus Chen"
-          title="Senior AI Data Strategist"
-          location="Lagos, Nigeria"
-          image="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop"
-          verified={true}
-          skills={['PyTorch', 'Prompt Engineering', 'LLM Tuning', '+4 More']}
-          verificationBadge="Verified Economic Identity"
+          name={profile.name}
+          title={profile.title}
+          location={profile.location}
+          image={profile.image}
+          verified={profile.verified}
+          skills={profile.skills}
+          verificationBadge={profile.verificationBadge}
         />
 
         <Section title="AI Trust Score" className="h-full">
