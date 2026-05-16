@@ -32,6 +32,25 @@ interface RecentHire {
   icon: string;
 }
 
+interface EmployerProfile {
+  full_name?: string;
+  email?: string;
+  phone?: string;
+  location?: string;
+  bio?: string;
+  company_name?: string;
+  industry?: string;
+  website?: string;
+}
+
+interface EmployerJob {
+  id: number | string;
+  title?: string;
+  location?: string;
+  status?: string;
+  created_at?: string;
+}
+
 const mockWorkers: Worker[] = [
   { id: '1', name: 'James Adenuga', location: 'Lagos, Nigeria', project: 'AI Model Training', amount: '$3,200.00', initials: 'JA' },
   { id: '2', name: 'Sarah Kim', location: 'Seoul, KR', project: 'Cloud Architecture', amount: '$5,450.00', initials: 'SK' },
@@ -51,6 +70,8 @@ const mockRecentHires: RecentHire[] = [
 ];
 
 export default function EmployerDashboard() {
+  const [profile, setProfile] = useState<EmployerProfile | null>(null);
+  const [jobs, setJobs] = useState<EmployerJob[]>([]);
   const [workers, setWorkers] = useState<Worker[]>(mockWorkers);
   const [talent, setTalent] = useState<Talent[]>(mockTalent);
   const [recentHires, setRecentHires] = useState<RecentHire[]>(mockRecentHires);
@@ -61,14 +82,31 @@ export default function EmployerDashboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const workersData = await apiGet('/api/employer/payroll/');
-        setWorkers(Array.isArray(workersData.results) ? workersData.results : workersData);
-        
-        const talentData = await apiGet('/api/employer/talent/');
-        setTalent(Array.isArray(talentData.results) ? talentData.results : talentData);
-        
-        const hiresData = await apiGet('/api/employer/recent-hires/');
-        setRecentHires(Array.isArray(hiresData.results) ? hiresData.results : hiresData);
+        const [profileData, jobsData] = await Promise.all([
+          apiGet('/api/auth/employer/profile/'),
+          apiGet('/api/employer/jobs/'),
+        ]);
+
+        const payload = profileData?.data ?? profileData;
+        setProfile(payload);
+
+        const normalizedJobs = Array.isArray(jobsData?.results)
+          ? jobsData.results
+          : Array.isArray(jobsData)
+            ? jobsData
+            : [];
+        setJobs(normalizedJobs);
+
+        if (normalizedJobs.length > 0) {
+          const hires = normalizedJobs.slice(0, 4).map((job: EmployerJob, index: number) => ({
+            id: String(job.id ?? index + 1),
+            name: job.title || 'New Role',
+            action: (job.status || 'Open').toString(),
+            icon: '📌',
+            timestamp: 'now',
+          }));
+          setRecentHires(hires);
+        }
       } catch (error) {
         console.warn('Error fetching employer data, using fallback:', error);
       }
@@ -76,6 +114,11 @@ export default function EmployerDashboard() {
 
     fetchData();
   }, []);
+
+  const openJobsCount = useMemo(
+    () => jobs.filter((job) => (job.status ?? 'OPEN').toString().toUpperCase() === 'OPEN').length,
+    [jobs]
+  );
 
   const statVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -93,6 +136,24 @@ export default function EmployerDashboard() {
 
   return (
     <div className="space-y-6">
+      <motion.section
+        variants={statVariants}
+        initial="hidden"
+        animate="visible"
+        transition={{ delay: 0 }}
+        className="rounded-2xl border border-border bg-card px-6 py-5 shadow-sm"
+      >
+        <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-muted">Employer Profile</p>
+        <h2 className="mt-2 text-2xl font-semibold text-slate-900">
+          {profile?.company_name || 'Complete your company profile'}
+        </h2>
+        <p className="mt-1 text-sm text-muted">
+          {profile?.industry || 'Industry not set'}
+          {profile?.location ? ` • ${profile.location}` : ''}
+        </p>
+        {profile?.bio && <p className="mt-3 text-sm text-slate-700">{profile.bio}</p>}
+      </motion.section>
+
       {/* Stats Strip */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         <motion.div
@@ -127,7 +188,7 @@ export default function EmployerDashboard() {
             <div>
               <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-muted">Active Workers</p>
               <p className="mt-3 text-3xl font-bold text-slate-900">
-                <AnimatedNumber value={84} duration={1500} />
+                <AnimatedNumber value={workers.length} duration={1500} />
               </p>
               <p className="mt-2 text-[13px] text-muted font-medium">across 12 global regions</p>
             </div>
@@ -148,7 +209,7 @@ export default function EmployerDashboard() {
             <div>
               <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-muted">Open Jobs</p>
               <p className="mt-3 text-3xl font-bold text-slate-900">
-                <AnimatedNumber value={6} duration={1500} />
+                <AnimatedNumber value={openJobsCount || 0} duration={1500} />
               </p>
               <p className="mt-2 text-[13px] text-warning font-medium">◆ 4 high-priority roles</p>
             </div>
