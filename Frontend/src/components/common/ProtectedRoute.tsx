@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { apiGet } from '../../utils/api';
+import AppPreloader from './AppPreloader';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -84,9 +85,9 @@ export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) 
     };
   }, [isAuthenticated, loading, userRole]);
 
-  // Show loading state while checking auth and onboarding status
+  // Show branded preloader while checking auth and onboarding status
   if (loading || (isAuthenticated && userRole !== 'admin' && onboardingComplete === null)) {
-    return <div className="flex h-screen items-center justify-center">Loading...</div>;
+    return <AppPreloader />;
   }
 
   // Redirect to auth if not authenticated
