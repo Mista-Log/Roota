@@ -10,13 +10,15 @@ interface WorkerShellProps {
 }
 
 export default function WorkerShell({ children }: WorkerShellProps) {
+  const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
+
   return (
     <div className="flex min-h-screen app-bg">
       <a href="#main-content" className="skip-link">Skip to content</a>
-      <WorkerSidebar />
+      <WorkerSidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
 
       <div className="flex-1 flex flex-col overflow-hidden md:ml-72">
-        <WorkerHeader />
+        <WorkerHeader onToggleSidebar={() => setIsSidebarOpen((s) => !s)} />
 
         <motion.main
           id="main-content"
