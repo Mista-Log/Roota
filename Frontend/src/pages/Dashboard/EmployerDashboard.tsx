@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { ArrowUpRight, Users, Briefcase, TrendingUp, Plus } from 'lucide-react';
 import { motion } from 'framer-motion';
 import AnimatedNumber from '../../components/common/AnimatedNumber';

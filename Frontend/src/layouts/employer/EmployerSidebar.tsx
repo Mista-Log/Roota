@@ -1,10 +1,9 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { LayoutGrid, Briefcase, Wallet, ShieldCheck, Settings, LifeBuoy, LogOut } from 'lucide-react';
-import { X } from 'lucide-react';
+import { LayoutGrid, Briefcase, Wallet, ShieldCheck, Settings, LifeBuoy, LogOut, X } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
-export default function EmployerSidebar() {
+export default function EmployerSidebar({ isOpen, onClose }: { isOpen?: boolean; onClose?: () => void }) {
   const location = useLocation();
   const navigate = useNavigate();
   const { logout } = useAuth();
